@@ -4,8 +4,8 @@ This program is built to scrape all sold item data from eBay for any particular 
 
 Examples:
 
-![PS5 Example](https://github.com/driscoll42/ebayScraper/blob/master/PS5%20-digital.png)
-![RTX 3080 Example](https://github.com/driscoll42/ebayScraper/blob/master/RTX+3080.png?raw=true)
+![PS5 Example](https://github.com/driscoll42/ebayScraper/blob/master/Images/PS5%20-digital.png)
+![RTX 3080 Example](https://github.com/driscoll42/ebayScraper/blob/master/Images/RTX%203080.png)
 
 # Install Instructions
 
