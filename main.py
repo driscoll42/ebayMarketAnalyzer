@@ -295,8 +295,9 @@ def median_plotting(dfs, names, title, msrps=[]):
         plt.plot(med_price, colors[ci], label=names[i])
     plt.ylim(bottom=min_msrp)
     plt.legend()
-    plt.show()
     plt.savefig("Images/" + title)
+    plt.show()
+
 
 # Zen 3 Analysis
 df_5950x = ebay_search('5950X', 799, 400, 2200)
@@ -305,7 +306,6 @@ df_5800x = ebay_search('5800X', 449, 400, 1000)
 df_5600x = ebay_search('5600X', 299, 250, 1000)
 median_plotting([df_5950x, df_5900x, df_5800x, df_5600x], ['5950X', '5900X', '5800X', '5600X'], 'Zen 3 Median Pricing',
                 [799, 549, 449, 299])
-
 
 # Big Navi Analysis
 df_6800 = ebay_search('RX 6800 -XT', 579, 400, 2500)
@@ -322,8 +322,8 @@ median_plotting([df_3060, df_3070, df_3080, df_3090], ['3060', '3070', '3080', '
                 [399, 499, 699, 1499])
 
 # PS5 Analysis (All time)
-df_ps5_digital = ebay_search('PS5 Digital', 299, 300, 11000, min_date=datetime.datetime(2020, 9, 12))
-df_ps5_disc = ebay_search('PS5 -digital', 499, 450, 11000, min_date=datetime.datetime(2020, 9, 12))
+df_ps5_digital = ebay_search('PS5 Digital', 299, 300, 11000, min_date=datetime.datetime(2020, 9, 16))
+df_ps5_disc = ebay_search('PS5 -digital', 499, 450, 11000, min_date=datetime.datetime(2020, 9, 16))
 median_plotting([df_ps5_disc, df_ps5_digital], ['PS5 Disc', 'PS5 Digital'], 'PS5 Median Pricing', [299, 499])
 
 # PS5 Analysis (Post Launch)
