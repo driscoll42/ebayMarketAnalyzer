@@ -127,7 +127,7 @@ def ebay_plot(query, msrp, df):
         msrp_discount = 0.05  # If drop scalpers are buying off of Amazon with an Amazon Prime account and credit card, they
         # can get 5% cash back, so effectively the MSRP is 5% lower
 
-        est_break_even = round((msrp * (1 + est_tax)) / (1 - est_ebay_fee - pp_fee_per) + pp_flat_fee + estimated_shipping, 2)
+        est_break_even = round((msrp * (1 + est_tax)) / (1 - est_ebay_fee - pp_fee_per) + pp_flat_fee + estimated_shipping)
         min_break_even = round((msrp * (1 - msrp_discount)) / (1 - min_be_ebay_fee - pp_fee_per) + pp_flat_fee)
 
         ax1.axhline(y=est_break_even, label='Est. Scalper Break Even - $' + str(est_break_even), color=color, dashes=[2, 2])

@@ -7,7 +7,7 @@ Examples:
 ![PS5 Example](https://github.com/driscoll42/ebayScraper/blob/master/PS5%20-digital.png)
 ![RTX 3080 Example](https://github.com/driscoll42/ebayScraper/blob/master/RTX+3080.png?raw=true)
 
-## Install Instructions
+# Install Instructions
 
 * Create an Anaconda 3.8 python environment
 * Run "pip install matplotlib==3.2.2, numpy, pandas==1.1.0, beautifulsoup==4.9.1, lxml==4.6.2, openpyxl==3.0.5, requests==2.25.0, scipy==1.5.4"
