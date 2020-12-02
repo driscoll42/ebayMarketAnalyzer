@@ -14,7 +14,7 @@ from scipy import stats
 
 def ebay_scrape(base_url, df, min_date='', verbose=False):
     for x in range(1, 5):
-        time.sleep(0.1)
+        time.sleep(0.2)  # eBays servers will kill your connection if you hit them too frequently
         url = base_url + str(x)
         source = requests.get(url).text
         soup = BeautifulSoup(source, 'lxml')
@@ -211,7 +211,7 @@ def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.d
     # Determine price ranges to search with
     i = 0
     while i != len(price_ranges) - 1:
-        time.sleep(0.1)
+        time.sleep(0.2)  # eBays servers will kill your connection if you hit them too frequently
         url = 'https://www.ebay.com/sch/i.html?_from=R40&_nkw=' + str(
                 query.replace(" ", "+")) + '&_sacat=0&LH_PrefLoc=1&LH_Sold=1&LH_Complete=1&_udlo=' + str(
                 price_ranges[i]) + '&_udhi=' + str(
@@ -295,6 +295,7 @@ def median_plotting(dfs, names, title, msrps=[]):
         plt.plot(med_price, colors[ci], label=names[i])
     plt.ylim(bottom=min_msrp)
     plt.legend()
+    plt.tight_layout()
     plt.savefig("Images/" + title)
     plt.show()
 
