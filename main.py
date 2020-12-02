@@ -128,7 +128,7 @@ def ebay_plot(query, msrp, df):
         # can get 5% cash back, so effectively the MSRP is 5% lower
 
         est_break_even = round(
-            (msrp * (1 + est_tax)) / (1 - est_ebay_fee - pp_fee_per) + pp_flat_fee + estimated_shipping)
+                (msrp * (1 + est_tax)) / (1 - est_ebay_fee - pp_fee_per) + pp_flat_fee + estimated_shipping)
         min_break_even = round((msrp * (1 - msrp_discount)) / (1 - min_be_ebay_fee - pp_fee_per) + pp_flat_fee)
 
         ax1.axhline(y=est_break_even, label='Est. Scalper Break Even - $' + str(int(est_break_even)), color=color,
@@ -279,49 +279,69 @@ def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.d
     return df
 
 
-df_3060 = ebay_search('RTX 3060', 399, 200, 1300, min_date=datetime.datetime(2020, 12, 1))
+def median_plotting(dfs, names, title, msrps=[]):
+    colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w']
+    min_msrp = 100
+    plt.figure()  # In this example, all the plots will be in one figure.
+    plt.ylabel("% of MSRP")
+    plt.xlabel("Sale Date")
+    plt.tick_params(axis='y')
+    plt.tick_params(axis='x', rotation=30)
+    plt.title(title)
+    for i in range(len(dfs)):
+        ci = i % (len(colors) - 1)
+        med_price = dfs[i].groupby(['Sold Date'])['Total Price'].median() / msrps[i] * 100
+        min_msrp = min(100, min(med_price))
+        plt.plot(med_price, colors[ci], label=names[i])
+    plt.ylim(bottom=min_msrp)
+    plt.legend()
+    plt.show()
+    plt.savefig("Images/" + title)
 
-
-df_ps5_digital = ebay_search('PS5 Digital', 299, 300, 11000, min_date=datetime.datetime(2020, 9, 12))
-df_ps5_disc = ebay_search('PS5 -digital', 499, 450, 11000, min_date=datetime.datetime(2020, 9, 12))
-
-# Launch Date
-df_xbox_x_ld = ebay_search('Xbox Series S', 299, 250, 11000, min_date=datetime.datetime(2020, 11, 10))
-df_xbox_s_ld = ebay_search('Xbox Series X', 499, 350, 11000, min_date=datetime.datetime(2020, 11, 10))
-
-df_ps5_digital_ld = ebay_search('PS5 Digital', 299, 300, 11000, min_date=datetime.datetime(2020, 11, 12))
-df_ps5_disc_ld = ebay_search('PS5 -digital', 499, 450, 11000, min_date=datetime.datetime(2020, 11, 12))
-
-df_3080 = ebay_search('RTX+3080', 699, 550, 10000, min_date=datetime.datetime(2020, 9, 17))
-
+# Zen 3 Analysis
 df_5950x = ebay_search('5950X', 799, 400, 2200)
 df_5900x = ebay_search('5900X', 549, 499, 2050)
 df_5800x = ebay_search('5800X', 449, 400, 1000)
 df_5600x = ebay_search('5600X', 299, 250, 1000)
+median_plotting([df_5950x, df_5900x, df_5800x, df_5600x], ['5950X', '5900X', '5800X', '5600X'], 'Zen 3 Median Pricing',
+                [799, 549, 449, 299])
 
+
+# Big Navi Analysis
 df_6800 = ebay_search('RX 6800 -XT', 579, 400, 2500)
 df_6800xt = ebay_search('RX 6800 XT', 649, 850, 2000)  # There are some $5000+, but screw with graphs
 # df_6900 = ebay_search('RX 6900', 999, 100, 999999, min_date=datetime.datetime(2020, 12, 8)) # Not out until December 8
+median_plotting([df_6800, df_6800xt], ['RX 6800', 'RX 6800 XT'], 'Big Navi Median Pricing', [579, 649])
 
+# RTX 30 Series Analysis
 df_3060 = ebay_search('RTX 3060', 399, 200, 1300, min_date=datetime.datetime(2020, 12, 1))
 df_3070 = ebay_search('RTX 3070', 499, 499, 1300, min_date=datetime.datetime(2020, 10, 29))
 df_3080 = ebay_search('RTX 3080', 699, 550, 10000, min_date=datetime.datetime(2020, 9, 17))
 df_3090 = ebay_search('RTX 3090', 1499, 550, 10000, min_date=datetime.datetime(2020, 9, 17))
+median_plotting([df_3060, df_3070, df_3080, df_3090], ['3060', '3070', '3080', '3090'], 'RTX 30 Series Median Pricing',
+                [399, 499, 699, 1499])
 
-df_xbox_x = ebay_search('Xbox Series S', 299, 250, 11000, min_date=datetime.datetime(2020, 9, 22))
-df_xbox_s = ebay_search('Xbox Series X', 499, 350, 11000, min_date=datetime.datetime(2020, 9, 22))
-
+# PS5 Analysis (All time)
 df_ps5_digital = ebay_search('PS5 Digital', 299, 300, 11000, min_date=datetime.datetime(2020, 9, 12))
 df_ps5_disc = ebay_search('PS5 -digital', 499, 450, 11000, min_date=datetime.datetime(2020, 9, 12))
+median_plotting([df_ps5_disc, df_ps5_digital], ['PS5 Disc', 'PS5 Digital'], 'PS5 Median Pricing', [299, 499])
 
-# Launch Date
-df_xbox_x_ld = ebay_search('Xbox Series S', 299, 250, 11000, min_date=datetime.datetime(2020, 11, 10))
-df_xbox_s_ld = ebay_search('Xbox Series X', 499, 350, 11000, min_date=datetime.datetime(2020, 11, 10))
-
+# PS5 Analysis (Post Launch)
 df_ps5_digital_ld = ebay_search('PS5 Digital', 299, 300, 11000, min_date=datetime.datetime(2020, 11, 12))
 df_ps5_disc_ld = ebay_search('PS5 -digital', 499, 450, 11000, min_date=datetime.datetime(2020, 11, 12))
+median_plotting([df_ps5_disc_ld, df_ps5_digital_ld], ['PS5 Disc', 'PS5 Digital'], 'PS5 Median Pricing (Post Launch)',
+                [299, 499])
 
-df_3080 = ebay_search('RTX+3080', 699, 550, 10000, min_date=datetime.datetime(2020, 9, 17))
+# Xbox Analysis (All time)
+df_xbox_s = ebay_search('Xbox Series S', 299, 250, 11000, min_date=datetime.datetime(2020, 9, 16))
+df_xbox_x = ebay_search('Xbox Series X', 499, 350, 11000, min_date=datetime.datetime(2020, 9, 16))
+median_plotting([df_xbox_s, df_xbox_x], ['Xbox Series S', 'Xbox Series X'], 'Xbox Median Pricing',
+                [299, 499])
 
+# Xbox Analysis (Post Launch)
+df_xbox_s_ld = ebay_search('Xbox Series S', 299, 250, 11000, min_date=datetime.datetime(2020, 11, 10))
+df_xbox_x_ld = ebay_search('Xbox Series X', 499, 350, 11000, min_date=datetime.datetime(2020, 11, 10))
+median_plotting([df_xbox_s_ld, df_xbox_x_ld], ['Xbox Series S', 'Xbox Series X'], 'Xbox Median Pricing (Post Launch)',
+                [299, 499])
 
 # TODO: Non-Linear Trendline and breakeven
