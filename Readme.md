@@ -22,7 +22,7 @@ Examples:
 * msrp - The MSRP of the product to estimate scalper profits, if not entered it will not display those lines
 * min_price - Default: 0 - The minimum price to search for
 * max_price - Default: 10000 - The maximum price to search for
-* min_date - Default: datetime.datetime(2020, 1, 1) - The earliest date to consider prices, useful if you want to split on preorders vs post-go live
+* min_date - Default: datetime.datetime(2020, 1, 1) - The earliest date to consider prices, useful if you want to split on preorders vs post-go live. Note that if you only have one day of data it errors out if you also have an msrp
 * verbose - Default: False - If true prints out a number of debugging statements
 
 ## Release History

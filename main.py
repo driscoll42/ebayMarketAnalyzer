@@ -50,6 +50,7 @@ def ebay_scrape(base_url, df, min_date='', verbose=False):
 
                 try:
                     item_price = items.find('span', class_='s-item__price').text
+                    item_price = float(float(item_price.replace('$', '').replace(',', '')))
                 except Exception as e:
                     item_price = 'None'
 
@@ -67,8 +68,7 @@ def ebay_scrape(base_url, df, min_date='', verbose=False):
                 if verbose: print(item_shipping)
 
                 try:
-                    item_tot = float(float(item_price.replace('$', '').replace(',', '')))
-                    item_tot += item_shipping
+                    item_tot = item_price + item_shipping
                 except Exception as e:
                     item_tot = 'None'
 
@@ -86,7 +86,7 @@ def ebay_scrape(base_url, df, min_date='', verbose=False):
                            'Shipping': item_shipping, 'Total Price': item_tot, 'Sold Date': item_date,
                            'Link'    : item_link}
 
-                if 'None' not in str(item_tot) and 'None' not in str(item_date) and (item_date > min_date):
+                if 'None' not in str(item_tot) and 'None' not in str(item_date) and (item_date >= min_date):
                     df = df.append(df__new, ignore_index=True)
 
     return df
@@ -127,11 +127,14 @@ def ebay_plot(query, msrp, df):
         msrp_discount = 0.05  # If drop scalpers are buying off of Amazon with an Amazon Prime account and credit card, they
         # can get 5% cash back, so effectively the MSRP is 5% lower
 
-        est_break_even = round((msrp * (1 + est_tax)) / (1 - est_ebay_fee - pp_fee_per) + pp_flat_fee + estimated_shipping)
+        est_break_even = round(
+            (msrp * (1 + est_tax)) / (1 - est_ebay_fee - pp_fee_per) + pp_flat_fee + estimated_shipping)
         min_break_even = round((msrp * (1 - msrp_discount)) / (1 - min_be_ebay_fee - pp_fee_per) + pp_flat_fee)
 
-        ax1.axhline(y=est_break_even, label='Est. Scalper Break Even - $' + str(est_break_even), color=color, dashes=[2, 2])
-        ax1.axhline(y=min_break_even, label='Min Scalper Break Even - $' + str(min_break_even), color=color, dashes=[4, 1])
+        ax1.axhline(y=est_break_even, label='Est. Scalper Break Even - $' + str(int(est_break_even)), color=color,
+                    dashes=[2, 2])
+        ax1.axhline(y=min_break_even, label='Min Scalper Break Even - $' + str(int(min_break_even)), color=color,
+                    dashes=[4, 1])
 
         # Estimated assuming 6.25% tax, $15 shipping, and the multiplier for ebay/Paypal fees determined by
         # https://www.ebayfeescalculator.com/usa-ebay-calculator/ where not an eBay store, seller is above standard, and
@@ -167,11 +170,12 @@ def ebay_plot(query, msrp, df):
     mymodel = list(map(myfunc, x))
 
     ax3 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
-    est_msrp = datetime.datetime.fromordinal(int((msrp - intercept) / slope)).strftime("%y-%m-%d")
+    if msrp > 0:
+        est_msrp = datetime.datetime.fromordinal(int((msrp - intercept) / slope)).strftime("%y-%m-%d")
 
     if slope >= 0:
         ax3.plot(x, mymodel, dashes=[4, 1], label='Linear Trend Line')
-    else:
+    elif msrp > 0:
         ax3.plot(x, mymodel, dashes=[4, 1], label='Linear Trend Line - Est MSRP Date - ' + str(est_msrp))
 
     ax3.set_ylim(top=min(1.5 * max_med, max_max), bottom=min(min_min * 0.95, msrp * 0.95))
@@ -191,7 +195,7 @@ def ebay_plot(query, msrp, df):
     lines3, labels3 = ax3.get_legend_handles_labels()
     ax1.legend(lines + lines2 + lines3, labels + labels2 + labels3)
 
-    plt.savefig(query)
+    plt.savefig('Images/' + query)
     plt.show()
 
     return median_price, est_break_even, min_break_even, tot_sold
@@ -229,7 +233,6 @@ def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.d
         else:
             i += 1
 
-
     # https://www.ebay.com/sch/i.html?_from=R40&_nkw=xbox+series+x+-one&_sacat=0&LH_TitleDesc=0&LH_Sold=1&LH_Complete=1&_udlo=100&_udhi=1100&rt=nc&LH_PrefLoc=1
     # https://www.ebay.com/sch/i.html?_from=R40&_nkw=Xbox+Series+X+-one&_sacat=0&LH_PrefLoc=1&LH_Sold=1&LH_Complete=1&_udlo=100&_udhi=10000&rt=nc&_ipg=200&_pgn=4
 
@@ -243,34 +246,53 @@ def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.d
 
     df = pd.DataFrame.drop_duplicates(df)
 
-    df.to_excel(str(query) + '.xlsx')
+    df.to_excel('Spreadsheets/' + str(query) + '.xlsx')
 
     median_price, est_break_even, min_break_even, tot_sold = ebay_plot(query, msrp, df)
 
     last_week = df.loc[
         df['Sold Date'] >= (datetime.datetime.now() - datetime.timedelta(days=7)).replace(hour=0, minute=0, second=0,
                                                                                           microsecond=0)]
+    tot_sales = df['Total Price'].sum()
+    tot_ini_sales = df['Price'].sum()
 
+    ebay_profit = float(tot_sales) * 0.08
+    # Estimate, eBay can take up to 10% for a fairly "new" seller and as little as 3.6% for a top selling store
+    # I assume most scalpers are "new" sellers so 8% seems fair
+
+    pp_profit = float(tot_sold) * 0.30 + float(tot_ini_sales) * 0.029
 
     print('Past Week Median Price: $' + str(last_week['Total Price'].median()))
     print('Median Price: $' + str(median_price))
     print('Past Week Average Price: $' + str(round(last_week['Total Price'].mean(), 2)))
     print('Average Price: $' + str(round(df['Total Price'].mean(), 2)))
     print('Total Sold: ' + str(tot_sold))
+    print('Total Sales: $' + str(tot_sales))
+    print('PayPal Profit: $' + str(int(pp_profit)))
+    print('Est eBay Profit: $' + str(int(ebay_profit)))
     if msrp > 0:
         total_scalp_val = round(df['Total Price'].sum() - tot_sold * msrp, 2)
         print('Total Scalpers/eBay Profit: $' + str(total_scalp_val))
         print('Estimated Break Even Point for Scalpers: $' + str(est_break_even))
         print('Minimum Break Even Point for Scalpers: $' + str(min_break_even))
-
+    print('')
     return df
 
 
-df_xbox_x = ebay_search('Xbox Series S', 299, 250, 11000, min_date=datetime.datetime(2020, 9, 22))
-df_xbox_s = ebay_search('Xbox Series X', 499, 350, 11000, min_date=datetime.datetime(2020, 9, 22))
+df_3060 = ebay_search('RTX 3060', 399, 200, 1300, min_date=datetime.datetime(2020, 12, 1))
 
-# df_ps5_digital = ebay_search('PS5 Digital', 299, 300, 11000, min_date=datetime.datetime(2020, 1, 12))
-# df_ps5_disc = ebay_search('PS5 -digital', 499, 450, 11000, min_date=datetime.datetime(2020, 1, 12))
+
+df_ps5_digital = ebay_search('PS5 Digital', 299, 300, 11000, min_date=datetime.datetime(2020, 9, 12))
+df_ps5_disc = ebay_search('PS5 -digital', 499, 450, 11000, min_date=datetime.datetime(2020, 9, 12))
+
+# Launch Date
+df_xbox_x_ld = ebay_search('Xbox Series S', 299, 250, 11000, min_date=datetime.datetime(2020, 11, 10))
+df_xbox_s_ld = ebay_search('Xbox Series X', 499, 350, 11000, min_date=datetime.datetime(2020, 11, 10))
+
+df_ps5_digital_ld = ebay_search('PS5 Digital', 299, 300, 11000, min_date=datetime.datetime(2020, 11, 12))
+df_ps5_disc_ld = ebay_search('PS5 -digital', 499, 450, 11000, min_date=datetime.datetime(2020, 11, 12))
+
+df_3080 = ebay_search('RTX+3080', 699, 550, 10000, min_date=datetime.datetime(2020, 9, 17))
 
 df_5950x = ebay_search('5950X', 799, 400, 2200)
 df_5900x = ebay_search('5900X', 549, 499, 2050)
@@ -281,12 +303,25 @@ df_6800 = ebay_search('RX 6800 -XT', 579, 400, 2500)
 df_6800xt = ebay_search('RX 6800 XT', 649, 850, 2000)  # There are some $5000+, but screw with graphs
 # df_6900 = ebay_search('RX 6900', 999, 100, 999999, min_date=datetime.datetime(2020, 12, 8)) # Not out until December 8
 
-#df_3060 = ebay_search('RTX 3060', 399, 200, 1300, min_date=datetime.datetime(2020, 12, 1))
+df_3060 = ebay_search('RTX 3060', 399, 200, 1300, min_date=datetime.datetime(2020, 12, 1))
 df_3070 = ebay_search('RTX 3070', 499, 499, 1300, min_date=datetime.datetime(2020, 10, 29))
 df_3080 = ebay_search('RTX 3080', 699, 550, 10000, min_date=datetime.datetime(2020, 9, 17))
-# df_3090 = ebay_search('RTX 3090', 1499, 550, 10000, min_date=datetime.datetime(2020, 9, 17))
+df_3090 = ebay_search('RTX 3090', 1499, 550, 10000, min_date=datetime.datetime(2020, 9, 17))
 
-df_xbox_x = ebay_search('Xbox Series S', 299, 300, 11000, min_date=datetime.datetime(2020, 9, 22))
-df_xbox_s = ebay_search('Xbox Series X', 499, 100, 11000, min_date=datetime.datetime(2020, 9, 22))
+df_xbox_x = ebay_search('Xbox Series S', 299, 250, 11000, min_date=datetime.datetime(2020, 9, 22))
+df_xbox_s = ebay_search('Xbox Series X', 499, 350, 11000, min_date=datetime.datetime(2020, 9, 22))
+
+df_ps5_digital = ebay_search('PS5 Digital', 299, 300, 11000, min_date=datetime.datetime(2020, 9, 12))
+df_ps5_disc = ebay_search('PS5 -digital', 499, 450, 11000, min_date=datetime.datetime(2020, 9, 12))
+
+# Launch Date
+df_xbox_x_ld = ebay_search('Xbox Series S', 299, 250, 11000, min_date=datetime.datetime(2020, 11, 10))
+df_xbox_s_ld = ebay_search('Xbox Series X', 499, 350, 11000, min_date=datetime.datetime(2020, 11, 10))
+
+df_ps5_digital_ld = ebay_search('PS5 Digital', 299, 300, 11000, min_date=datetime.datetime(2020, 11, 12))
+df_ps5_disc_ld = ebay_search('PS5 -digital', 499, 450, 11000, min_date=datetime.datetime(2020, 11, 12))
+
+df_3080 = ebay_search('RTX+3080', 699, 550, 10000, min_date=datetime.datetime(2020, 9, 17))
+
 
 # TODO: Non-Linear Trendline and breakeven
