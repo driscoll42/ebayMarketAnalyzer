@@ -4,6 +4,9 @@ This program is built to scrape all sold item data from eBay for any particular 
 
 Examples:
 
+![PS5 Example](https://github.com/driscoll42/ebayScraper/blob/master/PS5%20-digital.png)
+![RTX 3080 Example](https://github.com/driscoll42/ebayScraper/blob/master/RTX+3080.png?raw=true)
+
 ## Install Instructions
 
 * Create an Anaconda 3.8 python environment
