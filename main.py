@@ -202,6 +202,7 @@ def ebay_plot(query, msrp, df):
 
 
 def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.datetime(2020, 1, 1), verbose=False):
+    start = time.time()
     print(query)
 
     dict = {'Title': [], 'description': [], 'Price': [], 'Shipping': [], 'Total Price': [], 'Sold Date': [], 'Link': []}
@@ -275,6 +276,8 @@ def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.d
         print('Total Scalpers/eBay Profit: $' + str(total_scalp_val))
         print('Estimated Break Even Point for Scalpers: $' + str(est_break_even))
         print('Minimum Break Even Point for Scalpers: $' + str(min_break_even))
+    elapsed = time.time() - start
+    print("Runtime: %02d:%02d:%02d" % (elapsed // 3600, elapsed // 60 % 60, elapsed % 60))
     print('')
     return df
 
@@ -334,8 +337,8 @@ median_plotting([df_ps5_disc_ld, df_ps5_digital_ld], ['PS5 Disc', 'PS5 Digital']
                 [299, 499])
 
 # Xbox Analysis (All time)
-df_xbox_s = ebay_search('Xbox Series S', 299, 250, 11000, min_date=datetime.datetime(2020, 9, 16))
-df_xbox_x = ebay_search('Xbox Series X', 499, 350, 11000, min_date=datetime.datetime(2020, 9, 16))
+df_xbox_s = ebay_search('Xbox Series S', 299, 250, 11000, min_date=datetime.datetime(2020, 9, 22))
+df_xbox_x = ebay_search('Xbox Series X', 499, 350, 11000, min_date=datetime.datetime(2020, 9, 22))
 median_plotting([df_xbox_s, df_xbox_x], ['Xbox Series S', 'Xbox Series X'], 'Xbox Median Pricing',
                 [299, 499])
 
