@@ -326,12 +326,12 @@ median_plotting([df_3060, df_3070, df_3080, df_3090], ['3060', '3070', '3080', '
                 [399, 499, 699, 1499])
 
 # PS5 Analysis (All time)
-df_ps5_digital = ebay_search('PS5 Digital', 299, 300, 11000, min_date=datetime.datetime(2020, 9, 16))
+df_ps5_digital = ebay_search('PS5 Digital', 399, 300, 11000, min_date=datetime.datetime(2020, 9, 16))
 df_ps5_disc = ebay_search('PS5 -digital', 499, 450, 11000, min_date=datetime.datetime(2020, 9, 16))
 median_plotting([df_ps5_disc, df_ps5_digital], ['PS5 Disc', 'PS5 Digital'], 'PS5 Median Pricing', [299, 499])
 
 # PS5 Analysis (Post Launch)
-df_ps5_digital_ld = ebay_search('PS5 Digital', 299, 300, 11000, min_date=datetime.datetime(2020, 11, 12))
+df_ps5_digital_ld = ebay_search('PS5 Digital', 399, 300, 11000, min_date=datetime.datetime(2020, 11, 12))
 df_ps5_disc_ld = ebay_search('PS5 -digital', 499, 450, 11000, min_date=datetime.datetime(2020, 11, 12))
 median_plotting([df_ps5_disc_ld, df_ps5_digital_ld], ['PS5 Disc', 'PS5 Digital'], 'PS5 Median Pricing (Post Launch)',
                 [299, 499])
