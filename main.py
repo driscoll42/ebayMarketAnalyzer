@@ -1,12 +1,12 @@
 # Initial Code: https://oaref.blogspot.com/2019/01/web-scraping-using-python-part-2.html
 
+import time
+import datetime
 import matplotlib
 from bs4 import BeautifulSoup
 import requests
 import pandas as pd
-import time
 import numpy as np
-import datetime
 from matplotlib import pyplot as plt
 import matplotlib.ticker as ticker
 from scipy import stats
@@ -24,12 +24,20 @@ def ebay_scrape(base_url, df, min_date='', verbose=False):
 
         for n, items in enumerate(items):
             if n > 0:
+
                 try:
                     item_title = items.find('h3', class_='s-item__title').text
                 except Exception as e:
                     item_title = 'None'
 
                 if verbose: print(item_title)
+
+                try:
+                    item_link = items.find('a', class_='s-item__link')['href']
+                except Exception as e:
+                    item_link = 'None'
+
+                if verbose: print(item_link)
 
                 try:
                     item_date = '2020 ' + items.find('span', class_='s-item__endedDate').text
@@ -50,7 +58,7 @@ def ebay_scrape(base_url, df, min_date='', verbose=False):
 
                 try:
                     item_price = items.find('span', class_='s-item__price').text
-                    item_price = float(float(item_price.replace('$', '').replace(',', '')))
+                    item_price = float(item_price.replace('$', '').replace(',', ''))
                 except Exception as e:
                     item_price = 'None'
 
@@ -74,12 +82,6 @@ def ebay_scrape(base_url, df, min_date='', verbose=False):
 
                 if verbose: print(item_shipping)
 
-                try:
-                    item_link = items.find('a', class_='s-item__link')['href']
-                except Exception as e:
-                    item_link = 'None'
-
-                if verbose: print(item_link)
                 if verbose: print()
 
                 df__new = {'Title'   : item_title, 'description': item_desc, 'Price': item_price,
@@ -92,7 +94,7 @@ def ebay_scrape(base_url, df, min_date='', verbose=False):
     return df
 
 
-def ebay_plot(query, msrp, df):
+def ebay_plot(query, msrp, df, extra_title_text=''):
     # Make Linear Regression Trend Line
     # https://stackoverflow.com/questions/59723501/plotting-a-linear-regression-with-dates-in-matplotlib-pyplot
 
@@ -109,7 +111,7 @@ def ebay_plot(query, msrp, df):
 
     fig, ax1 = plt.subplots(figsize=(10, 8))
     color = 'tab:blue'
-    plt.title(query.replace("+", " ").split('-', 1)[0].strip() + ' eBay Sold Prices Over Time')
+    plt.title(query.replace("+", " ").split('-', 1)[0].strip() + extra_title_text + ' eBay Sold Prices Over Time')
     ax1.scatter(df['Sold Date'], df['Total Price'], s=10, label='Sold Listing', color=color)
 
     if msrp > 0:
@@ -195,15 +197,24 @@ def ebay_plot(query, msrp, df):
     lines3, labels3 = ax3.get_legend_handles_labels()
     ax1.legend(lines + lines2 + lines3, labels + labels2 + labels3)
 
-    plt.savefig('Images/' + query)
+    plt.savefig('Images/' + query + extra_title_text)
     plt.show()
 
     return median_price, est_break_even, min_break_even, tot_sold
 
 
-def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.datetime(2020, 1, 1), verbose=False):
+def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.datetime(2020, 1, 1), verbose=False,
+                extra_title_text=''):
     start = time.time()
     print(query)
+
+    # https://stackoverflow.com/questions/35807605/create-a-file-if-it-doesnt-exist?lq=1
+    try:
+        fh = open('StatSummaries/' + query + '.csv', 'r')
+    except:
+        # if file does not exist, create it
+        fh = open('StatSummaries/' + query + '.csv', 'w')
+
 
     dict = {'Title': [], 'description': [], 'Price': [], 'Shipping': [], 'Total Price': [], 'Sold Date': [], 'Link': []}
     df = pd.DataFrame(dict)
@@ -247,9 +258,9 @@ def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.d
 
     df = pd.DataFrame.drop_duplicates(df)
 
-    df.to_excel('Spreadsheets/' + str(query) + '.xlsx')
+    df.to_excel('Spreadsheets/' + str(query) + extra_title_text + '.xlsx')
 
-    median_price, est_break_even, min_break_even, tot_sold = ebay_plot(query, msrp, df)
+    median_price, est_break_even, min_break_even, tot_sold = ebay_plot(query, msrp, df, extra_title_text)
 
     last_week = df.loc[
         df['Sold Date'] >= (datetime.datetime.now() - datetime.timedelta(days=7)).replace(hour=0, minute=0, second=0,
@@ -268,7 +279,7 @@ def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.d
     print('Past Week Average Price: $' + str(round(last_week['Total Price'].mean(), 2)))
     print('Average Price: $' + str(round(df['Total Price'].mean(), 2)))
     print('Total Sold: ' + str(tot_sold))
-    print('Total Sales: $' + str(tot_sales))
+    print('Total Sales: $' + str(round(tot_sales, 2)))
     print('PayPal Profit: $' + str(int(pp_profit)))
     print('Est eBay Profit: $' + str(int(ebay_profit)))
     if msrp > 0:
@@ -305,6 +316,9 @@ def median_plotting(dfs, names, title, msrps=[]):
 
 # Zen 3 Analysis
 df_5950x = ebay_search('5950X', 799, 400, 2200)
+
+# raise SystemExit(0)
+
 df_5900x = ebay_search('5900X', 549, 499, 2050)
 df_5800x = ebay_search('5800X', 449, 400, 1000)
 df_5600x = ebay_search('5600X', 299, 250, 1000)
@@ -331,8 +345,10 @@ df_ps5_disc = ebay_search('PS5 -digital', 499, 450, 11000, min_date=datetime.dat
 median_plotting([df_ps5_disc, df_ps5_digital], ['PS5 Digital', 'PS5 Disc'], 'PS5 Median Pricing', [299, 499])
 
 # PS5 Analysis (Post Launch)
-df_ps5_digital_ld = ebay_search('PS5 Digital', 399, 300, 11000, min_date=datetime.datetime(2020, 11, 12))
-df_ps5_disc_ld = ebay_search('PS5 -digital', 499, 450, 11000, min_date=datetime.datetime(2020, 11, 12))
+df_ps5_digital_ld = ebay_search('PS5 Digital', 399, 300, 11000, min_date=datetime.datetime(2020, 11, 12),
+                                extra_title_text=' (Post Launch)')
+df_ps5_disc_ld = ebay_search('PS5 -digital', 499, 450, 11000, min_date=datetime.datetime(2020, 11, 12),
+                             extra_title_text=' (Post Launch)')
 median_plotting([df_ps5_disc_ld, df_ps5_digital_ld], ['PS5 Digital', 'PS5 Disc'], 'PS5 Median Pricing (Post Launch)',
                 [299, 499])
 
@@ -343,8 +359,10 @@ median_plotting([df_xbox_s, df_xbox_x], ['Xbox Series S', 'Xbox Series X'], 'Xbo
                 [299, 499])
 
 # Xbox Analysis (Post Launch)
-df_xbox_s_ld = ebay_search('Xbox Series S', 299, 250, 11000, min_date=datetime.datetime(2020, 11, 10))
-df_xbox_x_ld = ebay_search('Xbox Series X', 499, 350, 11000, min_date=datetime.datetime(2020, 11, 10))
+df_xbox_s_ld = ebay_search('Xbox Series S', 299, 250, 11000, min_date=datetime.datetime(2020, 11, 10),
+                           extra_title_text=' (Post Launch)')
+df_xbox_x_ld = ebay_search('Xbox Series X', 499, 350, 11000, min_date=datetime.datetime(2020, 11, 10),
+                           extra_title_text=' (Post Launch)')
 median_plotting([df_xbox_s_ld, df_xbox_x_ld], ['Xbox Series S', 'Xbox Series X'], 'Xbox Median Pricing (Post Launch)',
                 [299, 499])
 
@@ -352,3 +370,26 @@ median_plotting([df_xbox_s_ld, df_xbox_x_ld], ['Xbox Series S', 'Xbox Series X']
 # TODO: Cache sale dated to make fewer calls
 # TODO: Open links and pull seller data and quantity sold
 # TODO: Size dots at given price point, round to nearest dollar
+# TODO: Plot second date for post launch without running everything again
+# TODO: Remove current day's sold data point, causes confusion
+
+'''
+1. Simple Moving Averages (SMA)
+2. Weighted Moving Averages (WMA)
+3. Exponential Moving Averages (EMA)
+4. Moving Average Convergence Divergence (MACD)
+5. Bollinger Bands
+
+Michael I did a similar project and created an LSTM in Tensorflow that worked fairly well.
+
+
+https://towardsdatascience.com/introduction-to-technical-indicators-and-its-implementation-using-python-155ae0fb51c9
+
+https://docs.aws.amazon.com/sagemaker/latest/dg/deepar.html
+
+ou prob need RNN
+ARIMA type of model are all linear model
+
+https://www.edx.org/course/introduction-to-analytics-modeling
+http://omscs.gatech.edu/isye-6501-intro-analytics-modeling
+'''
