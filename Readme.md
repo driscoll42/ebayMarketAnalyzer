@@ -10,7 +10,7 @@ Examples:
 # Install Instructions
 
 * Create an Anaconda 3.8 python environment
-* Run "pip install matplotlib==3.2.2, numpy, pandas==1.1.0, beautifulsoup==4.9.1, lxml==4.6.2, openpyxl==3.0.5, requests==2.25.0, scipy==1.5.4"
+* Run "pip install matplotlib==3.2.2, numpy, pandas==1.1.0, beautifulsoup==4.9.1, lxml==4.6.2, openpyxl==3.0.5, requests==2.25.0, scipy==1.5.4, xlrd==1.2.0"
 * Note: This code requires matplotlib 3.2.2, newer versions break the trend line
 
 # How to Run
@@ -25,6 +25,11 @@ Examples:
 * max_price - Default: 10000 - The maximum price to search for
 * min_date - Default: datetime.datetime(2020, 1, 1) - The earliest date to consider prices, useful if you want to split on preorders vs post-go live. Note that if you only have one day of data it errors out if you also have an msrp
 * verbose - Default: False - If true prints out a number of debugging statements
+* run_cached - Default: False - If true does not get new data from eBay, just runs the plots/analysis on the saved xlsx files. Most useful if want to get the data then run the plots using a different min date (e.g. for all time and then after post-launch only)
+* feedback - Default: False - Gets the seller feedback for each sold item. WARNING: This explodes run times as the code needs to call the url of every single item. In testing the 5950X extract with this false takes 8 seconds, with True it takes 40 minutes. This is forced True if full_quantity is True as there is no extra work to get the feedback
+
+IN PROGRESS
+* full_quantity - Default: False - Gets the full quantities of sold listings for listings which have >1 available. WARNING: This explodes run times. In tests with False 5950X takes 8 seconds and when True takes XYZ minutes. 
 
 ## Release History
 
