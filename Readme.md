@@ -26,10 +26,16 @@ Examples:
 * min_date - Default: datetime.datetime(2020, 1, 1) - The earliest date to consider prices, useful if you want to split on preorders vs post-go live. Note that if you only have one day of data it errors out if you also have an msrp
 * verbose - Default: False - If true prints out a number of debugging statements
 * run_cached - Default: False - If true does not get new data from eBay, just runs the plots/analysis on the saved xlsx files. Most useful if want to get the data then run the plots using a different min date (e.g. for all time and then after post-launch only)
-* feedback - Default: False - Gets the seller feedback for each sold item. WARNING: This explodes run times as the code needs to call the url of every single item. In testing the 5950X extract with this false takes 8 seconds, with True it takes 40 minutes. This is forced True if full_quantity is True as there is no extra work to get the feedback
 
-IN PROGRESS
-* full_quantity - Default: False - Gets the full quantities of sold listings for listings which have >1 available. WARNING: This explodes run times. In tests with False 5950X takes 8 seconds and when True takes XYZ minutes. 
+Extra Variables:
+
+* feedback - Default: False - Gets the seller feedback for each sold item. WARNING: This explodes run times as the code needs to call the url of every single item. In testing the 5950X extract with this false takes 8 seconds, with True it takes 40 minutes. This is forced True if full_quantity is True as there is no extra work to get the feedback
+* quantity_hist - Default: False - Gets the full sold history of a multi-item listing. WARNING: This explodes run times 
+
+When running for the 5950X on 12/10/20:
+* Both False - 5 URL calls - 00:07 - 434 listings 
+* Only Feedback - 755 URL calls - 14:11 - 434 listings (470 total sold)
+* Quantity_hist - 
 
 ## Release History
 
