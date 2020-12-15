@@ -65,31 +65,32 @@ def ebay_scrape(base_url, df, min_date='', feedback=False, quantity_hist=False, 
     for x in range(1, 5):
         time.sleep(0.4 * random.uniform(0, 1))  # eBays servers will kill your connection if you hit them too frequently
         url = base_url + str(x)
+
         source = requests.get(url).text
         soup = BeautifulSoup(source, 'lxml')
         items = soup.find_all('li', attrs={'class': 's-item'})
 
         if verbose: print(x, len(items), url)
 
-        for n, items in enumerate(items):
+        for n, item in enumerate(items):
             if n > 0:
 
                 try:
-                    item_title = items.find('h3', class_='s-item__title').text
+                    item_title = item.find('h3', class_='s-item__title').text
                 except Exception as e:
                     item_title = 'None'
 
                 if verbose: print('Title:', item_title)
 
                 try:
-                    item_link = items.find('a', class_='s-item__link')['href']
+                    item_link = item.find('a', class_='s-item__link')['href']
                 except Exception as e:
                     item_link = 'None'
 
                 if verbose: print('URL:', item_link)
 
                 try:
-                    orig_item_date = '2020 ' + items.find('span', class_='s-item__endedDate').text
+                    orig_item_date = '2020 ' + item.find('span', class_='s-item__endedDate').text
                     item_date = datetime.datetime.strptime(orig_item_date, '%Y %b-%d %H:%M')
                     item_date = item_date.replace(hour=0, minute=0, second=0, microsecond=0)
 
@@ -99,7 +100,7 @@ def ebay_scrape(base_url, df, min_date='', feedback=False, quantity_hist=False, 
                 if verbose: print('Date:', item_date)
 
                 try:
-                    orig_item_datetime = '2020 ' + items.find('span', class_='s-item__endedDate').text
+                    orig_item_datetime = '2020 ' + item.find('span', class_='s-item__endedDate').text
                     item_datetime = datetime.datetime.strptime(orig_item_datetime, '%Y %b-%d %H:%M')
 
                 except Exception as e:
@@ -108,14 +109,14 @@ def ebay_scrape(base_url, df, min_date='', feedback=False, quantity_hist=False, 
                 if verbose: print('Datetime:', item_datetime)
 
                 try:
-                    item_desc = items.find('div', class_='s-item__subtitle').text
+                    item_desc = item.find('div', class_='s-item__subtitle').text
                 except Exception as e:
                     item_desc = 'None'
 
                 if verbose: print('Desc: ', item_desc)
 
                 try:
-                    item_price = items.find('span', class_='s-item__price').text
+                    item_price = item.find('span', class_='s-item__price').text
                     item_price = float(item_price.replace('$', '').replace(',', ''))
                 except Exception as e:
                     item_price = 'None'
@@ -123,7 +124,7 @@ def ebay_scrape(base_url, df, min_date='', feedback=False, quantity_hist=False, 
                 if verbose: print('Price:', item_price)
 
                 try:
-                    item_shipping = items.find('span', class_='s-item__shipping s-item__logisticsCost').text
+                    item_shipping = item.find('span', class_='s-item__shipping s-item__logisticsCost').text
                     if item_shipping.upper().find("FREE") == -1:
                         item_shipping = float(item_shipping.replace('+$', '').replace(' shipping', ''))
                     else:
@@ -156,8 +157,8 @@ def ebay_scrape(base_url, df, min_date='', feedback=False, quantity_hist=False, 
                             seller_fb = seller_fb[0].find('a').text
 
                             try:
-                                items = soup.find_all('a', attrs={'class': 'vi-txt-underline'})
-                                quantity_sold = int(items[0].text.split()[0])
+                                iitem = soup.find_all('a', attrs={'class': 'vi-txt-underline'})
+                                quantity_sold = int(iitem[0].text.split()[0])
 
                                 if quantity_hist:
                                     sold_hist_url = items[0]['href']
@@ -168,8 +169,8 @@ def ebay_scrape(base_url, df, min_date='', feedback=False, quantity_hist=False, 
 
                         except Exception as e:
                             try:
-                                items = soup.find_all('a', attrs={'class': 'nodestar-item-card-details__view-link'})
-                                orig_link = items[0]['href']
+                                oitems = soup.find_all('a', attrs={'class': 'nodestar-item-card-details__view-link'})
+                                orig_link = oitems[0]['href']
 
                                 time.sleep(0.4 * random.uniform(0, 1))
                                 source = requests.get(orig_link).text
@@ -182,11 +183,11 @@ def ebay_scrape(base_url, df, min_date='', feedback=False, quantity_hist=False, 
 
                                 seller_fb = seller_fb[0].find('a').text
                                 try:
-                                    items = soup.find_all('a', attrs={'class': 'vi-txt-underline'})
-                                    quantity_sold = int(items[0].text.split()[0])
+                                    nnitems = soup.find_all('a', attrs={'class': 'vi-txt-underline'})
+                                    quantity_sold = int(nnitems[0].text.split()[0])
 
                                     if quantity_hist:
-                                        sold_hist_url = items[0]['href']
+                                        sold_hist_url = nnitems[0]['href']
                                         sold_list = get_quantity_hist(sold_hist_url, sold_list, verbose)
 
                                 except Exception as e:
@@ -250,6 +251,8 @@ def ebay_scrape(base_url, df, min_date='', feedback=False, quantity_hist=False, 
                                    'Quantity'       : quantity_sold - tot_sale_quant,
                                    'Seller Feedback': seller_fb}
                         df = df.append(df__new, ignore_index=True)
+
+            #
 
     return df
 
@@ -420,7 +423,7 @@ def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.d
             if verbose: print(price_ranges[i], price_ranges[i + 1], url)
             df = ebay_scrape(url, df, min_date, feedback=feedback, quantity_hist=quantity_hist, verbose=verbose)
 
-        # df = pd.DataFrame.drop_duplicates(df)
+        df = pd.DataFrame.drop_duplicates(df)
 
         df.to_excel('Spreadsheets/' + str(query) + extra_title_text + '.xlsx')
 
@@ -478,49 +481,52 @@ def median_plotting(dfs, names, title, msrps=[]):
     plt.show()
 
 
-df_darkhero = ebay_search('ASUS Dark Hero -image -jpeg -img -picture -pic -jpg', 399, 400, 2200)
+run_all_feedback = True
+run_all_hist = True
+
+df_darkhero = ebay_search('ASUS Dark Hero -image -jpeg -img -picture -pic -jpg', 399, 400, 1000, feedback=run_all_feedback, quantity_hist=run_all_hist)
 
 # Zen 3 Analysis
-df_5950x = ebay_search('5950X -image -jpeg -img -picture -pic -jpg', 799, 400, 2200)
-df_5900x = ebay_search('5900X -image -jpeg -img -picture -pic -jpg', 549, 499, 2050)
-df_5800x = ebay_search('5800X -image -jpeg -img -picture -pic -jpg', 449, 400, 1000)
-df_5600x = ebay_search('5600X -image -jpeg -img -picture -pic -jpg', 299, 250, 1000,
+df_5950x = ebay_search('5950X -image -jpeg -img -picture -pic -jpg', 799, 400, 2200, feedback=run_all_feedback, quantity_hist=run_all_hist)
+df_5900x = ebay_search('5900X -image -jpeg -img -picture -pic -jpg', 549, 499, 2050, feedback=run_all_feedback, quantity_hist=run_all_hist)
+df_5800x = ebay_search('5800X -image -jpeg -img -picture -pic -jpg', 449, 400, 1000, feedback=run_all_feedback, quantity_hist=run_all_hist)
+df_5600x = ebay_search('5600X -image -jpeg -img -picture -pic -jpg', 299, 250, 1000, feedback=run_all_feedback, quantity_hist=run_all_hist,
                        min_date=datetime.datetime(2020, 11, 1))
 median_plotting([df_5950x, df_5900x, df_5800x, df_5600x], ['5950X', '5900X', '5800X', '5600X'], 'Zen 3 Median Pricing',
                 [799, 549, 449, 299])
 
 # Big Navi Analysis
-df_6800 = ebay_search('RX 6800 -XT -image -jpeg -img -picture -pic -jpg', 579, 400, 2500)
+df_6800 = ebay_search('RX 6800 -XT -image -jpeg -img -picture -pic -jpg', 579, 400, 2500, feedback=run_all_feedback, quantity_hist=run_all_hist)
 df_6800xt = ebay_search('RX 6800 XT -image -jpeg -img -picture -pic -jpg', 649, 850,
-                        2000)  # There are some $5000+, but screw with graphs
-df_6900 = ebay_search('RX 6900 -image -jpeg -img -picture -pic -jpg', 999, 100, 999999,
+                        2000, feedback=run_all_feedback, quantity_hist=run_all_hist)  # There are some $5000+, but screw with graphs
+df_6900 = ebay_search('RX 6900 -image -jpeg -img -picture -pic -jpg', 999, 100, 999999, feedback=run_all_feedback, quantity_hist=run_all_hist,
                       min_date=datetime.datetime(2020, 12, 8))  # Not out until December 8
 median_plotting([df_6800, df_6800xt, df_6900], ['RX 6800', 'RX 6800 XT', 'RX 6900'], 'Big Navi Median Pricing',
                 [579, 649, 999])
 
 # RTX 30 Series Analysis
-df_3060 = ebay_search('RTX 3060 -image -jpeg -img -picture -pic -jpg', 399, 200, 1300,
+df_3060 = ebay_search('RTX 3060 -image -jpeg -img -picture -pic -jpg', 399, 200, 1300, feedback=run_all_feedback, quantity_hist=run_all_hist,
                       min_date=datetime.datetime(2020, 12, 1))
-df_3070 = ebay_search('RTX 3070 -image -jpeg -img -picture -pic -jpg', 499, 499, 1300,
+df_3070 = ebay_search('RTX 3070 -image -jpeg -img -picture -pic -jpg', 499, 499, 1300, feedback=run_all_feedback, quantity_hist=run_all_hist,
                       min_date=datetime.datetime(2020, 10, 29))
-df_3080 = ebay_search('RTX 3080 -image -jpeg -img -picture -pic -jpg', 699, 550, 10000,
+df_3080 = ebay_search('RTX 3080 -image -jpeg -img -picture -pic -jpg', 699, 550, 10000, feedback=run_all_feedback, quantity_hist=run_all_hist,
                       min_date=datetime.datetime(2020, 9, 17))
-df_3090 = ebay_search('RTX 3090 -image -jpeg -img -picture -pic -jpg', 1499, 550, 10000,
+df_3090 = ebay_search('RTX 3090 -image -jpeg -img -picture -pic -jpg', 1499, 550, 10000, feedback=run_all_feedback, quantity_hist=run_all_hist,
                       min_date=datetime.datetime(2020, 9, 17))
 median_plotting([df_3060, df_3070, df_3080, df_3090], ['3060', '3070', '3080', '3090'], 'RTX 30 Series Median Pricing',
                 [399, 499, 699, 1499])
 
 # PS5 Analysis (All time)
-df_ps5_digital = ebay_search('PS5 Digital -image -jpeg -img -picture -pic -jpg', 399, 300, 11000,
+df_ps5_digital = ebay_search('PS5 Digital -image -jpeg -img -picture -pic -jpg', 399, 300, 11000, feedback=run_all_feedback, quantity_hist=run_all_hist,
                              min_date=datetime.datetime(2020, 9, 16))
-df_ps5_disc = ebay_search('PS5 -digital -image -jpeg -img -picture -pic -jpg', 499, 450, 11000,
+df_ps5_disc = ebay_search('PS5 -digital -image -jpeg -img -picture -pic -jpg', 499, 450, 11000, feedback=run_all_feedback, quantity_hist=run_all_hist,
                           min_date=datetime.datetime(2020, 9, 16))
 median_plotting([df_ps5_disc, df_ps5_digital], ['PS5 Digital', 'PS5 Disc'], 'PS5 Median Pricing', [299, 499])
 
 # Xbox Analysis (All time)
-df_xbox_s = ebay_search('Xbox Series S -image -jpeg -img -picture -pic -jpg', 299, 250, 11000,
+df_xbox_s = ebay_search('Xbox Series S -image -jpeg -img -picture -pic -jpg', 299, 250, 11000, feedback=run_all_feedback, quantity_hist=run_all_hist,
                         min_date=datetime.datetime(2020, 9, 22))
-df_xbox_x = ebay_search('Xbox Series X -image -jpeg -img -picture -pic -jpg', 499, 350, 11000,
+df_xbox_x = ebay_search('Xbox Series X -image -jpeg -img -picture -pic -jpg', 499, 350, 11000, feedback=run_all_feedback, quantity_hist=run_all_hist,
                         min_date=datetime.datetime(2020, 9, 22))
 median_plotting([df_xbox_s, df_xbox_x], ['Xbox Series S', 'Xbox Series X'], 'Xbox Median Pricing',
                 [299, 499])
@@ -554,6 +560,8 @@ median_plotting([df_ps5_disc_ld, df_ps5_digital_ld], ['PS5 Digital', 'PS5 Disc']
 # TODO: Non-Linear Trendline and breakeven
 # TODO: Size dots at given price point, round to nearest dollar
 # TODO: Plot second date for post launch without running everything again
+# TODO: Shipping None bug for multi
+# https://www.ebay.com/itm/NVIDIA-GeForce-RTX-3080-Founders-Edition-Graphics-Card-IN-HAND/353209178435?epid=4040934334&hash=item523ce85943:g:TikAAOSwUE9fZ5jz
 
 
 '''
@@ -586,6 +594,10 @@ Make visulaizations in Tableau
 Seller Star rating
 Anonymyze Data
 
+CL, FB, World of Mouth, DMs, twitter
+OfferUp, StockX, 
+
+https://realpython.com/caching-external-api-requests/
 
 I'm late to the party, but has scalping noticeably affected the market for games themselves & other related goods? E.g. 4K TVs, VR sets, Series X games, Desktop power supplies
 If scalping is inhibiting growth in other markets, that may be an important argument to make for anti scalping legislation
