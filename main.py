@@ -11,6 +11,7 @@ from matplotlib import pyplot as plt
 import matplotlib.ticker as ticker
 from scipy import stats
 import random
+import requests_cache
 
 
 # XML Formatter: https://jsonformatter.org/xml-formatter
@@ -63,6 +64,7 @@ def get_quantity_hist(sold_hist_url, sold_list, verbose=False):
 
 def ebay_scrape(base_url, df, min_date='', feedback=False, quantity_hist=False, verbose=False):
     for x in range(1, 5):
+        requests_cache.enabled()
         time.sleep(0.4 * random.uniform(0, 1))  # eBays servers will kill your connection if you hit them too frequently
         url = base_url + str(x)
 
@@ -71,6 +73,7 @@ def ebay_scrape(base_url, df, min_date='', feedback=False, quantity_hist=False, 
         items = soup.find_all('li', attrs={'class': 's-item'})
 
         if verbose: print(x, len(items), url)
+        requests_cache.disabled()  # We don't want to cache all the calls into the individual listings, they'll never be repeated
 
         for n, item in enumerate(items):
             if n > 0:
@@ -143,6 +146,8 @@ def ebay_scrape(base_url, df, min_date='', feedback=False, quantity_hist=False, 
 
                 quantity_sold = 1
                 sold_list = []
+                multi_list = False
+
                 if feedback or quantity_hist:
                     try:
                         time.sleep(0.4 * random.uniform(0, 1))
@@ -161,6 +166,7 @@ def ebay_scrape(base_url, df, min_date='', feedback=False, quantity_hist=False, 
                                 quantity_sold = int(iitem[0].text.split()[0])
 
                                 if quantity_hist:
+                                    multi_list = True
                                     sold_hist_url = items[0]['href']
                                     sold_list = get_quantity_hist(sold_hist_url, sold_list, verbose)
 
@@ -186,14 +192,15 @@ def ebay_scrape(base_url, df, min_date='', feedback=False, quantity_hist=False, 
                                     nnitems = soup.find_all('a', attrs={'class': 'vi-txt-underline'})
                                     quantity_sold = int(nnitems[0].text.split()[0])
 
-                                    if quantity_hist:
+                                    if quantity_hist and quantity_sold > 1:
+                                        multi_list = True
                                         sold_hist_url = nnitems[0]['href']
                                         sold_list = get_quantity_hist(sold_hist_url, sold_list, verbose)
 
                                 except Exception as e:
                                     sold_hist_url = ''
                             except Exception as e:
-                                print(url)
+                                #print(url)
                                 # print(e)
                                 seller = 'None'
                                 seller_fb = 'None'
@@ -215,6 +222,7 @@ def ebay_scrape(base_url, df, min_date='', feedback=False, quantity_hist=False, 
                     df__new = {'Title'          : item_title, 'description': item_desc, 'Price': item_price,
                                'Shipping'       : item_shipping, 'Total Price': item_tot, 'Sold Date': item_date,
                                'Sold Datetime'  : item_datetime, 'Link': item_link, 'Seller': seller,
+                               'Multi Listing': multi_list,
                                'Quantity'       : quantity_sold,
                                'Seller Feedback': seller_fb}
 
@@ -232,6 +240,7 @@ def ebay_scrape(base_url, df, min_date='', feedback=False, quantity_hist=False, 
                         df__new = {'Title'          : item_title, 'description': item_desc, 'Price': sale_price,
                                    'Shipping'       : item_shipping, 'Total Price': item_tot, 'Sold Date': sale[2],
                                    'Sold Datetime'  : sale[2], 'Link': item_link, 'Seller': seller,
+                                   'Multi Listing': multi_list,
                                    'Quantity'       : sale[1],
                                    'Seller Feedback': seller_fb}
 
@@ -248,12 +257,13 @@ def ebay_scrape(base_url, df, min_date='', feedback=False, quantity_hist=False, 
                                    'Shipping'       : item_shipping, 'Total Price': item_tot,
                                    'Sold Date'      : item_date,
                                    'Sold Datetime'  : item_datetime, 'Link': item_link, 'Seller': seller,
-                                   'Quantity'       : quantity_sold - tot_sale_quant,
+                                   'Quantity'       : quantity_sold - tot_sale_quant, 'Multi Listing': multi_list,
                                    'Seller Feedback': seller_fb}
                         df = df.append(df__new, ignore_index=True)
 
             #
-
+        if len(items) < 201:
+            break
     return df
 
 
@@ -378,7 +388,7 @@ def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.d
     except:
         # if file does not exist, create it
         dict = {'Title'    : [], 'description': [], 'Price': [], 'Shipping': [], 'Total Price': [],
-                'Sold Date': [], 'Sold Datetime': [], 'Quantity': [], 'Buyer': [], 'Buyer Feedback': [],
+                'Sold Date': [], 'Sold Datetime': [], 'Quantity': [], 'Multi Listing': [],
                 'Seller'   : [], 'Seller Feedback': [], 'Link': []}
         df = pd.DataFrame(dict)
 
@@ -483,6 +493,9 @@ def median_plotting(dfs, names, title, msrps=[]):
 
 run_all_feedback = True
 run_all_hist = True
+
+requests_cache.install_cache('ebay_cache', backend='sqlite', expire_after=300)
+
 
 df_darkhero = ebay_search('ASUS Dark Hero -image -jpeg -img -picture -pic -jpg', 399, 400, 1000, feedback=run_all_feedback, quantity_hist=run_all_hist)
 
