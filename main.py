@@ -18,7 +18,8 @@ import requests_cache
 
 def get_quantity_hist(sold_hist_url, sold_list, verbose=False):
     # time.sleep(0.4 * random.uniform(0, 1))  # eBays servers will kill your connection if you hit them too frequently
-    source = requests.get(sold_hist_url).text
+    with requests_cache.disabled():  # We don't want to cache all the calls into the individual listings, they'll never be repeated
+        source = requests.get(sold_hist_url).text
     soup = BeautifulSoup(source, 'lxml')
 
     # items = soup.find_all('tr')
@@ -64,16 +65,19 @@ def get_quantity_hist(sold_hist_url, sold_list, verbose=False):
 
 def ebay_scrape(base_url, df, min_date='', feedback=False, quantity_hist=False, verbose=False):
     for x in range(1, 5):
-        # requests_cache.enabled()
+
         # time.sleep(0.4 * random.uniform(0, 1))  # eBays servers will kill your connection if you hit them too frequently
         url = base_url + str(x)
 
-        source = requests.get(url).text
+        if x == 4:
+            source = requests.get(url).text
+        else:
+            with requests_cache.disabled():  # We don't want to cache all the calls into the individual listings, they'll never be repeated
+                source = requests.get(url).text
         soup = BeautifulSoup(source, 'lxml')
         items = soup.find_all('li', attrs={'class': 's-item'})
 
         if verbose: print(x, len(items), url)
-        # requests_cache.disabled()  # We don't want to cache all the calls into the individual listings, they'll never be repeated
 
         for n, item in enumerate(items):
             if n > 0:
@@ -153,8 +157,9 @@ def ebay_scrape(base_url, df, min_date='', feedback=False, quantity_hist=False, 
 
                     if feedback or quantity_hist:
                         try:
-                            time.sleep(0.4 * random.uniform(0, 1))
-                            source = requests.get(item_link).text
+                            #time.sleep(0.4 * random.uniform(0, 1))
+                            with requests_cache.disabled():  # We don't want to cache all the calls into the individual listings, they'll never be repeated
+                                source = requests.get(item_link).text
                             soup = BeautifulSoup(source, 'lxml')
 
                             try:
@@ -182,8 +187,9 @@ def ebay_scrape(base_url, df, min_date='', feedback=False, quantity_hist=False, 
                                                            attrs={'class': 'nodestar-item-card-details__view-link'})
                                     orig_link = oitems[0]['href']
 
-                                    time.sleep(0.4 * random.uniform(0, 1))
-                                    source = requests.get(orig_link).text
+                                    #time.sleep(0.4 * random.uniform(0, 1))
+                                    with requests_cache.disabled():  # We don't want to cache all the calls into the individual listings, they'll never be repeated
+                                        source = requests.get(orig_link).text
                                     soup = BeautifulSoup(source, 'lxml')
 
                                     seller = soup.find_all('span', attrs={'class': 'mbg-nw'})
@@ -389,8 +395,8 @@ def ebay_plot(query, msrp, df, extra_title_text=''):
 def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.datetime(2020, 1, 1), verbose=False,
                 extra_title_text='', run_cached=False, feedback=False, quantity_hist=False):
     start = time.time()
-    print(query)
     requests_cache.clear()
+    print(query)
 
     # https://stackoverflow.com/questions/35807605/create-a-file-if-it-doesnt-exist?lq=1
     try:
@@ -440,11 +446,13 @@ def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.d
                     price_ranges[i]) + '&_udhi=' + str(
                     price_ranges[i + 1]) + '&rt=nc&_ipg=200&_pgn='
             if verbose: print(price_ranges[i], price_ranges[i + 1], url)
+
             df = ebay_scrape(url, df, min_date, feedback=feedback, quantity_hist=quantity_hist, verbose=verbose)
 
             # Best to save semiregularly in case eBay kills the connection
             df = pd.DataFrame.drop_duplicates(df)
             df.to_excel('Spreadsheets/' + str(query) + extra_title_text + '.xlsx')
+            requests_cache.remove_expired_responses()
 
     median_price, est_break_even, min_break_even, tot_sold = ebay_plot(query, msrp, df, extra_title_text)
 
@@ -506,16 +514,17 @@ run_all_hist = True
 # https://realpython.com/caching-external-api-requests/
 requests_cache.install_cache('ebay_cache', backend='sqlite', expire_after=300)
 
+
 df_darkhero = ebay_search('ASUS Dark Hero -image -jpeg -img -picture -pic -jpg', 399, 400, 1000,
-                          feedback=run_all_feedback, quantity_hist=run_all_hist, extra_title_text=' -second run')
+                          feedback=run_all_feedback, quantity_hist=run_all_hist, extra_title_text='')
 
 # Zen 3 Analysis
 df_5950x = ebay_search('5950X -image -jpeg -img -picture -pic -jpg', 799, 400, 2200, feedback=run_all_feedback,
-                       quantity_hist=run_all_hist)
+                       quantity_hist=run_all_hist, extra_title_text='')
 df_5900x = ebay_search('5900X -image -jpeg -img -picture -pic -jpg', 549, 499, 2050, feedback=run_all_feedback,
-                       quantity_hist=run_all_hist)
+                       quantity_hist=run_all_hist, extra_title_text='')
 df_5800x = ebay_search('5800X -image -jpeg -img -picture -pic -jpg', 449, 400, 1000, feedback=run_all_feedback,
-                       quantity_hist=run_all_hist)
+                       quantity_hist=run_all_hist, extra_title_text='')
 df_5600x = ebay_search('5600X -image -jpeg -img -picture -pic -jpg', 299, 250, 1000, feedback=run_all_feedback,
                        quantity_hist=run_all_hist,
                        min_date=datetime.datetime(2020, 11, 1))
@@ -524,48 +533,48 @@ median_plotting([df_5950x, df_5900x, df_5800x, df_5600x], ['5950X', '5900X', '58
 
 # Big Navi Analysis
 df_6800 = ebay_search('RX 6800 -XT -image -jpeg -img -picture -pic -jpg', 579, 400, 2500, feedback=run_all_feedback,
-                      quantity_hist=run_all_hist)
+                      quantity_hist=run_all_hist, extra_title_text='')
 df_6800xt = ebay_search('RX 6800 XT -image -jpeg -img -picture -pic -jpg', 649, 850,
                         2000, feedback=run_all_feedback,
-                        quantity_hist=run_all_hist)  # There are some $5000+, but screw with graphs
+                        quantity_hist=run_all_hist, extra_title_text='')  # There are some $5000+, but screw with graphs
 df_6900 = ebay_search('RX 6900 -image -jpeg -img -picture -pic -jpg', 999, 100, 999999, feedback=run_all_feedback,
                       quantity_hist=run_all_hist,
-                      min_date=datetime.datetime(2020, 12, 8))  # Not out until December 8
+                      min_date=datetime.datetime(2020, 12, 8), extra_title_text='')  # Not out until December 8
 median_plotting([df_6800, df_6800xt, df_6900], ['RX 6800', 'RX 6800 XT', 'RX 6900'], 'Big Navi Median Pricing',
                 [579, 649, 999])
 
 # RTX 30 Series Analysis
 df_3060 = ebay_search('RTX 3060 -image -jpeg -img -picture -pic -jpg', 399, 200, 1300, feedback=run_all_feedback,
                       quantity_hist=run_all_hist,
-                      min_date=datetime.datetime(2020, 12, 1))
+                      min_date=datetime.datetime(2020, 12, 1), extra_title_text='')
 df_3070 = ebay_search('RTX 3070 -image -jpeg -img -picture -pic -jpg', 499, 499, 1300, feedback=run_all_feedback,
                       quantity_hist=run_all_hist,
-                      min_date=datetime.datetime(2020, 10, 29))
+                      min_date=datetime.datetime(2020, 10, 29), extra_title_text='')
 df_3080 = ebay_search('RTX 3080 -image -jpeg -img -picture -pic -jpg', 699, 550, 10000, feedback=run_all_feedback,
                       quantity_hist=run_all_hist,
-                      min_date=datetime.datetime(2020, 9, 17))
+                      min_date=datetime.datetime(2020, 9, 17), extra_title_text='')
 df_3090 = ebay_search('RTX 3090 -image -jpeg -img -picture -pic -jpg', 1499, 550, 10000, feedback=run_all_feedback,
                       quantity_hist=run_all_hist,
-                      min_date=datetime.datetime(2020, 9, 17))
+                      min_date=datetime.datetime(2020, 9, 17), extra_title_text='')
 median_plotting([df_3060, df_3070, df_3080, df_3090], ['3060', '3070', '3080', '3090'], 'RTX 30 Series Median Pricing',
                 [399, 499, 699, 1499])
 
 # PS5 Analysis (All time)
 df_ps5_digital = ebay_search('PS5 Digital -image -jpeg -img -picture -pic -jpg', 399, 300, 11000,
                              feedback=run_all_feedback, quantity_hist=run_all_hist,
-                             min_date=datetime.datetime(2020, 9, 16))
+                             min_date=datetime.datetime(2020, 9, 16), extra_title_text='')
 df_ps5_disc = ebay_search('PS5 -digital -image -jpeg -img -picture -pic -jpg', 499, 450, 11000,
                           feedback=run_all_feedback, quantity_hist=run_all_hist,
-                          min_date=datetime.datetime(2020, 9, 16))
+                          min_date=datetime.datetime(2020, 9, 16), extra_title_text='')
 median_plotting([df_ps5_disc, df_ps5_digital], ['PS5 Digital', 'PS5 Disc'], 'PS5 Median Pricing', [299, 499])
 
 # Xbox Analysis (All time)
 df_xbox_s = ebay_search('Xbox Series S -image -jpeg -img -picture -pic -jpg', 299, 250, 11000,
                         feedback=run_all_feedback, quantity_hist=run_all_hist,
-                        min_date=datetime.datetime(2020, 9, 22))
+                        min_date=datetime.datetime(2020, 9, 22), extra_title_text='')
 df_xbox_x = ebay_search('Xbox Series X -image -jpeg -img -picture -pic -jpg', 499, 350, 11000,
                         feedback=run_all_feedback, quantity_hist=run_all_hist,
-                        min_date=datetime.datetime(2020, 9, 22))
+                        min_date=datetime.datetime(2020, 9, 22), extra_title_text='')
 median_plotting([df_xbox_s, df_xbox_x], ['Xbox Series S', 'Xbox Series X'], 'Xbox Median Pricing',
                 [299, 499])
 
@@ -601,8 +610,6 @@ median_plotting([df_ps5_disc_ld, df_ps5_digital_ld], ['PS5 Digital', 'PS5 Disc']
 
 # TODO: If already exists in cached file without seller feedback, replace it
 # TODO: If cached, skip delay
-
-# TODO: automate latest image pushing to Github: you can automate to git push at an interval
 
 '''
 Ways to predict future pricing:
