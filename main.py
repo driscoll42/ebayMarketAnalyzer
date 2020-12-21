@@ -608,6 +608,148 @@ def median_plotting(dfs, names, title, msrps=[]):
     plt.show()
 
 
+# https://tylermarrs.com/posts/pareto-plot-with-matplotlib/
+def pareto_plot(df, df2,  df_name='', df2_name='',x=None, y=None, title=None, show_pct_y=False, pct_format='{0:.0%}'):
+    xlabel = x
+    ylabel = y
+
+    weights = df[y] / df[y].sum()
+    cumsum = weights.cumsum()
+
+    fig, ax1 = plt.subplots()
+    ax1.bar(df[x], df[y], label=df_name)
+    if df2.size > 0:
+        ax1.bar(df2[x], df2[y], bottom=df[y], label=df2_name)
+    ax1.set_xlabel(xlabel)
+    ax1.set_ylabel(ylabel)
+    ax1.tick_params(axis='x', rotation=30)
+    ax1.legend(loc='center right')
+
+    ax2 = ax1.twinx()
+    ax2.plot(df[x], cumsum, '-ro', alpha=0.5)
+    ax2.set_ylabel('', color='r')
+    ax2.tick_params('y', colors='r')
+
+    vals = ax2.get_yticks()
+    ax2.set_yticklabels(['{:,.2%}'.format(x) for x in vals])
+
+    # hide y-labels on right side
+    if not show_pct_y:
+        ax2.set_yticks([])
+
+    formatted_weights = [pct_format.format(x) for x in cumsum]
+    for i, txt in enumerate(formatted_weights):
+        ax2.annotate(txt, (df[x][i], cumsum[i]), fontweight='heavy')
+
+    if title:
+        plt.title(title)
+    fig.tight_layout()
+    plt.legend()
+
+    plt.figure(figsize=(8, 8))
+
+    plt.show()
+
+
+def ebay_seller_plot(query, df, extra_title_text=''):
+    # eBay Seller Feedback vs Quantity Sold
+
+    df_sell = df[df['Seller'] != 'None']
+    df_sell = df_sell[df_sell['Seller Feedback'] != 'None']
+
+    df_sell['Seller Feedback'] = pd.to_numeric(df_sell['Seller Feedback'])
+
+    df_stores = df_sell[df_sell['Store'] == 1]
+    df_nostores = df_sell[df_sell['Store'] == 0]
+
+    def split_data(df_sell):
+        # https://blog.edesk.com/resources/ebay-star-ratings/
+        zero_fb = df_sell[df_sell['Seller Feedback'] == 0]['Quantity'].sum()
+        no_star = df_sell[(df_sell['Seller Feedback'] > 0) & (df_sell['Seller Feedback'] < 10)]['Quantity'].sum()
+        yellow_star = df_sell[(df_sell['Seller Feedback'] >= 10) & (df_sell['Seller Feedback'] < 50)]['Quantity'].sum()
+        blue_star = df_sell[(df_sell['Seller Feedback'] >= 50) & (df_sell['Seller Feedback'] < 100)]['Quantity'].sum()
+        turquoise_star = df_sell[(df_sell['Seller Feedback'] >= 100) & (df_sell['Seller Feedback'] < 500)]['Quantity'].sum()
+        purple_star = df_sell[(df_sell['Seller Feedback'] >= 500) & (df_sell['Seller Feedback'] < 1000)]['Quantity'].sum()
+        red_star = df_sell[(df_sell['Seller Feedback'] >= 1000) & (df_sell['Seller Feedback'] < 5000)]['Quantity'].sum()
+        green_star = df_sell[(df_sell['Seller Feedback'] >= 5000) & (df_sell['Seller Feedback'] < 10000)]['Quantity'].sum()
+        shooting_star = df_sell[(df_sell['Seller Feedback'] >= 10000)]['Quantity'].sum()
+
+        df_fb = pd.DataFrame({
+            'Star Category': ['Zero FB', '1 - 9', '10 - 49', '50 - 99', '100 - 499', '500 - 999', '1000 - 4999',
+                              '5000 - 9999', '10000+'],
+            'Quantity Sold': [zero_fb, no_star, yellow_star, blue_star, turquoise_star, purple_star, red_star, green_star,
+                              shooting_star]
+        })
+        return df_fb
+
+    df_store_fb = split_data(df_stores)
+    df_nostores_fb = split_data(df_nostores)
+
+    title = query.replace("+", " ").split('-', 1)[
+                0].strip() + extra_title_text + ' eBay Seller Feedback vs Quantity Sold'
+
+    pareto_plot(df_nostores_fb, df_store_fb, df_name='Non-Store', df2_name='Store', x='Star Category', y='Quantity Sold', title=title)
+
+    # eBay Seller Sales vs Total Sold
+
+    df_quant = df[df['Seller'] != 'None']
+
+    df_stores = df_quant[df_sell['Store'] == 1]
+    df_nostores = df_quant[df_sell['Store'] == 0]
+
+    def split_data_again(df_quant):
+        df_quant = df_quant.groupby(['Seller'])['Quantity'].sum().reset_index()
+
+        one_sale = df_quant[df_quant['Quantity'] == 1]['Quantity'].sum()
+        two_sales = df_quant[(df_quant['Quantity'] == 2)]['Quantity'].sum()
+        three_sales = df_quant[(df_quant['Quantity'] == 3)]['Quantity'].sum()
+        four_sales = df_quant[(df_quant['Quantity'] == 4)]['Quantity'].sum()
+        five_sales = df_quant[(df_quant['Quantity'] == 5)]['Quantity'].sum()
+        five_ten = df_quant[(df_quant['Quantity'] >= 6) & (df_quant['Quantity'] < 10)]['Quantity'].sum()
+        eleven_twenty = df_quant[(df_quant['Quantity'] >= 11) & (df_quant['Quantity'] < 20)]['Quantity'].sum()
+        twen_fifty = df_quant[(df_quant['Quantity'] >= 21) & (df_quant['Quantity'] < 50)]['Quantity'].sum()
+        fifty_plus = df_quant[(df_quant['Quantity'] >= 50)]['Quantity'].sum()
+
+        df_fb = pd.DataFrame({
+            'Number of Sales': ['1', '2', '3', '4', '5', '5 - 10', '11 - 20', '21 - 50', '50 +'],
+            'Quantity Sold'  : [one_sale, two_sales, three_sales, four_sales, five_sales, five_ten, eleven_twenty,
+                                twen_fifty,
+                                fifty_plus]
+        })
+        return df_fb
+    title = query.replace("+", " ").split('-', 1)[0].strip() + extra_title_text + ' eBay Seller Sales vs Total Sold'
+
+    df_store_fb = split_data_again(df_stores)
+    df_nostore_fb = split_data_again(df_nostores)
+
+    pareto_plot(df_nostore_fb, df_store_fb, df_name='Non-Store', df2_name='Store', x='Number of Sales', y='Quantity Sold', title=title)
+
+def brand_plot(df, title, brand_list, msrp):
+    brand_dict = {}
+    for b in brand_list:
+        brand_dict[b] = df[(df['Brand'] == b) & (df['Ignore'] == 0) & (df['Total Price'] <= 3000)]
+
+    colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'grey', 'orange', 'lime']
+    min_msrp = 100
+    plt.figure(figsize=(8,8))  # In this example, all the plots will be in one figure.
+    plt.ylabel("% of MSRP")
+    plt.xlabel("Sale Date")
+    plt.tick_params(axis='y')
+    plt.tick_params(axis='x', rotation=30)
+    plt.title(title)
+    for i, b in enumerate(brand_list):
+        ci = i % (len(colors) - 1)
+        if len(brand_dict[b]) > 0:
+            print(b, len(brand_dict[b]))
+            med_price = brand_dict[b].groupby(['Sold Date'])['Total Price'].median() / msrp * 100
+            min_msrp = min(100, min(med_price))
+            plt.plot(med_price, colors[ci], label=brand_list[i])
+    plt.ylim(bottom=min_msrp)
+    plt.legend()
+    plt.tight_layout()
+
+    plt.show()
+
 run_all_feedback = True
 run_all_hist = True
 run_cached = False
