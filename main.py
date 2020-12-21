@@ -553,6 +553,8 @@ def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.d
             requests_cache.remove_expired_responses()
 
     df = df[df['Ignore'] == 0]
+    if min_date:
+        df = df[df['Sold Date'] >= min_date]
 
     median_price, est_break_even, min_break_even, tot_sold = ebay_plot(query, msrp, df, extra_title_text)
 
@@ -615,8 +617,10 @@ def pareto_plot(df, df2,  df_name='', df2_name='',x=None, y=None, title=None, sh
 
     weights = df[y] / df[y].sum()
     cumsum = weights.cumsum()
+    plt.figure(figsize=(8, 8))
 
     fig, ax1 = plt.subplots()
+
     ax1.bar(df[x], df[y], label=df_name)
     if df2.size > 0:
         ax1.bar(df2[x], df2[y], bottom=df[y], label=df2_name)
@@ -629,6 +633,7 @@ def pareto_plot(df, df2,  df_name='', df2_name='',x=None, y=None, title=None, sh
     ax2.plot(df[x], cumsum, '-ro', alpha=0.5)
     ax2.set_ylabel('', color='r')
     ax2.tick_params('y', colors='r')
+    ax2.set_ylim(bottom=0)
 
     vals = ax2.get_yticks()
     ax2.set_yticklabels(['{:,.2%}'.format(x) for x in vals])
@@ -646,8 +651,7 @@ def pareto_plot(df, df2,  df_name='', df2_name='',x=None, y=None, title=None, sh
     fig.tight_layout()
     plt.legend()
 
-    plt.figure(figsize=(8, 8))
-
+    plt.savefig('Images/' + title)
     plt.show()
 
 
@@ -729,9 +733,10 @@ def brand_plot(df, title, brand_list, msrp):
     for b in brand_list:
         brand_dict[b] = df[(df['Brand'] == b) & (df['Ignore'] == 0) & (df['Total Price'] <= 3000)]
 
-    colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'grey', 'orange', 'lime']
+    # Picked using this https://mokole.com/palette.html
+    colors = ['#000000', '#7f0000', '#808000', '#008080', '#000080', '#ff8c00', '#2f4f4f', '#00ff00', '#0000ff', '#ff00ff', '#6495ed', '#ff1493', '#98fb98', '#ffdab9']
     min_msrp = 100
-    plt.figure(figsize=(8,8))  # In this example, all the plots will be in one figure.
+    plt.figure(figsize=(12, 8))  # In this example, all the plots will be in one figure.
     plt.ylabel("% of MSRP")
     plt.xlabel("Sale Date")
     plt.tick_params(axis='y')
@@ -747,6 +752,7 @@ def brand_plot(df, title, brand_list, msrp):
     plt.ylim(bottom=min_msrp)
     plt.legend()
     plt.tight_layout()
+    plt.savefig('Images/' + title)
 
     plt.show()
 
@@ -755,14 +761,13 @@ run_all_hist = True
 run_cached = False
 sleep_len = 0.5
 country = 'USA'
-brand_list = ['FOUNDERS', 'ASUS', 'MSI', 'EVGA', 'GIGABYTE', 'ZOTAC', 'INNO3D', 'PNY', 'SAPPHIRE', 'COLORFUL', 'ASROCK',
-              'POWERCOLOR', 'XFX', 'POWER COLOR']
+brand_list = ['FOUNDERS', 'ASUS', 'MSI', 'EVGA', 'GIGABYTE', 'ZOTAC',  'XFX', 'PNY', 'SAPPHIRE', 'COLORFUL', 'ASROCK',
+              'POWERCOLOR',  'POWER COLOR', 'INNO3D',]
 model_list = ['XC3', 'TRINITY', 'FTW3', 'FOUNDERS', 'STRIX', 'EKWB', 'TUF', 'SUPRIM', 'VENTUS', 'MECH', 'EVOKE', 'TRIO',
               'FTW3', 'KINGPIN', 'K|NGP|N', 'AORUS', 'WATERFORCE', 'XTREME', 'MASTER', 'TRINITY', 'AMP']
 
 requests_cache.install_cache('main_cache', backend='sqlite', expire_after=300)
 
-# raise SystemExit(0)
 
 
 
@@ -782,8 +787,20 @@ df_5800x = ebay_search('5800X -image -jpeg -img -picture -pic -jpg', 449, 400, 1
 df_5600x = ebay_search('5600X -image -jpeg -img -picture -pic -jpg', 299, 250, 1000, feedback=run_all_feedback,
                        run_cached=run_cached, quantity_hist=run_all_hist, min_date=datetime.datetime(2020, 11, 1),
                        sleep_len=sleep_len, country=country, extra_title_text='')
+
+# Extra Zen 3 Plotting
 median_plotting([df_5950x, df_5900x, df_5800x, df_5600x], ['5950X', '5900X', '5800X', '5600X'], 'Zen 3 Median Pricing',
                 [799, 549, 449, 299])
+
+df_5800X = df_5800x.assign(item='5800X')
+df_5600X = df_5600x.assign(item='5600X')
+df_5900X = df_5900x.assign(item='5900X')
+df_5950X = df_5950x.assign(item='5950X')
+
+frames = [df_5600X, df_5800X, df_5900X, df_5950X]
+com_df = pd.concat(frames)
+ebay_seller_plot('Zen 3', com_df, extra_title_text='')
+
 
 # Big Navi Analysis
 df_6800 = ebay_search('RX 6800 -XT -image -jpeg -img -picture -pic -jpg', 579, 400, 2500, feedback=run_all_feedback,
@@ -797,8 +814,21 @@ df_6900 = ebay_search('RX 6900 -image -jpeg -img -picture -pic -jpg', 999, 100, 
                       run_cached=run_cached, quantity_hist=run_all_hist, min_date=datetime.datetime(2020, 12, 8),
                       extra_title_text='', sleep_len=sleep_len, brand_list=brand_list,
                       model_list=model_list, country=country)  # Not out until December 8
+
+# Big Navi Plotting
 median_plotting([df_6800, df_6800xt, df_6900], ['RX 6800', 'RX 6800 XT', 'RX 6900'], 'Big Navi Median Pricing',
                 [579, 649, 999])
+
+df_6800 = df_6800.assign(item='6800')
+df_6800xt = df_6800xt.assign(item='6800XT')
+df_6900 = df_6900.assign(item='6900')
+
+frames = [df_6800, df_6800xt, df_6900]
+com_df = pd.concat(frames)
+ebay_seller_plot('Big Navi', com_df, extra_title_text='')
+
+brand_plot(com_df, 'Big Navi AIB Comparison', brand_list, 699)
+
 
 # RTX 30 Series Analysis
 df_3060 = ebay_search('RTX 3060 -image -jpeg -img -picture -pic -jpg', 399, 200, 1300, feedback=run_all_feedback,
@@ -813,33 +843,27 @@ df_3080 = ebay_search('RTX 3080 -image -jpeg -img -picture -pic -jpg', 699, 550,
 df_3090 = ebay_search('RTX 3090 -image -jpeg -img -picture -pic -jpg', 1499, 550, 10000, feedback=run_all_feedback,
                       run_cached=run_cached, quantity_hist=run_all_hist, min_date=datetime.datetime(2020, 9, 17),
                       extra_title_text='', sleep_len=sleep_len, brand_list=brand_list, model_list=model_list, country=country)
+
+
+# RTX 30 Series/Ampere Plotting
 median_plotting([df_3060, df_3070, df_3080, df_3090], ['3060', '3070', '3080', '3090'], 'RTX 30 Series Median Pricing',
                 [399, 499, 699, 1499])
 
-# PS5 Analysis (All time)
-df_ps5_digital = ebay_search('PS5 Digital -image -jpeg -img -picture -pic -jpg', 399, 300, 11000, run_cached=run_cached,
-                             feedback=run_all_feedback, quantity_hist=run_all_hist,
-                             min_date=datetime.datetime(2020, 9, 16), extra_title_text='', sleep_len=sleep_len,
-                             sacat=139971, country=country)
-df_ps5_disc = ebay_search('PS5 -digital -image -jpeg -img -picture -pic -jpg', 499, 450, 11000, run_cached=run_cached,
-                          feedback=run_all_feedback, quantity_hist=run_all_hist,
-                          min_date=datetime.datetime(2020, 9, 16), extra_title_text='', sleep_len=sleep_len,
-                          sacat=139971, country=country)
-median_plotting([df_ps5_digital, df_ps5_disc], ['PS5 Digital', 'PS5 Disc'], 'PS5 Median Pricing', [299, 499])
+df_3060 = df_3060.assign(item='3060')
+df_3070 = df_3070.assign(item='3070')
+df_3080 = df_3080.assign(item='3080')
+df_3090 = df_3090.assign(item='3090')
 
-# Xbox Analysis (All time)
-df_xbox_s = ebay_search('Xbox Series S -image -jpeg -img -picture -pic -jpg', 299, 250, 11000, run_cached=run_cached,
-                        feedback=run_all_feedback, quantity_hist=run_all_hist, min_date=datetime.datetime(2020, 9, 22),
-                        extra_title_text='', sleep_len=sleep_len, sacat=139971, country=country)
-df_xbox_x = ebay_search('Xbox Series X -image -jpeg -img -picture -pic -jpg', 499, 350, 11000, run_cached=run_cached,
-                        feedback=run_all_feedback, quantity_hist=run_all_hist, min_date=datetime.datetime(2020, 9, 22),
-                        extra_title_text='', sleep_len=sleep_len, sacat=139971, country=country)
-median_plotting([df_xbox_s, df_xbox_x], ['Xbox Series S', 'Xbox Series X'], 'Xbox Median Pricing',
-                [299, 499])
+frames = [df_3060, df_3070, df_3080, df_3090]
+com_df = pd.concat(frames)
+ebay_seller_plot('RTX 30 Series-Ampere', com_df, extra_title_text='')
+
+brand_plot(com_df, 'RTX 30 Series-Ampere AIB Comparison', brand_list, 699)
+
+
 
 # Zen 2 data
-df_3300X = ebay_search('3300X -combo -custom', 120, 160, 250, run_cached=run_cached,
-                       feedback=run_all_feedback, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len)
+
 
 df_3950X = ebay_search('3950X -image -jpeg -img -picture -pic -jpg', 749, 350, 1200, run_cached=run_cached,
                        feedback=run_all_feedback, quantity_hist=False, extra_title_text='', sleep_len=sleep_len)
@@ -868,11 +892,37 @@ df_3600X = ebay_search('3600X -combo -custom -roku', 249, 40, 520, run_cached=ru
 df_3600 = ebay_search('(AMD, Ryzen) 3600 -combo -custom -roku -3600x -3600xt', 249, 30, 361, run_cached=run_cached,
                       feedback=run_all_feedback, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len)
 
+df_3300X = ebay_search('3300X -combo -custom', 120, 160, 250, run_cached=run_cached,
+                       feedback=run_all_feedback, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len)
+
 df_3100 = ebay_search('(AMD, Ryzen) 3100 -combo -custom -radeon', 99, 79, 280, run_cached=run_cached,
                       feedback=run_all_feedback, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len)
 
-# Turing GPUs
+# Zen 2 Plotting
 
+df_3950X = df_3950X.assign(item='3950X')
+df_3900X = df_3900X.assign(item='3900X')
+df_3900XT = df_3900XT.assign(item='3900XT')
+df_3800XT = df_3800XT.assign(item='3800XT')
+df_3800X = df_3800X.assign(item='3800X')
+df_3700X = df_3700X.assign(item='3700X')
+df_3600XT = df_3600XT.assign(item='3600XT')
+df_3600X = df_3600X.assign(item='3600X')
+df_3600 = df_3600.assign(item='3600')
+df_3300X = df_3300X.assign(item='3300X')
+df_3100 = df_3100.assign(item='3100')
+
+frames = [df_3950X, df_3900X, df_3900XT, df_3800XT, df_3800X, df_3700X, df_3600XT, df_3600X, df_3600, df_3300X, df_3100]
+com_df = pd.concat(frames)
+
+median_plotting(frames,
+                ['3950X', '3900X', '3900XT', '3800XT', '3800X', '3700X', '3600XT', '3600X', '3600', '3300X', '3100'],
+                'Zen 2 Median Pricing',
+                [749, 499, 499, 399, 399, 329, 249, 249, 249, 120, 99])
+ebay_seller_plot('Zen 2', com_df, extra_title_text='')
+
+
+# Turing GPUs
 df_2060 = ebay_search('rtx 2060 -super', 299, 100, 650, run_cached=run_cached, feedback=run_all_feedback,
                       quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                       brand_list=brand_list, model_list=model_list)
@@ -934,6 +984,7 @@ df_xbox_one_x = ebay_search('xbox one x -repair -series -box -broken -parts -bad
                             feedback=run_all_feedback, quantity_hist=run_all_hist, extra_title_text='',
                             sleep_len=sleep_len, sacat=139971)
 
+raise SystemExit(0)
 # Xbox Analysis (Post Launch)
 df_xbox_s_ld = ebay_search('Xbox Series S -image -jpeg -img -picture -pic -jpg', 299, 250, 11000,
                            min_date=datetime.datetime(2020, 11, 10), run_cached=True, extra_title_text=' (Post Launch)')
@@ -952,6 +1003,45 @@ df_ps5_disc_ld = ebay_search('PS5 -digital -image -jpeg -img -picture -pic -jpg'
 median_plotting([df_ps5_disc_ld, df_ps5_digital_ld], ['PS5 Digital', 'PS5 Disc'], 'PS5 Median Pricing (Post Launch)',
                 [299, 499])
 
+
+# PS5 Analysis (All time)
+df_ps5_digital = ebay_search('PS5 Digital -image -jpeg -img -picture -pic -jpg', 399, 300, 11000, run_cached=run_cached,
+                             feedback=run_all_feedback, quantity_hist=run_all_hist,
+                             min_date=datetime.datetime(2020, 9, 16), extra_title_text='', sleep_len=sleep_len,
+                             sacat=139971, country=country)
+df_ps5_disc = ebay_search('PS5 -digital -image -jpeg -img -picture -pic -jpg', 499, 450, 11000, run_cached=run_cached,
+                          feedback=run_all_feedback, quantity_hist=run_all_hist,
+                          min_date=datetime.datetime(2020, 9, 16), extra_title_text='', sleep_len=sleep_len,
+                          sacat=139971, country=country)
+
+# PS5 Plotting
+median_plotting([df_ps5_digital, df_ps5_disc], ['PS5 Digital', 'PS5 Disc'], 'PS5 Median Pricing', [299, 499])
+
+df_ps5_digital = df_ps5_digital.assign(item='PS5 Digital')
+df_ps5_disc = df_ps5_disc.assign(item='PS5 Disc')
+
+frames = [df_ps5_digital, df_ps5_disc]
+com_df = pd.concat(frames)
+ebay_seller_plot('PS5', com_df, extra_title_text='')
+
+# Xbox Analysis (All time)
+df_xbox_s = ebay_search('Xbox Series S -image -jpeg -img -picture -pic -jpg', 299, 250, 11000, run_cached=run_cached,
+                        feedback=run_all_feedback, quantity_hist=run_all_hist, min_date=datetime.datetime(2020, 9, 22),
+                        extra_title_text='', sleep_len=sleep_len, sacat=139971, country=country)
+df_xbox_x = ebay_search('Xbox Series X -image -jpeg -img -picture -pic -jpg', 499, 350, 11000, run_cached=run_cached,
+                        feedback=run_all_feedback, quantity_hist=run_all_hist, min_date=datetime.datetime(2020, 9, 22),
+                        extra_title_text='', sleep_len=sleep_len, sacat=139971, country=country)
+
+# Xbox Plotting
+median_plotting([df_xbox_s, df_xbox_x], ['Xbox Series S', 'Xbox Series X'], 'Xbox Median Pricing',
+                [299, 499])
+
+df_xbox_s = df_xbox_s.assign(item='Xbox Series S')
+df_xbox_x = df_xbox_x.assign(item='Xbox Series X')
+
+frames = [df_xbox_s, df_xbox_x]
+com_df = pd.concat(frames)
+ebay_seller_plot('Xbox', com_df, extra_title_text='')
 
 # TODO: Rerun multis, delete all first
 # TODO: Get stockx listings (need to be manual)
