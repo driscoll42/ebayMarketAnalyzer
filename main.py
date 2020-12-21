@@ -13,6 +13,7 @@ from scipy import stats
 import random
 import requests_cache
 import math
+import re
 
 
 # XML Formatter: https://jsonformatter.org/xml-formatter
@@ -37,7 +38,7 @@ def get_quantity_hist(sold_hist_url, sold_list, sleep_len=0.4, verbose=False):
         tds = r.find_all('td')
         if len(tds) > 0:
             # buyer = tds[1].text
-            price = float(tds[2].text.replace('US $', '').replace(',', ''))
+            price = float(re.sub(r'[^\d.]+', '', tds[2].text))
             quantity = int(tds[3].text)
             sold_date = tds[4].text.split()[0]
             sold_time = tds[4].text.split()[1]
@@ -77,7 +78,7 @@ def get_quantity_hist(sold_hist_url, sold_list, sleep_len=0.4, verbose=False):
 
 
 def ebay_scrape(base_url, df, min_date='', feedback=False, quantity_hist=False, sleep_len=0.4, brand_list=[],
-                model_list=[], verbose=False):
+                model_list=[], verbose=False, country='USA'):
     for x in range(1, 5):
 
         time.sleep(
@@ -106,9 +107,10 @@ def ebay_scrape(base_url, df, min_date='', feedback=False, quantity_hist=False, 
 
                 try:
                     orig_item_datetime = '2020 ' + item.find('span', class_='s-item__endedDate').text
-                    item_datetime = datetime.datetime.strptime(orig_item_datetime, '%Y %b-%d %H:%M')
-
-                    # if UK: item_datetime = datetime.datetime.strptime(orig_item_datetime, '%Y %d-%b %H:%M')
+                    if country == 'UK':
+                        item_datetime = datetime.datetime.strptime(orig_item_datetime, '%Y %d-%b %H:%M')
+                    else:
+                        item_datetime = datetime.datetime.strptime(orig_item_datetime, '%Y %b-%d %H:%M')
 
                 except Exception as e:
                     try:
@@ -136,8 +138,11 @@ def ebay_scrape(base_url, df, min_date='', feedback=False, quantity_hist=False, 
 
                     try:
                         orig_item_date = '2020 ' + item.find('span', class_='s-item__endedDate').text
-                        item_date = datetime.datetime.strptime(orig_item_date, '%Y %b-%d %H:%M')
-                        # if UK: item_date = datetime.datetime.strptime(orig_item_date, '%Y %d-%b %H:%M')
+                        if country == 'UK':
+                            item_date = datetime.datetime.strptime(orig_item_date, '%Y %d-%b %H:%M')
+                        else:
+                            item_date = datetime.datetime.strptime(orig_item_date, '%Y %b-%d %H:%M')
+
                         item_date = item_date.replace(hour=0, minute=0, second=0, microsecond=0)
 
                     except Exception as e:
@@ -162,9 +167,7 @@ def ebay_scrape(base_url, df, min_date='', feedback=False, quantity_hist=False, 
 
                     try:
                         item_price = item.find('span', class_='s-item__price').text
-                        item_price = float(
-                                item_price.replace('+', '').replace(' shipping', '').replace('postage', '').replace(
-                                        '$', '').replace('£', '').strip())  # if UK: £
+                        item_price = float(re.sub(r'[^\d.]+', '', item_price))
                     except Exception as e:
                         item_price = -1
 
@@ -173,10 +176,7 @@ def ebay_scrape(base_url, df, min_date='', feedback=False, quantity_hist=False, 
                     try:
                         item_shipping = item.find('span', class_='s-item__shipping s-item__logisticsCost').text
                         if item_shipping.upper().find("FREE") == -1:
-                            item_shipping = float(
-                                    item_shipping.replace('+', '').replace(' shipping', '').replace('postage',
-                                                                                                    '').replace(
-                                            '$', '').replace('£', '').strip())  # if UK: £
+                            item_shipping = float(re.sub(r'[^\d.]+', '', item_shipping))
                         else:
                             item_shipping = 0
                     except Exception as e:
@@ -355,7 +355,8 @@ def ebay_scrape(base_url, df, min_date='', feedback=False, quantity_hist=False, 
                                      'Quantity': [quantity_sold - tot_sale_quant]}).all(
                                     axis='columns').any() and item_tot > 0:
                                 df = df.append(df__new, ignore_index=True)
-
+        if country == 'UK' and len(items) < 193:
+            break
         if len(items) < 201:
             break
     return df
@@ -474,7 +475,7 @@ def ebay_plot(query, msrp, df, extra_title_text=''):
 
 def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.datetime(2020, 1, 1), verbose=False,
                 extra_title_text='', run_cached=False, feedback=False, quantity_hist=False, sleep_len=0.4,
-                brand_list=[], model_list=[], sacat=0):
+                brand_list=[], model_list=[], sacat=0, country='USA'):
     start = time.time()
     requests_cache.clear()
     print(query)
@@ -483,6 +484,7 @@ def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.d
     try:
         df = pd.read_excel('Spreadsheets/' + query + extra_title_text + '.xlsx', index_col=0)
         df = df.astype({'Brand': 'object'})
+        df = df.astype({'Model': 'object'})
 
     except:
         # if file does not exist, create it
@@ -499,11 +501,18 @@ def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.d
 
         # Determine price ranges to search with
         i = 0
+        if country == 'UK':
+            extension = 'co.uk'
+            num_check = 193
+        else:
+            extension = 'com'
+            num_check = 201
+
         while i != len(price_ranges) - 1:
             time.sleep(
                     sleep_len * random.uniform(0,
                                                1))  # eBays servers will kill your connection if you hit them too frequently
-            url = 'https://www.ebay.com/sch/i.html?_from=R40&_nkw=' + str(
+            url = 'https://www.ebay.' + extension + '/sch/i.html?_from=R40&_nkw=' + str(
                     query.replace(" ", "+").replace(',', '%2C').replace('(', '%28').replace(')',
                                                                                             '%29')) + '&_sacat=' + str(
                     sacat) + '&LH_PrefLoc=1&LH_Sold=1&LH_Complete=1&_udlo=' + str(
@@ -515,11 +524,11 @@ def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.d
             items = soup.find_all('li', attrs={'class': 's-item'})
             if verbose: print(price_ranges, len(items), i, price_ranges[i], price_ranges[i + 1], url)
 
-            if len(items) == 201 and round(price_ranges[i + 1] - price_ranges[i], 2) > 0.01:
+            if len(items) >= num_check and round(price_ranges[i + 1] - price_ranges[i], 2) > 0.01:
                 # If there's only one cent difference between the two just increment, we need to do some special logic below
                 midpoint = round((price_ranges[i] + price_ranges[i + 1]) / 2, 2)
                 price_ranges = price_ranges[:i + 1] + [midpoint] + price_ranges[i + 1:]
-            elif len(items) == 201 and round(price_ranges[i + 1] - price_ranges[i], 2) == 0.01:
+            elif len(items) >= num_check and round(price_ranges[i + 1] - price_ranges[i], 2) == 0.01:
                 # If there is a one cent difference between the two, we can have eBay just return that specific price to get a little bit finer detail
                 price_ranges = price_ranges[:i + 1] + [price_ranges[i]] + [price_ranges[i + 1]] + price_ranges[i + 1:]
                 i += 2
@@ -527,7 +536,7 @@ def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.d
                 i += 1
 
         for i in range(len(price_ranges) - 1):
-            url = 'https://www.ebay.com/sch/i.html?_from=R40&_nkw=' + str(
+            url = 'https://www.ebay.' + extension + '/sch/i.html?_from=R40&_nkw=' + str(
                     query.replace(" ", "+").replace(',', '%2C').replace('(', '%28').replace(')',
                                                                                             '%29')) + '&_sacat=' + str(
                     sacat) + '&LH_PrefLoc=1&LH_Sold=1&LH_Complete=1&_udlo=' + str(
@@ -536,7 +545,7 @@ def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.d
             if verbose: print(price_ranges[i], price_ranges[i + 1], url)
 
             df = ebay_scrape(url, df, min_date, feedback=feedback, quantity_hist=quantity_hist, sleep_len=sleep_len,
-                             brand_list=brand_list, model_list=model_list, verbose=verbose)
+                             brand_list=brand_list, model_list=model_list, verbose=verbose, country=country)
 
             # Best to save semiregularly in case eBay kills the connection
             df = pd.DataFrame.drop_duplicates(df)
@@ -603,6 +612,7 @@ run_all_feedback = True
 run_all_hist = True
 run_cached = False
 sleep_len = 0.5
+country = 'USA'
 brand_list = ['FOUNDERS', 'ASUS', 'MSI', 'EVGA', 'GIGABYTE', 'ZOTAC', 'INNO3D', 'PNY', 'SAPPHIRE', 'COLORFUL', 'ASROCK',
               'POWERCOLOR', 'XFX', 'POWER COLOR']
 model_list = ['XC3', 'TRINITY', 'FTW3', 'FOUNDERS', 'STRIX', 'EKWB', 'TUF', 'SUPRIM', 'VENTUS', 'MECH', 'EVOKE', 'TRIO',
@@ -622,45 +632,45 @@ df_darkhero = ebay_search('ASUS Dark Hero -image -jpeg -img -picture -pic -jpg',
 
 # Zen 3 Analysis
 df_5950x = ebay_search('5950X -image -jpeg -img -picture -pic -jpg', 799, 400, 2200, feedback=run_all_feedback,
-                       run_cached=run_cached, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len)
+                       run_cached=run_cached, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len, country=country)
 df_5900x = ebay_search('5900X -image -jpeg -img -picture -pic -jpg', 549, 499, 2050, feedback=run_all_feedback,
-                       run_cached=run_cached, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len)
+                       run_cached=run_cached, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len, country=country)
 df_5800x = ebay_search('5800X -image -jpeg -img -picture -pic -jpg', 449, 400, 1000, feedback=run_all_feedback,
-                       run_cached=run_cached, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len)
+                       run_cached=run_cached, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len, country=country)
 df_5600x = ebay_search('5600X -image -jpeg -img -picture -pic -jpg', 299, 250, 1000, feedback=run_all_feedback,
                        run_cached=run_cached, quantity_hist=run_all_hist, min_date=datetime.datetime(2020, 11, 1),
-                       sleep_len=sleep_len)
+                       sleep_len=sleep_len, country=country, extra_title_text='')
 median_plotting([df_5950x, df_5900x, df_5800x, df_5600x], ['5950X', '5900X', '5800X', '5600X'], 'Zen 3 Median Pricing',
                 [799, 549, 449, 299])
 
 # Big Navi Analysis
 df_6800 = ebay_search('RX 6800 -XT -image -jpeg -img -picture -pic -jpg', 579, 400, 2500, feedback=run_all_feedback,
                       run_cached=run_cached, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
-                      brand_list=brand_list, model_list=model_list)
+                      brand_list=brand_list, model_list=model_list, country=country)
 df_6800xt = ebay_search('RX 6800 XT -image -jpeg -img -picture -pic -jpg', 649, 850, 2000, feedback=run_all_feedback,
                         run_cached=run_cached, quantity_hist=run_all_hist,
                         extra_title_text='', sleep_len=sleep_len, brand_list=brand_list,
-                        model_list=model_list)  # There are some $5000+, but screw with graphs
+                        model_list=model_list, country=country)  # There are some $5000+, but screw with graphs
 df_6900 = ebay_search('RX 6900 -image -jpeg -img -picture -pic -jpg', 999, 100, 999999, feedback=run_all_feedback,
                       run_cached=run_cached, quantity_hist=run_all_hist, min_date=datetime.datetime(2020, 12, 8),
                       extra_title_text='', sleep_len=sleep_len, brand_list=brand_list,
-                      model_list=model_list)  # Not out until December 8
+                      model_list=model_list, country=country)  # Not out until December 8
 median_plotting([df_6800, df_6800xt, df_6900], ['RX 6800', 'RX 6800 XT', 'RX 6900'], 'Big Navi Median Pricing',
                 [579, 649, 999])
 
 # RTX 30 Series Analysis
 df_3060 = ebay_search('RTX 3060 -image -jpeg -img -picture -pic -jpg', 399, 200, 1300, feedback=run_all_feedback,
                       run_cached=run_cached, quantity_hist=run_all_hist, min_date=datetime.datetime(2020, 12, 1),
-                      extra_title_text='', sleep_len=sleep_len, brand_list=brand_list, model_list=model_list)
+                      extra_title_text='', sleep_len=sleep_len, brand_list=brand_list, model_list=model_list, country=country)
 df_3070 = ebay_search('RTX 3070 -image -jpeg -img -picture -pic -jpg', 499, 499, 1300, feedback=run_all_feedback,
                       run_cached=run_cached, quantity_hist=run_all_hist, min_date=datetime.datetime(2020, 10, 29),
-                      extra_title_text='', sleep_len=sleep_len, brand_list=brand_list, model_list=model_list)
+                      extra_title_text='', sleep_len=sleep_len, brand_list=brand_list, model_list=model_list, country=country)
 df_3080 = ebay_search('RTX 3080 -image -jpeg -img -picture -pic -jpg', 699, 550, 10000, feedback=run_all_feedback,
                       run_cached=run_cached, quantity_hist=run_all_hist, min_date=datetime.datetime(2020, 9, 17),
-                      extra_title_text='', sleep_len=sleep_len, brand_list=brand_list, model_list=model_list)
+                      extra_title_text='', sleep_len=sleep_len, brand_list=brand_list, model_list=model_list, country=country)
 df_3090 = ebay_search('RTX 3090 -image -jpeg -img -picture -pic -jpg', 1499, 550, 10000, feedback=run_all_feedback,
                       run_cached=run_cached, quantity_hist=run_all_hist, min_date=datetime.datetime(2020, 9, 17),
-                      extra_title_text='', sleep_len=sleep_len, brand_list=brand_list, model_list=model_list)
+                      extra_title_text='', sleep_len=sleep_len, brand_list=brand_list, model_list=model_list, country=country)
 median_plotting([df_3060, df_3070, df_3080, df_3090], ['3060', '3070', '3080', '3090'], 'RTX 30 Series Median Pricing',
                 [399, 499, 699, 1499])
 
@@ -668,20 +678,20 @@ median_plotting([df_3060, df_3070, df_3080, df_3090], ['3060', '3070', '3080', '
 df_ps5_digital = ebay_search('PS5 Digital -image -jpeg -img -picture -pic -jpg', 399, 300, 11000, run_cached=run_cached,
                              feedback=run_all_feedback, quantity_hist=run_all_hist,
                              min_date=datetime.datetime(2020, 9, 16), extra_title_text='', sleep_len=sleep_len,
-                             sacat=139971)
+                             sacat=139971, country=country)
 df_ps5_disc = ebay_search('PS5 -digital -image -jpeg -img -picture -pic -jpg', 499, 450, 11000, run_cached=run_cached,
                           feedback=run_all_feedback, quantity_hist=run_all_hist,
                           min_date=datetime.datetime(2020, 9, 16), extra_title_text='', sleep_len=sleep_len,
-                          sacat=139971)
+                          sacat=139971, country=country)
 median_plotting([df_ps5_digital, df_ps5_disc], ['PS5 Digital', 'PS5 Disc'], 'PS5 Median Pricing', [299, 499])
 
 # Xbox Analysis (All time)
 df_xbox_s = ebay_search('Xbox Series S -image -jpeg -img -picture -pic -jpg', 299, 250, 11000, run_cached=run_cached,
                         feedback=run_all_feedback, quantity_hist=run_all_hist, min_date=datetime.datetime(2020, 9, 22),
-                        extra_title_text='', sleep_len=sleep_len, sacat=139971)
+                        extra_title_text='', sleep_len=sleep_len, sacat=139971, country=country)
 df_xbox_x = ebay_search('Xbox Series X -image -jpeg -img -picture -pic -jpg', 499, 350, 11000, run_cached=run_cached,
                         feedback=run_all_feedback, quantity_hist=run_all_hist, min_date=datetime.datetime(2020, 9, 22),
-                        extra_title_text='', sleep_len=sleep_len, sacat=139971)
+                        extra_title_text='', sleep_len=sleep_len, sacat=139971, country=country)
 median_plotting([df_xbox_s, df_xbox_x], ['Xbox Series S', 'Xbox Series X'], 'Xbox Median Pricing',
                 [299, 499])
 
@@ -775,10 +785,10 @@ df_ps4_pro = ebay_search('PS4 pro -repair -box -broken -parts -bad', 399, 60, 50
                          sleep_len=sleep_len, sacat=139971)
 
 # Xbox One Analysis
-df_xbox_one_s = ebay_search('xbox one s -pro -repair -box -broken -parts -bad', 299, 250, 11000, run_cached=run_cached,
+df_xbox_one_s = ebay_search('xbox one s -pro -series -repair -box -broken -parts -bad', 299, 60, 11000, run_cached=run_cached,
                             feedback=run_all_feedback, quantity_hist=run_all_hist, extra_title_text='',
                             sleep_len=sleep_len, sacat=139971)
-df_xbox_one_x = ebay_search('xbox one x -repair -box -broken -parts -bad', 499, 350, 11000, run_cached=run_cached,
+df_xbox_one_x = ebay_search('xbox one x -repair -series -box -broken -parts -bad', 499, 100, 11000, run_cached=run_cached,
                             feedback=run_all_feedback, quantity_hist=run_all_hist, extra_title_text='',
                             sleep_len=sleep_len, sacat=139971)
 
@@ -800,7 +810,7 @@ df_ps5_disc_ld = ebay_search('PS5 -digital -image -jpeg -img -picture -pic -jpg'
 median_plotting([df_ps5_disc_ld, df_ps5_digital_ld], ['PS5 Digital', 'PS5 Disc'], 'PS5 Median Pricing (Post Launch)',
                 [299, 499])
 
-# TODO: Get last gen extracts (run it)
+
 # TODO: Rerun multis, delete all first
 # TODO: Get stockx listings (need to be manual)
 # TODO: Count CL, FB, OfferUp listings
@@ -808,6 +818,7 @@ median_plotting([df_ps5_disc_ld, df_ps5_digital_ld], ['PS5 Digital', 'PS5 Disc']
 # TODO: Size dots at given price point
 
 # TODO: Anonymize data
+# TODO: End search once found already existing data
 
 # TODO: When it's just 1 sold in a multi
 # TODO: "in 24 hours"
