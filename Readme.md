@@ -31,7 +31,7 @@ Examples:
   * sleep_len - Default: 0.4 - How long to wait between url calls. This is to prevent DoSing eBay's servers and having your connection killed
 
 * Filtering Parameters (Mostly to improve performance)
-  * days_before - Default: 999 - How far back in time to search listings. Ends the search at current date - days_before
+  * days_before - Default: 999 - How far back in time to search listings. Ends the search at current date - days_before. 
 
 
 * Plotting/file Parameters

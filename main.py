@@ -37,17 +37,23 @@ def get_quantity_hist(sold_hist_url, sold_list, sleep_len=0.4, verbose=False, de
 
         for r in trs:
             tds = r.find_all('td')
-            if len(tds) > 0:
+            if len(tds) > 1:
                 # buyer = tds[1].text
                 price = float(re.sub(r'[^\d.]+', '', tds[2].text))
                 quantity = int(tds[3].text)
                 sold_date = tds[4].text.split()[0]
                 sold_time = tds[4].text.split()[1]
 
-                sold_datetime = datetime.datetime.strptime(sold_date + ' ' + sold_time, '%b-%d-%y %H:%M:%S')
-                sold_datetime = sold_datetime.replace(second=0, microsecond=0)
+                try:
+                    sold_datetime = datetime.datetime.strptime(sold_date + ' ' + sold_time, '%b-%d-%y %H:%M:%S')
+                    sold_datetime = sold_datetime.replace(second=0, microsecond=0)
 
-                sold_date = datetime.datetime.strptime(tds[4].text.split()[0], '%b-%d-%y')
+                    sold_date = datetime.datetime.strptime(tds[4].text.split()[0], '%b-%d-%y')
+                except Exception as e:
+                    sold_datetime = datetime.datetime.strptime(sold_date + ' ' + sold_time, '%d-%b-%y %H:%M:%S')
+                    sold_datetime = sold_datetime.replace(second=0, microsecond=0)
+
+                    sold_date = datetime.datetime.strptime(tds[4].text.split()[0], '%d-%b-%y')
                 if verbose: print(price, quantity, sold_datetime)
 
                 sold_list.append([price, quantity, sold_date, sold_datetime])
@@ -58,7 +64,7 @@ def get_quantity_hist(sold_hist_url, sold_list, sleep_len=0.4, verbose=False, de
 
         for r in trs:
             tds = r.find_all('td', )
-            if len(tds) > 0:
+            if len(tds) > 1:
                 try:
                     # buyer = tds[1].text
                     accepted = tds[2].text
@@ -66,9 +72,16 @@ def get_quantity_hist(sold_hist_url, sold_list, sleep_len=0.4, verbose=False, de
                     sold_date = tds[4].text.split()[0]
                     sold_time = tds[4].text.split()[1]
 
-                    sold_datetime = datetime.datetime.strptime(sold_date + ' ' + sold_time, '%b-%d-%y %H:%M:%S')
-                    sold_datetime = sold_datetime.replace(second=0, microsecond=0)
-                    sold_date = datetime.datetime.strptime(tds[4].text.split()[0], '%b-%d-%y')
+                    try:
+                        sold_datetime = datetime.datetime.strptime(sold_date + ' ' + sold_time, '%b-%d-%y %H:%M:%S')
+                        sold_datetime = sold_datetime.replace(second=0, microsecond=0)
+
+                        sold_date = datetime.datetime.strptime(tds[4].text.split()[0], '%b-%d-%y')
+                    except Exception as e:
+                        sold_datetime = datetime.datetime.strptime(sold_date + ' ' + sold_time, '%d-%b-%y %H:%M:%S')
+                        sold_datetime = sold_datetime.replace(second=0, microsecond=0)
+
+                        sold_date = datetime.datetime.strptime(tds[4].text.split()[0], '%d-%b-%y')
 
                     if accepted == 'Accepted':
                         if verbose: print(accepted, quantity, sold_datetime)
@@ -225,7 +238,7 @@ def ebay_scrape(base_url, df, min_date='', feedback=False, quantity_hist=False, 
                                     multi_list = True
 
                                     if quantity_hist:
-                                        sold_hist_url = items[0]['href']
+                                        sold_hist_url = iitem[0]['href']
                                         sold_list = get_quantity_hist(sold_hist_url, sold_list, sleep_len=sleep_len,
                                                                       verbose=verbose)
 
@@ -510,6 +523,7 @@ def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.d
 
     if not run_cached:
         price_ranges = [min_price, max_price]
+
 
         # Determine price ranges to search with
         i = 0
