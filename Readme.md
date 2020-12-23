@@ -18,26 +18,36 @@ Examples:
 * Run main.py
 
 # ebaysearch Parameters
+- Search Parameters
+  * query - Search you wish to perform on eBay, can include the following symbols ",", "(", ")", "-", and " " (Example: (AMD, Ryzen) 3100 -combo)
+  * msrp - The MSRP of the product to estimate scalper profits, if not entered it will not display those lines
+  * min_price - Default: 0 - The minimum price to search for
+  * max_price - Default: 10000 - The maximum price to search for
+  * sacat - Default: 0 - Can filter down to a specific category on eBay (For example, video game consoles = 139971) 
+  * country - Default: USA - Allows for searching of different countries, currently only supports 'USA' and 'UK'
+  * feedback - Default: False - Gets the seller feedback for each sold item. WARNING: This explodes run times as the code needs to call the url of every single item. In testing the 5950X extract with this false takes 8 seconds, with True it takes 40 minutes the first time. This is forced True if full_quantity is True as there is no extra work to get the feedback
+  * quantity_hist - Default: False - Gets the full sold history of a multi-item listing. WARNING: This explodes run times
+  * run_cached - Default: False - If True does not get new data from eBay, just runs the plots/analysis on the saved xlsx files. Most useful if want to get the data then run the plots using a different min date (e.g. for all time and then after post-launch only)
+  * sleep_len - Default: 0.4 - How long to wait between url calls. This is to prevent DoSing eBay's servers and having your connection killed
 
-* query - Search you wish to perform on eBay, can include spaces and "-" (Example: PS5 Digital -disc)
-* msrp - The MSRP of the product to estimate scalper profits, if not entered it will not display those lines
-* min_price - Default: 0 - The minimum price to search for
-* max_price - Default: 10000 - The maximum price to search for
-* min_date - Default: datetime.datetime(2020, 1, 1) - The earliest date to consider prices, useful if you want to split on preorders vs post-go live. Note that if you only have one day of data it errors out if you also have an msrp
-* verbose - Default: False - If true prints out a number of debugging statements
-* run_cached - Default: False - If true does not get new data from eBay, just runs the plots/analysis on the saved xlsx files. Most useful if want to get the data then run the plots using a different min date (e.g. for all time and then after post-launch only)
+* Filtering Parameters (Mostly to improve performance)
+  * days_before - Default: 999 - How far back in time to search listings. Ends the search at current date - days_before
 
-Extra Variables:
 
-* feedback - Default: False - Gets the seller feedback for each sold item. WARNING: This explodes run times as the code needs to call the url of every single item. In testing the 5950X extract with this false takes 8 seconds, with True it takes 40 minutes. This is forced True if full_quantity is True as there is no extra work to get the feedback
-* quantity_hist - Default: False - Gets the full sold history of a multi-item listing. WARNING: This explodes run times 
+* Plotting/file Parameters
+  * brand_list - Default: [] - If populated, will search for brands in the list in the title and populate a column with the brand found
+  * model_list - Default: [] - If populated, will search for brands in the list in the title and populate a column with the brand found
+  * min_date - Default: datetime.datetime(2020, 1, 1) - The earliest date to consider prices when plotting, useful if you want to split on preorders vs post-go live. Note that if you only have one day of data it errors out if you also have a msrp
+  * extra_title_text - Default: '' - Extra text to add to the file name and plot titles 
 
-When running for the 5950X on 12/10/20:
-* Both False - 5 URL calls - 00:07 - 434 listings 
-* Only Feedback - 755 URL calls - 14:11 - 434 listings (470 total sold)
-* Quantity_hist - 
+
+* Debugging parameters
+   * debug - Default: False - If True prints out exceptions. If verbose=True this is effectively True
+   * verbose - Default: False - If True prints out all the data as soon as its pulled
 
 ## Release History
 
 * 0.1.0
     * The first proper release
+* 0.5.0
+    * Added a number of performance enhancements and ensuring correct data being scraped

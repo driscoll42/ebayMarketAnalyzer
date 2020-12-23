@@ -487,9 +487,8 @@ def ebay_plot(query, msrp, df, extra_title_text=''):
 
 
 def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.datetime(2020, 1, 1), days_before=999,
-                verbose=False,
-                extra_title_text='', run_cached=False, feedback=False, quantity_hist=False, sleep_len=0.4,
-                brand_list=[], model_list=[], sacat=0, country='USA', debug=False):
+                verbose=False, extra_title_text='', run_cached=False, feedback=False, quantity_hist=False,
+                sleep_len=0.4, brand_list=[], model_list=[], sacat=0, country='USA', debug=False):
     start = time.time()
     requests_cache.clear()
     print(query)
@@ -1118,6 +1117,7 @@ df_ps5_disc_ld = ebay_search('PS5 -digital -image -jpeg -img -picture -pic -jpg'
 median_plotting([df_ps5_disc_ld, df_ps5_digital_ld], ['PS5 Digital', 'PS5 Disc'], 'PS5 Median Pricing (Post Launch)',
                 [299, 499])
 
+# TODO: Update ReadMe
 # TODO: Rerun multis, delete all first
 # TODO: Get stockx listings (need to be manual)
 # TODO: Count CL, FB, OfferUp listings
@@ -1125,7 +1125,6 @@ median_plotting([df_ps5_disc_ld, df_ps5_digital_ld], ['PS5 Digital', 'PS5 Disc']
 # TODO: Size dots at given price point
 
 # TODO: Anonymize data
-# TODO: End search once found already existing data
 
 # TODO: When it's just 1 sold in a multi
 # TODO: "in 24 hours"
