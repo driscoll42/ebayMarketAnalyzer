@@ -498,12 +498,12 @@ def ebay_plot(query, msrp, df, extra_title_text=''):
     plt.savefig('Images/' + query + extra_title_text)
     plt.show()
 
-    return median_price, est_break_even, min_break_even, tot_sold
+    return median_price, est_break_even, min_break_even, tot_sold, estimated_shipping
 
 
 def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.datetime(2020, 1, 1), days_before=999,
                 verbose=False, extra_title_text='', run_cached=False, feedback=False, quantity_hist=False,
-                sleep_len=0.4, brand_list=[], model_list=[], sacat=0, country='USA', debug=False):
+                sleep_len=0.4, brand_list=[], model_list=[], sacat=0, country='USA', debug=False, ebay_rate=0.09):
     start = time.time()
     requests_cache.clear()
     print(query)
@@ -515,7 +515,7 @@ def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.d
         df = pd.read_excel('Spreadsheets/' + query + extra_title_text + '.xlsx', index_col=0, engine='openpyxl')
         df = df.astype({'Brand': 'object'})
         df = df.astype({'Model': 'object'})
-        print(df)
+
     except:
         # if file does not exist, create it
         dict = {'Title'      : [], 'Brand': [], 'Model': [], 'description': [], 'Price': [], 'Shipping': [],
@@ -588,7 +588,7 @@ def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.d
     if min_date:
         df = df[df['Sold Date'] >= min_date]
 
-    median_price, est_break_even, min_break_even, tot_sold = ebay_plot(query, msrp, df, extra_title_text)
+    median_price, est_break_even, min_break_even, tot_sold, estimated_shipping = ebay_plot(query, msrp, df, extra_title_text)
 
     last_week = df.loc[
         df['Sold Date'] >= (datetime.datetime.now() - datetime.timedelta(days=7)).replace(hour=0, minute=0, second=0,
@@ -596,9 +596,9 @@ def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.d
     tot_sales = (df['Total Price'] * df['Quantity']).sum()
     tot_ini_sales = (df['Price'] * df['Quantity']).sum()
 
-    ebay_profit = float(tot_sales) * 0.08
+    ebay_profit = float(tot_sales) * ebay_rate
     # Estimate, eBay can take up to 10% for a fairly "new" seller and as little as 3.6% for a top selling store
-    # I assume most scalpers are "new" sellers so 8% seems fair
+    # I assume most scalpers are "new" sellers so 9% seems fair
 
     pp_profit = float(tot_sold) * 0.30 + float(tot_ini_sales) * 0.029
 
@@ -611,8 +611,9 @@ def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.d
     print('PayPal Profit: $' + str(int(pp_profit)))
     print('Est eBay Profit: $' + str(int(ebay_profit)))
     if msrp > 0:
-        total_scalp_val = round(tot_sales - tot_sold * msrp, 2)
+        total_scalp_val = round(tot_sales - tot_sold * (msrp * 1.0625 + estimated_shipping), 2)
         print('Total Scalpers/eBay Profit: $' + str(total_scalp_val))
+        print('Estimated Scalper Profit: $' + str(round(total_scalp_val - pp_profit - ebay_profit)))
         print('Estimated Break Even Point for Scalpers: $' + str(est_break_even))
         print('Minimum Break Even Point for Scalpers: $' + str(min_break_even))
     elapsed = time.time() - start
@@ -801,6 +802,92 @@ def brand_plot(df, title, brand_list, msrp):
     plt.savefig('Images/' + title)
 
     plt.show()
+
+
+def plot_profits(title, df, msrp, extra_title_text='', ebay_rate=0.09):
+    df = df[df['Ignore'] == 0]
+
+    estimated_shipping = df.loc[df['Shipping'] > 0]
+    estimated_shipping = estimated_shipping['Shipping'].median()
+    if math.isnan(estimated_shipping):
+        estimated_shipping = 0
+
+    df_sales = df.groupby(['Sold Date'])['Total Price'].sum().reset_index()
+    df_quant = df.groupby(['Sold Date'])['Quantity'].sum().reset_index()
+    df_count = df.groupby(['Sold Date'])['Quantity'].count().reset_index()
+
+    df_sales['Quantity'] = df_quant['Quantity']
+    df_sales['Count'] = df_count['Quantity']
+
+    df_sales['Profits'] = df_sales['Total Price'] - (msrp * 1.0625 + estimated_shipping) * df_quant['Quantity']
+    df_sales['eBay Profits'] = df_sales['Total Price'] * ebay_rate
+    df_sales['PayPal Profits'] = df_sales['Total Price'] * 0.029 + 0.30 * df_sales['Count']
+    df_sales['Scalper Profits'] = df_sales['Profits'] - df_sales['eBay Profits'] - df_sales['PayPal Profits']
+
+    df_sales['Cum Sales'] = df_sales['Total Price'].cumsum()
+    df_sales['Cum Profits'] = df_sales['Profits'].cumsum()
+    df_sales['Cum Quantity'] = df_sales['Quantity'].cumsum()
+    df_sales['Cum eBay'] = df_sales['eBay Profits'].cumsum()
+    df_sales['Cum PayPal'] = df_sales['PayPal Profits'].cumsum()
+    df_sales['Cum Scalper'] = df_sales['Scalper Profits'].cumsum()
+
+    print(df_sales)
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5), tight_layout=True)
+
+    ax1.plot(df_sales['Sold Date'], df_sales['Cum Sales'], color='red', label='Cumulative Sales')
+    ax1.plot(df_sales['Sold Date'], df_sales['Cum Profits'], color='darkred', label='Cumulative Total Profits')
+    ax1.plot(df_sales['Sold Date'], df_sales['Cum Scalper'], color='purple', label='Cumulative Scalper Profits')
+
+    ax1.plot(df_sales['Sold Date'], df_sales['Cum eBay'], color='crimson', label='Cumulative eBay Profits')
+
+    ax1.plot(df_sales['Sold Date'], df_sales['Cum PayPal'], color='deeppink', label='Cumulative PayPal Profits')
+
+    ax1.set_ylabel('', color='r')
+    ax1.tick_params('y', colors='r')
+    ax1.set_ylim(bottom=0)
+    ax1.tick_params(axis='y')
+    ax1.set_ylabel("Sales/Profits Dollars ($)")
+    ax1.tick_params(axis='x', rotation=30)
+    ax1.set_xlabel("Sold Date")
+
+    ax1_2 = ax1.twinx()
+    ax1_2.plot(df_quant['Sold Date'], df_sales['Cum Quantity'], color='blue', label='Cumulative Quantity')
+    ax1_2.set_ylabel('Quantity Sold', color='blue')
+    ax1_2.tick_params('y', colors='b')
+    ax1_2.set_ylim(bottom=0)
+    ax1_2.set_ylabel("Quantity")
+
+    lines, labels = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax1_2.get_legend_handles_labels()
+    ax1.legend(lines + lines2, labels + labels2)
+
+    ax2.plot(df_sales['Sold Date'], df_sales['Total Price'], color='red', label='Total Sales ($)')
+    ax2.plot(df_sales['Sold Date'], df_sales['Scalper Profits'], '-', color='darkred', label='Scalper Profits')
+
+    ax2.tick_params(axis='y', colors='red')
+    ax2.tick_params(axis='x', rotation=30)
+    ax2.set_xlabel("Sold Date")
+    ax2.set_ylabel("Sales/Profits Dollars ($)", color='r')
+
+    ax2_2 = ax2.twinx()
+    med_price = df.groupby(['Sold Date'])['Total Price'].median() / 799 * 100
+    ax2_2.plot(med_price, color='black', label='Median % of MSRP')
+    ax2_2.set_ylabel("Median % of MSRP")
+    ax2_2.set_ylim(bottom=100)
+
+    lines, labels = ax2.get_legend_handles_labels()
+    lines2, labels2 = ax2_2.get_legend_handles_labels()
+    ax2.legend(lines + lines2, labels + labels2)
+
+
+    fig.tight_layout()
+    fig.suptitle(title + ' Cumulative Sales/Profits and Profits over time')
+    plt.subplots_adjust(top=0.45)
+    plt.savefig('Images/' + title + ' Cumulative Plots')
+
+    plt.show()
+
 
 
 run_all_feedback = True
@@ -1140,6 +1227,7 @@ median_plotting([df_ps5_disc_ld, df_ps5_digital_ld], ['PS5 Digital', 'PS5 Disc']
                 [299, 499])
 
 # TODO: Update ReadMe
+# TODO: Plot Profit over time
 # TODO: Rerun multis, delete all first
 # TODO: Get stockx listings (need to be manual)
 # TODO: Count CL, FB, OfferUp listings
