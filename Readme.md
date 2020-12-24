@@ -10,7 +10,7 @@ Examples:
 # Install Instructions
 
 * Create an Anaconda 3.8 python environment
-* Run "pip install matplotlib==3.2.2, numpy, pandas==1.1.0, beautifulsoup==4.9.1, lxml==4.6.2, openpyxl==3.0.5, requests==2.25.0, scipy==1.5.4, xlrd==1.2.0"
+* Run "pip install matplotlib==3.2.2, numpy, pandas==1.1.0, beautifulsoup==4.9.1, lxml==4.6.2, openpyxl==3.0.5, requests==2.25.0, scipy==1.5.4, xlrd==1.2.0, lxml, requests_cache
 * Note: This code requires matplotlib 3.2.2, newer versions break the trend line
 
 # How to Run
@@ -35,8 +35,8 @@ Examples:
 
 
 * Plotting/file Parameters
-  * brand_list - Default: [] - If populated, will search for brands in the list in the title and populate a column with the brand found
-  * model_list - Default: [] - If populated, will search for brands in the list in the title and populate a column with the brand found
+  * brand_list - Default: [] - If populated, will search for brands in the list in the title and populate a column with the brand found. This is case insensitive.
+  * model_list - Default: [] - If populated, will search for brands in the list in the title and populate a column with the brand found. This is case insensitive.
   * min_date - Default: datetime.datetime(2020, 1, 1) - The earliest date to consider prices when plotting, useful if you want to split on preorders vs post-go live. Note that if you only have one day of data it errors out if you also have a msrp
   * extra_title_text - Default: '' - Extra text to add to the file name and plot titles 
 

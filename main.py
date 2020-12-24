@@ -303,17 +303,19 @@ def ebay_scrape(base_url, df, min_date='', feedback=False, quantity_hist=False, 
 
                     brand = ''
                     title = item_title
+
                     for b in brand_list:
-                        if b in title:
+                        if b.upper() in title.upper():
                             b = b.replace(' ', '')
                             brand = b
-                    if verbose: print('Brand', brand)
 
                     model = ''
                     for m in model_list:
-                        if m in title:
-                            m = m.replace(' ', '')
-                            model = m
+                        if m[0].upper() in title.upper():
+                            m[0] = m[0].replace(' ', '')
+                            model = m[0]
+                            brand = m[1]
+                    if verbose: print('Brand', brand)
                     if verbose: print('Model', model)
 
                     sold_list = np.array(sold_list)
@@ -507,10 +509,13 @@ def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.d
     print(query)
 
     # https://stackoverflow.com/questions/35807605/create-a-file-if-it-doesnt-exist?lq=1
+
+
     try:
-        df = pd.read_excel('Spreadsheets/' + query + extra_title_text + '.xlsx', index_col=0)
+        df = pd.read_excel('Spreadsheets/' + query + extra_title_text + '.xlsx', index_col=0, engine='openpyxl')
         df = df.astype({'Brand': 'object'})
         df = df.astype({'Model': 'object'})
+        print(df)
     except:
         # if file does not exist, create it
         dict = {'Title'      : [], 'Brand': [], 'Model': [], 'description': [], 'Price': [], 'Shipping': [],
@@ -576,7 +581,7 @@ def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.d
 
             # Best to save semiregularly in case eBay kills the connection
             df = pd.DataFrame.drop_duplicates(df)
-            df.to_excel('Spreadsheets/' + str(query) + extra_title_text + '.xlsx')
+            df.to_excel('Spreadsheets/' + str(query) + extra_title_text + '.xlsx', engine='openpyxl')
             requests_cache.remove_expired_responses()
 
     df = df[df['Ignore'] == 0]
@@ -806,10 +811,13 @@ country = 'USA'
 debug = False
 days_before = 2
 
-brand_list = ['FOUNDERS', 'ASUS', 'MSI', 'EVGA', 'GIGABYTE', 'ZOTAC', 'XFX', 'PNY', 'SAPPHIRE', 'COLORFUL', 'ASROCK',
-              'POWERCOLOR', 'POWER COLOR', 'INNO3D', ]
-model_list = ['XC3', 'TRINITY', 'FTW3', 'FOUNDERS', 'STRIX', 'EKWB', 'TUF', 'SUPRIM', 'VENTUS', 'MECH', 'EVOKE', 'TRIO',
-              'FTW3', 'KINGPIN', 'K|NGP|N', 'AORUS', 'WATERFORCE', 'XTREME', 'MASTER', 'TRINITY', 'AMP']
+brand_list = ['FOUNDER', 'ASUS', 'MSI', 'EVGA', 'GIGABYTE', 'ZOTAC', 'XFX', 'PNY', 'SAPPHIRE', 'COLORFUL', 'ASROCK',
+              'POWERCOLOR', 'INNO3D', 'PALIT', 'VISIONTEK', 'DELL']
+model_list = [['XC3', 'EVGA'], ['TRINITY', 'ZOTAC'], ['FTW3', 'EVGA'], ['FOUNDER', 'FOUNDER'], ['STRIX', 'ASUS'],
+              ['EKWB', 'ASUS'], ['TUF', 'ASUS'], ['SUPRIM', 'MSI'], ['VENTUS', 'MSI'], ['MECH', 'MSI'],
+              ['EVOKE', 'MSI'], ['TRIO', 'MSI'], ['KINGPIN', 'EVGA'], ['K|NGP|N', 'EVGA'], ['AORUS', 'GIGABYTE'],
+              ['WATERFORCE', 'GIGABYTE'], ['XTREME', 'GIGABYTE'], ['MASTER', 'GIGABYTE'], ['AMP', 'ZOTAC'], [' FE ', 'FOUNDER'], ['TWIN EDGE', 'ZOTAC'], ['POWER COLOR', 'POWERCOLOR'], ['ALIENWARE', 'DELL']]
+
 
 requests_cache.install_cache('main_cache', backend='sqlite', expire_after=300)
 
