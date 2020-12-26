@@ -1,5 +1,7 @@
 # eBay Sold Price Scraper
 
+Note: This works as of the last commit. It's very likely some change in eBay's website will break this at some point after I stop maintaining.
+
 This program is built to scrape all sold item data from eBay for any particular item. It will save the data to an excel file and create a scatter plot of the sold prices by date along with the median plot line and trendline. Further if you enter in the MSRP, it will plot a line for that and the break even prices of scalpers (particularly relevant when this was written during the PS5, Zen 3, and Xbox Series X launch). 
 
 Examples:
