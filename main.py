@@ -241,7 +241,7 @@ def ebay_scrape(base_url, df, adapter, min_date='', feedback=False, quantity_his
 
                                     if quantity_hist:
                                         sold_hist_url = iitem[0]['href']
-                                        sold_list = get_quantity_hist(sold_hist_url, sold_list, sleep_len=sleep_len,
+                                        sold_list = get_quantity_hist(sold_hist_url, sold_list, adapter=adapter, sleep_len=sleep_len,
                                                                       verbose=verbose)
 
                                 except Exception as e:
@@ -278,7 +278,7 @@ def ebay_scrape(base_url, df, adapter, min_date='', feedback=False, quantity_his
 
                                         if quantity_hist and quantity_sold > 1:
                                             sold_hist_url = nnitems[0]['href']
-                                            sold_list = get_quantity_hist(sold_hist_url, sold_list, sleep_len=sleep_len,
+                                            sold_list = get_quantity_hist(sold_hist_url, sold_list, adapter=adapter, sleep_len=sleep_len,
                                                                           verbose=verbose)
 
                                     except Exception as e:
@@ -397,7 +397,9 @@ def ebay_plot(query, msrp, df, extra_title_text=''):
     # https://stackoverflow.com/questions/59723501/plotting-a-linear-regression-with-dates-in-matplotlib-pyplot
     df_calc = df[df['Total Price'] > 0]
 
-    med_price = df_calc.groupby(['Sold Date'])['Total Price'].median()
+    df_temp = df_calc.loc[df.index.repeat(df['Quantity'])]
+
+    med_price = df_temp.groupby(['Sold Date'])['Total Price'].median()
     max_price = df_calc.groupby(['Sold Date'])['Total Price'].max()
     min_price = df_calc.groupby(['Sold Date'])['Total Price'].min()
     max_med = max(med_price)
@@ -576,7 +578,7 @@ def ebay_search(query, adapter, msrp=0, min_price=0, max_price=10000, min_date=d
                     price_ranges[i + 1]) + '&rt=nc&_ipg=200&_pgn='
             if verbose: print(price_ranges[i], price_ranges[i + 1], url)
 
-            df = ebay_scrape(url, df, min_date, feedback=feedback, quantity_hist=quantity_hist, sleep_len=sleep_len,
+            df = ebay_scrape(url, df, adapter, min_date, feedback=feedback, quantity_hist=quantity_hist, sleep_len=sleep_len,
                              brand_list=brand_list, model_list=model_list, verbose=verbose, country=country,
                              debug=debug, days_before=days_before)
 
@@ -632,6 +634,10 @@ def median_plotting(dfs, names, title, msrps=[], min_msrp=100):
     plt.title(title)
     for i in range(len(dfs)):
         ci = i % (len(colors) - 1)
+
+        dfs[i] = dfs[i][dfs[i]['Total Price'] > 0]
+        dfs[i] = dfs[i].loc[dfs[i].index.repeat(dfs[i]['Quantity'])]
+
         med_price = dfs[i].groupby(['Sold Date'])['Total Price'].median() / msrps[i] * 100
         min_msrp = min(min_msrp, min(med_price))
         plt.plot(med_price, colors[ci], label=names[i])
@@ -792,6 +798,10 @@ def brand_plot(df, title, brand_list, msrp):
         ci = i % (len(colors) - 1)
         if len(brand_dict[b]) > 0:
             print(b, len(brand_dict[b]))
+
+            brand_dict[b] = brand_dict[b][brand_dict[b]['Total Price'] > 0]
+            brand_dict[b] = brand_dict[b].loc[brand_dict[b].index.repeat(brand_dict[b]['Quantity'])]
+
             med_price = brand_dict[b].groupby(['Sold Date'])['Total Price'].median() / msrp * 100
             min_msrp = min(100, min(med_price))
             plt.plot(med_price, colors[ci], label=brand_list[i])
@@ -805,6 +815,8 @@ def brand_plot(df, title, brand_list, msrp):
 
 def plot_profits(df, title, msrp, store_ebay_rate=0.04, non_store_ebay_rate=0.09):
     df = df[df['Ignore'] == 0]
+    df = df[df['Total Price'] > 0]
+    df = df.loc[df.index.repeat(df['Quantity'])]
 
     med_price = df.groupby(['Sold Date'])['Total Price'].median() / msrp * 100
 
@@ -915,7 +927,7 @@ def plot_profits(df, title, msrp, store_ebay_rate=0.04, non_store_ebay_rate=0.09
 
 run_all_feedback = True
 run_all_hist = True
-run_cached = True
+run_cached = False
 sleep_len = 0.5
 country = 'USA'
 debug = False
@@ -958,19 +970,19 @@ df_darkhero = ebay_search('ASUS Dark Hero -image -jpeg -img -picture -pic -jpg',
 df_5950x = ebay_search('5950X -image -jpeg -img -picture -pic -jpg', http, 799, 400, 2200, feedback=run_all_feedback,
                        run_cached=run_cached, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                        country=country, debug=debug, days_before=days_before, store_rate=comp_store_rate,
-                       non_store_rate=comp_non_store_rate)
+                       non_store_rate=comp_non_store_rate, sacat=cpu_sacat)
 df_5900x = ebay_search('5900X -image -jpeg -img -picture -pic -jpg', http, 549, 499, 2050, feedback=run_all_feedback,
                        run_cached=run_cached, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                        country=country, debug=debug, days_before=days_before, store_rate=comp_store_rate,
-                       non_store_rate=comp_non_store_rate)
+                       non_store_rate=comp_non_store_rate, sacat=cpu_sacat)
 df_5800x = ebay_search('5800X -image -jpeg -img -picture -pic -jpg', http, 449, 400, 1000, feedback=run_all_feedback,
                        run_cached=run_cached, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                        country=country, debug=debug, days_before=days_before, store_rate=comp_store_rate,
-                       non_store_rate=comp_non_store_rate)
+                       non_store_rate=comp_non_store_rate, sacat=cpu_sacat)
 df_5600x = ebay_search('5600X -image -jpeg -img -picture -pic -jpg', http, 299, 250, 1000, feedback=run_all_feedback,
                        run_cached=run_cached, quantity_hist=run_all_hist, min_date=datetime.datetime(2020, 11, 1),
                        sleep_len=sleep_len, country=country, extra_title_text='', debug=debug, days_before=days_before,
-                       store_rate=comp_store_rate, non_store_rate=comp_non_store_rate)
+                       store_rate=comp_store_rate, non_store_rate=comp_non_store_rate, sacat=cpu_sacat)
 
 # Extra Zen 3 Plotting
 median_plotting([df_5950x, df_5900x, df_5800x, df_5600x], ['5950X', '5900X', '5800X', '5600X'], 'Zen 3 Median Pricing',
@@ -989,19 +1001,19 @@ ebay_seller_plot('Zen 3', com_df, extra_title_text='')
 df_6800 = ebay_search('RX 6800 -XT -image -jpeg -img -picture -pic -jpg', http, 579, 400, 2500, feedback=run_all_feedback,
                       run_cached=run_cached, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                       brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                      debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate)
+                      debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate, sacat=graphics_card_sacat)
 df_6800xt = ebay_search('RX 6800 XT -image -jpeg -img -picture -pic -jpg', http, 649, 850, 2000, feedback=run_all_feedback,
                         run_cached=run_cached, quantity_hist=run_all_hist,
                         extra_title_text='', sleep_len=sleep_len, brand_list=brand_list,
                         model_list=model_list, country=country, days_before=days_before,
                         debug=debug, store_rate=comp_store_rate,
-                        non_store_rate=comp_non_store_rate)  # There are some $5000+, but screw with graphs
+                        non_store_rate=comp_non_store_rate, sacat=graphics_card_sacat)  # There are some $5000+, but screw with graphs
 df_6900 = ebay_search('RX 6900 -image -jpeg -img -picture -pic -jpg', http, 999, 100, 999999, feedback=run_all_feedback,
                       run_cached=run_cached, quantity_hist=run_all_hist, min_date=datetime.datetime(2020, 12, 8),
                       extra_title_text='', sleep_len=sleep_len, brand_list=brand_list,
                       model_list=model_list, country=country, days_before=days_before,
                       debug=debug, store_rate=comp_store_rate,
-                      non_store_rate=comp_non_store_rate)  # Not out until December 8
+                      non_store_rate=comp_non_store_rate, sacat=graphics_card_sacat)  # Not out until December 8
 
 # Big Navi Plotting
 median_plotting([df_6800, df_6800xt, df_6900], ['RX 6800', 'RX 6800 XT', 'RX 6900'], 'Big Navi Median Pricing',
@@ -1022,22 +1034,22 @@ df_3060 = ebay_search('RTX 3060 -image -jpeg -img -picture -pic -jpg', http, 399
                       run_cached=run_cached, quantity_hist=run_all_hist, min_date=datetime.datetime(2020, 12, 1),
                       extra_title_text='', sleep_len=sleep_len, brand_list=brand_list, model_list=model_list,
                       country=country, days_before=days_before, debug=debug, store_rate=comp_store_rate,
-                      non_store_rate=comp_non_store_rate)
+                      non_store_rate=comp_non_store_rate, sacat=graphics_card_sacat)
 df_3070 = ebay_search('RTX 3070 -image -jpeg -img -picture -pic -jpg', http, 499, 499, 1300, feedback=run_all_feedback,
                       run_cached=run_cached, quantity_hist=run_all_hist, min_date=datetime.datetime(2020, 10, 29),
                       extra_title_text='', sleep_len=sleep_len, brand_list=brand_list, model_list=model_list,
                       country=country, days_before=days_before, debug=debug, store_rate=comp_store_rate,
-                      non_store_rate=comp_non_store_rate)
+                      non_store_rate=comp_non_store_rate, sacat=graphics_card_sacat)
 df_3080 = ebay_search('RTX 3080 -image -jpeg -img -picture -pic -jpg', http, 699, 550, 10000, feedback=run_all_feedback,
                       run_cached=run_cached, quantity_hist=run_all_hist, min_date=datetime.datetime(2020, 9, 17),
                       extra_title_text='', sleep_len=sleep_len, brand_list=brand_list, model_list=model_list,
                       country=country, days_before=days_before, debug=debug, store_rate=comp_store_rate,
-                      non_store_rate=comp_non_store_rate)
+                      non_store_rate=comp_non_store_rate, sacat=graphics_card_sacat)
 df_3090 = ebay_search('RTX 3090 -image -jpeg -img -picture -pic -jpg', http, 1499, 550, 10000, feedback=run_all_feedback,
                       run_cached=run_cached, quantity_hist=run_all_hist, min_date=datetime.datetime(2020, 9, 17),
                       extra_title_text='', sleep_len=sleep_len, brand_list=brand_list, model_list=model_list,
                       country=country, days_before=days_before, debug=debug, store_rate=comp_store_rate,
-                      non_store_rate=comp_non_store_rate)
+                      non_store_rate=comp_non_store_rate, sacat=graphics_card_sacat)
 
 # RTX 30 Series/Ampere Plotting
 median_plotting([df_3060, df_3070, df_3080, df_3090], ['3060', '3070', '3080', '3090'], 'RTX 30 Series Median Pricing',
@@ -1060,57 +1072,57 @@ brand_plot(com_df, 'RTX 30 Series-Ampere AIB Comparison', brand_list, 699)
 df_3950X = ebay_search('3950X -image -jpeg -img -picture -pic -jpg', http, 749, 350, 1200, run_cached=run_cached,
                        feedback=run_all_feedback, quantity_hist=False, extra_title_text='', sleep_len=sleep_len,
                        brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate)
+                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate, sacat=cpu_sacat)
 
 df_3900X = ebay_search('3900X -combo -custom', http, 499, 230, 920, run_cached=run_cached,
                        feedback=run_all_feedback, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                        brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate)
+                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate, sacat=cpu_sacat)
 
 df_3900XT = ebay_search('3900XT -combo -custom', http, 499, 200, 800, run_cached=run_cached,
                         feedback=run_all_feedback, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                         brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                        debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate)
+                        debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate, sacat=cpu_sacat)
 
 df_3800XT = ebay_search('3800XT -combo -custom', http, 399, 60, 800, run_cached=run_cached,
                         feedback=run_all_feedback, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                         brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                        debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate)
+                        debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate, sacat=cpu_sacat)
 
 df_3800X = ebay_search('3800X -combo -custom', http, 399, 60, 600, run_cached=run_cached,
                        feedback=run_all_feedback, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                        brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate)
+                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate, sacat=cpu_sacat)
 
 df_3700X = ebay_search('3700X -combo -custom', http, 329, 100, 551, run_cached=run_cached,
                        feedback=run_all_feedback, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                        brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate)
+                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate, sacat=cpu_sacat)
 
 df_3600XT = ebay_search('3600XT -combo -custom', http, 249, 149, 600, run_cached=run_cached,
                         feedback=run_all_feedback, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                         brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                        debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate)
+                        debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate, sacat=cpu_sacat)
 
 df_3600X = ebay_search('3600X -combo -custom -roku', http, 249, 40, 520, run_cached=run_cached,
                        feedback=run_all_feedback, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                        brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate)
+                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate, sacat=cpu_sacat)
 
 df_3600 = ebay_search('(AMD, Ryzen) 3600 -combo -custom -roku -3600x -3600xt', http, 249, 30, 361, run_cached=run_cached,
                       feedback=run_all_feedback, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                       brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                      debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate)
+                      debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate, sacat=cpu_sacat)
 
 df_3300X = ebay_search('3300X -combo -custom', http, 120, 160, 250, run_cached=run_cached,
                        feedback=run_all_feedback, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                        brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate)
+                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate, sacat=cpu_sacat)
 
 df_3100 = ebay_search('(AMD, Ryzen) 3100 -combo -custom -radeon', http, 99, 79, 280, run_cached=run_cached,
                       feedback=run_all_feedback, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                       brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                      debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate)
+                      debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate, sacat=cpu_sacat)
 
 # Zen 2 Plotting
 
@@ -1139,58 +1151,58 @@ ebay_seller_plot('Zen 2', com_df, extra_title_text='')
 df_2060 = ebay_search('rtx 2060 -super', http, 299, 100, 650, run_cached=run_cached, feedback=run_all_feedback,
                       quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                       brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                      debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate)
+                      debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate, sacat=graphics_card_sacat)
 
 df_2060S = ebay_search('rtx 2060 super', http, 399, 79, 10008, run_cached=run_cached, feedback=run_all_feedback,
                        quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                        brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate)
+                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate, sacat=graphics_card_sacat)
 
 df_2070 = ebay_search('rtx 2070 -super', http, 499, 79, 280, run_cached=run_cached, feedback=run_all_feedback,
                       quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                       brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                      debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate)
+                      debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate, sacat=graphics_card_sacat)
 
 df_2070S = ebay_search('rtx 2070 super', http, 499, 79, 1600, run_cached=run_cached, feedback=run_all_feedback,
                        quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                        brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate)
+                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate, sacat=graphics_card_sacat)
 
 df_2080 = ebay_search('rtx 2080 -super -ti', http, 699, 250, 1300, run_cached=run_cached, feedback=run_all_feedback,
                       quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                       brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                      debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate)
+                      debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate, sacat=graphics_card_sacat)
 
 df_2080S = ebay_search('rtx 2080 super -ti', http, 699, 299, 1600, run_cached=run_cached, feedback=run_all_feedback,
                        quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                        brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate)
+                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate, sacat=graphics_card_sacat)
 
 df_2080Ti = ebay_search('rtx 2080 ti -super', http, 999, 400, 3800, run_cached=run_cached,
                         feedback=run_all_feedback, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                         brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                        debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate)
+                        debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate, sacat=graphics_card_sacat)
 
 # Radeon RX 5000 Series (not bothering to separate out 4 vs 8 GB models nor the 50th anniversary
 df_5500XT = ebay_search('rx 5500 xt', http, 169, 80, 400, run_cached=run_cached, feedback=run_all_feedback,
                         quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                         brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                        debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate)
+                        debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate, sacat=graphics_card_sacat)
 
 df_5600XT = ebay_search('rx 5600 xt', http, 279, 200, 750, run_cached=run_cached, feedback=run_all_feedback,
                         quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                         brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                        debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate)
+                        debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate, sacat=graphics_card_sacat)
 
 df_5700 = ebay_search('rx 5700 -xt', http, 349, 250, 550, run_cached=run_cached, feedback=run_all_feedback,
                       quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                       brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                      debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate)
+                      debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate, sacat=graphics_card_sacat)
 
 df_5700XT = ebay_search('rx 5700 xt', http, 499, 150, 850, run_cached=run_cached, feedback=run_all_feedback,
                         quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                         brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                        debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate)
+                        debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate, sacat=graphics_card_sacat)
 
 # PS4 Analysis
 df_ps4 = ebay_search('ps4 -pro -repair -box -broken -parts -bad', http, 399, 60, 5000, run_cached=run_cached,
