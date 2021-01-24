@@ -810,6 +810,13 @@ def brand_plot(dfs, title, brand_list, msrp):
     pd.set_option('display.max_columns', None)
 
     for i, df in enumerate(dfs):
+        for b in brand_list:
+            # Get average price by
+            print(df['item'].iloc[0], b, round(
+                df[(df['Brand'] == b) & (df['Ignore'] == 0) & (df['Total Price'] <= 3000)]['Total Price'].mean(), 2),
+                  round(
+                      df[(df['Brand'] == b) & (df['Ignore'] == 0) & (df['Total Price'] <= 3000)]['Total Price'].count(),
+                      2))
         dfs[i]['Total Price'] /= msrp[i]
 
     df = pd.concat(dfs)
@@ -1788,16 +1795,17 @@ ebay_seller_plot('Xbox', com_df, extra_title_text='')
 
 # Nintendo Switch
 df_switch = ebay_search('nintendo switch -lite', http, 300, 0, 2800, run_cached=run_cached, feedback=run_all_feedback,
-                      quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
-                      brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                      debug=debug, store_rate=vg_store_rate, non_store_rate=vg_non_store_rate,
-                      sacat=139971)
+                        quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                        brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                        debug=debug, store_rate=vg_store_rate, non_store_rate=vg_non_store_rate,
+                        sacat=139971)
 
-df_switch_lite = ebay_search('nintendo switch lite', http, 200, 0, 2800, run_cached=run_cached, feedback=run_all_feedback,
-                      quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
-                      brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                      debug=debug, store_rate=vg_store_rate, non_store_rate=vg_non_store_rate,
-                      sacat=139971)
+df_switch_lite = ebay_search('nintendo switch lite', http, 200, 0, 2800, run_cached=run_cached,
+                             feedback=run_all_feedback,
+                             quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                             brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                             debug=debug, store_rate=vg_store_rate, non_store_rate=vg_non_store_rate,
+                             sacat=139971)
 
 # Nintendo Switch Plotting
 median_plotting([df_switch_lite, df_switch], ['Lite', 'Standard'], 'Nintendo Switch Median Pricing',
