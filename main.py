@@ -856,71 +856,62 @@ def brand_plot(dfs, title, brand_list, msrp):
 
 
 def plot_profits(df, title, msrp, store_ebay_rate=0.04, non_store_ebay_rate=0.09):
+    df = df.copy()
+
     df = df[df['Ignore'] == 0]
     df = df[df['Total Price'] > 0]
     df = df[df['Quantity'] > 0]
-    df = df.loc[df.index.repeat(df['Quantity'])]
+    df = df.sort_values(by=['Sold Date'])
 
+    # Repeat each row quantity times, need for accurate median plotting
+    df = df.loc[df.index.repeat(df['Quantity'])]
+    df['Quantity'] = 1
     med_price = df.groupby(['Sold Date'])['Total Price'].median() / msrp * 100
 
-    df['Total Price'] = df['Total Price'] * df['Quantity']
-
-    df_store = df[df['Store'] == 1]
-    df_nonstore = df[df['Store'] == 0]
+    df['Profits'] = 0
+    df['eBay Profits'] = 0
+    df['Scalper Profits'] = 0
+    df['PayPal Profits'] = 0
 
     estimated_shipping = df.loc[df['Shipping'] > 0]
     estimated_shipping = estimated_shipping['Shipping'].median()
     if math.isnan(estimated_shipping):
         estimated_shipping = 0
 
-    # Non-Store
-    df_sales = df_nonstore.groupby(['Sold Date'])['Total Price'].sum().reset_index()
-    df_quant = df_nonstore.groupby(['Sold Date'])['Quantity'].sum().reset_index()
-    df_count = df_nonstore.groupby(['Sold Date'])['Quantity'].count().reset_index()
+    df['eBay Profits'] = df['Total Price'] * non_store_ebay_rate * (1 - df['Store']) \
+                         + df['Total Price'] * store_ebay_rate * df['Store']
 
-    df_sales['Non-Store Quantity'] = df_quant['Quantity']
-    df_sales['Non-Store Count'] = df_count['Quantity']
+    df['PayPal Profits'] = df['Total Price'] * 0.029 + 0.30
 
-    # Store
-    df_st_sales = df_store.groupby(['Sold Date'])['Total Price'].sum().reset_index()
-    df_st_quant = df_store.groupby(['Sold Date'])['Quantity'].sum().reset_index()
-    df_st_count = df_store.groupby(['Sold Date'])['Quantity'].count().reset_index()
+    df['Scalper Profits'] = df['Store'] * (df['Total Price'] \
+                                           - (msrp * 1.0625 + estimated_shipping) \
+                                           - (df['Total Price'] * store_ebay_rate) \
+                                           - (df['Total Price'] * 0.029 + 0.30)) + ((1 - df['Store']) * (
+            df['Total Price'] \
+            - (msrp * 1.0625 + estimated_shipping) \
+            - (df['Total Price'] * non_store_ebay_rate) \
+            - (df['Total Price'] * 0.029 + 0.30)))
 
-    df_sales['Store Total Price'] = df_st_sales['Total Price']
-    df_sales['Store Quantity'] = df_st_quant['Quantity']
-    df_sales['Store Count'] = df_st_count['Quantity']
+    df['Total Sales'] = df['Total Price']
 
-    df_sales = df_sales.fillna(0)
+    df = df.groupby(['Sold Date']).agg(
+            {'Total Price'    : 'sum', 'Quantity': 'sum', 'eBay Profits': 'sum', 'PayPal Profits': 'sum',
+             'Scalper Profits': 'sum'})
 
-    df_sales['eBay Profits'] = df_sales['Total Price'] * non_store_ebay_rate \
-                               + df_sales['Store Total Price'] * store_ebay_rate
+    df['Sold Date'] = df.index
 
-    df_sales['PayPal Profits'] = (df_sales['Total Price'] * 0.029 + 0.30 * df_sales['Non-Store Count']) \
-                                 + (df_sales['Store Total Price'] * 0.029 + 0.30 * df_sales['Store Count'])
-    df_sales['Store Profits'] = df_sales['Store Total Price'] \
-                                - (msrp * 1.0625 + estimated_shipping) * df_sales['Store Quantity'] \
-                                - (df_sales['Store Total Price'] * store_ebay_rate) \
-                                - (df_sales['Store Total Price'] * 0.029 + 0.30 * df_sales['Store Count'])
-    df_sales['Non-Store Profits'] = df_sales['Total Price'] \
-                                    - (msrp * 1.0625 + estimated_shipping) * df_sales['Non-Store Quantity'] \
-                                    - (df_sales['Total Price'] * non_store_ebay_rate) \
-                                    - (df_sales['Total Price'] * 0.029 + 0.30 * df_sales['Non-Store Count'])
-    df_sales['Scalper Profits'] = df_sales['Store Profits'] + df_sales['Non-Store Profits']
-    df_sales['Total Sales'] = df_sales['Total Price'] + df_sales['Store Total Price']
-
-    df_sales['Cum Sales'] = (df_sales['Total Price'] + df_sales['Store Total Price']).cumsum()
-
-    df_sales['Cum Quantity'] = df_sales['Store Quantity'].cumsum() + df_sales['Non-Store Quantity'].cumsum()
-    df_sales['Cum eBay'] = df_sales['eBay Profits'].cumsum()
-    df_sales['Cum PayPal'] = df_sales['PayPal Profits'].cumsum()
-    df_sales['Cum Scalper'] = df_sales['Scalper Profits'].cumsum()
+    df['Cum Sales'] = df['Total Price'].cumsum()
+    df['Cum Quantity'] = df['Quantity'].cumsum()
+    df['Cum eBay'] = df['eBay Profits'].cumsum()
+    df['Cum PayPal'] = df['PayPal Profits'].cumsum()
+    df['Cum Scalper'] = df['Scalper Profits'].cumsum()
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5), tight_layout=True)
 
-    ax1.plot(df_sales['Sold Date'], df_sales['Cum Sales'], color='red', label='Cumulative Sales')
-    ax1.plot(df_sales['Sold Date'], df_sales['Cum Scalper'], color='purple', label='Cumulative Scalper Profits')
-    ax1.plot(df_sales['Sold Date'], df_sales['Cum eBay'], color='crimson', label='Cumulative eBay Profits')
-    ax1.plot(df_sales['Sold Date'], df_sales['Cum PayPal'], color='deeppink', label='Cumulative PayPal Profits')
+    ax1.plot(df['Sold Date'], df['Cum Sales'], color='red', label='Cumulative Sales')
+    ax1.plot(df['Sold Date'], df['Cum Scalper'], color='purple', label='Cumulative Scalper Profits')
+    ax1.plot(df['Sold Date'], df['Cum eBay'], color='crimson', label='Cumulative eBay Profits')
+    ax1.plot(df['Sold Date'], df['Cum PayPal'], color='deeppink', label='Cumulative PayPal Profits')
 
     ax1.set_ylabel('', color='r')
     ax1.tick_params('y', colors='r')
@@ -931,7 +922,7 @@ def plot_profits(df, title, msrp, store_ebay_rate=0.04, non_store_ebay_rate=0.09
     ax1.set_xlabel("Sold Date")
 
     ax1_2 = ax1.twinx()
-    ax1_2.plot(df_quant['Sold Date'], df_sales['Cum Quantity'], color='blue', label='Cumulative Quantity')
+    ax1_2.plot(df['Sold Date'], df['Cum Quantity'], color='blue', label='Cumulative Quantity')
     ax1_2.set_ylabel('Quantity Sold', color='blue')
     ax1_2.tick_params('y', colors='b')
     ax1_2.set_ylim(bottom=0)
@@ -941,8 +932,8 @@ def plot_profits(df, title, msrp, store_ebay_rate=0.04, non_store_ebay_rate=0.09
     lines2, labels2 = ax1_2.get_legend_handles_labels()
     ax1.legend(lines + lines2, labels + labels2)
 
-    ax2.plot(df_sales['Sold Date'], df_sales['Total Sales'], color='red', label='Total Sales ($)')
-    ax2.plot(df_sales['Sold Date'], df_sales['Scalper Profits'], '-', color='darkred', label='Scalper Profits')
+    ax2.plot(df['Sold Date'], df['Total Price'], color='red', label='Total Sales ($)')
+    ax2.plot(df['Sold Date'], df['Scalper Profits'], '-', color='darkred', label='Scalper Profits')
 
     ax2.tick_params(axis='y', colors='red')
     ax2.tick_params(axis='x', rotation=30)
@@ -965,7 +956,7 @@ def plot_profits(df, title, msrp, store_ebay_rate=0.04, non_store_ebay_rate=0.09
 
     plt.show()
 
-    return df_sales['Cum eBay'].iloc[-1], df_sales['Cum PayPal'].iloc[-1], df_sales['Cum Scalper'].iloc[-1]
+    return df['Cum eBay'].iloc[-1], df['Cum PayPal'].iloc[-1], df['Cum Scalper'].iloc[-1]
 
 
 run_all_feedback = True
@@ -1367,17 +1358,17 @@ df_980 = ebay_search('980 -ti -optiplex', http, 549, 0, 2000, run_cached=run_cac
                      debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
                      sacat=graphics_card_sacat)
 
-df_970 = ebay_search('970', http, 329, 0, 2000, run_cached=run_cached, feedback=run_all_feedback,
+df_970 = ebay_search('970', http, 329, 0, 400, run_cached=run_cached, feedback=run_all_feedback,
                      quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                      brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
                      debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
                      sacat=graphics_card_sacat)
-df_960 = ebay_search('960 -optiplex', http, 199, 0, 2000, run_cached=run_cached, feedback=run_all_feedback,
+df_960 = ebay_search('960 -optiplex', http, 199, 0, 400, run_cached=run_cached, feedback=run_all_feedback,
                      quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                      brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
                      debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
                      sacat=graphics_card_sacat)
-df_950 = ebay_search('950 -950m', http, 159, 0, 2000, run_cached=run_cached, feedback=run_all_feedback,
+df_950 = ebay_search('950 -950m', http, 159, 0, 400, run_cached=run_cached, feedback=run_all_feedback,
                      quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                      brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
                      debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
@@ -1393,7 +1384,7 @@ df_960 = df_960.assign(item='960')
 df_950 = df_950.assign(item='950')
 
 frames = [df_950, df_960, df_970, df_980, df_980Ti, df_titanx]
-median_plotting(frames, ['950', '960', '970', '980', '980 Ti', 'Titan X'], 'RX 5000 and Vega Series Median Pricing',
+median_plotting(frames, ['950', '960', '970', '980', '980 Ti', 'Titan X'], 'Maxwell (GTX 900) Series Median Pricing',
                 [159, 199, 329, 549, 649, 1200])
 
 # Zen 2 data
@@ -1584,7 +1575,7 @@ median_plotting(frames,
                 ['i7 Nehalem', 'i7 Lynnfield', 'i7 970+', 'i7 2700k', 'i7 3770k', 'i7 4770k', 'i7 4790k', 'i7 6700k',
                  'i7 7700k', 'i7 8700k', 'i7 9700K', 'i7 10700k'],
                 'i7 Median Pricing',
-                [284, 284, 583, 342, 339, 339, 339, 339, 359, 374, 374])
+                [284, 284, 583, 332, 342, 339, 339, 339, 339, 359, 374, 374])
 
 #  Zen Series
 
@@ -1628,7 +1619,7 @@ df_1300X = ebay_search('(amd, ryzen) 1300X', http, 129, 0, 500, feedback=run_all
                        brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
                        debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate, sacat=cpu_sacat)
 
-df_1200 = ebay_search('(amd, ryzen) 1200', http, 109, 0, 500, feedback=run_all_feedback,
+df_1200 = ebay_search('(amd, ryzen) 1200 -intel', http, 109, 0, 500, feedback=run_all_feedback,
                       run_cached=run_cached, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                       brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate, sacat=cpu_sacat)
