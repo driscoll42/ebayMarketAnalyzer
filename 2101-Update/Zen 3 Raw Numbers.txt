@@ -1,0 +1,637 @@
+C:\Users\mdriscoll6\Anaconda3\python.exe C:/Users/mdriscoll6/Dropbox/PythonProjects/eBayScraper/temp5.py
+5950X -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: $1109.995
+Median Price: $1187
+Past Week Average Price: $1119.34
+Average Price: $1216.34
+Total Sold: 1437
+Total Sales: $1747357.8
+PayPal Profit: $51104
+Est eBay Profit: $130093
+Est PayPal/eBay Profit: $181197
+Total Scalpers/eBay Profit: $510837.26
+Estimated Scalper Profit: $329639
+Estimated Break Even Point for Scalpers: $987
+Minimum Break Even Point for Scalpers: $812
+Runtime: 00:00:01
+
+5900X -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: $785.0
+Median Price: $800
+Past Week Average Price: $782.8
+Average Price: $829.14
+Total Sold: 1962
+Total Sales: $1626043.11
+PayPal Profit: $47743
+Est eBay Profit: $132403
+Est PayPal/eBay Profit: $180146
+Total Scalpers/eBay Profit: $459256.42
+Estimated Scalper Profit: $279109
+Estimated Break Even Point for Scalpers: $681
+Minimum Break Even Point for Scalpers: $558
+Runtime: 00:00:01
+
+5800X -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: $537.99
+Median Price: $553
+Past Week Average Price: $536.66
+Average Price: $566.5
+Total Sold: 2126
+Total Sales: $1203970.7
+PayPal Profit: $35552
+Est eBay Profit: $93339
+Est PayPal/eBay Profit: $128891
+Total Scalpers/eBay Profit: $168497.09
+Estimated Scalper Profit: $39604
+Estimated Break Even Point for Scalpers: $558
+Minimum Break Even Point for Scalpers: $457
+Runtime: 00:00:01
+
+5600X -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: $374.99
+Median Price: $405
+Past Week Average Price: $373.3
+Average Price: $406.83
+Total Sold: 3204
+Total Sales: $1303102.42
+PayPal Profit: $38751
+Est eBay Profit: $96680
+Est PayPal/eBay Profit: $135431
+Total Scalpers/eBay Profit: $253191.67
+Estimated Scalper Profit: $117760
+Estimated Break Even Point for Scalpers: $375
+Minimum Break Even Point for Scalpers: $304
+Runtime: 00:00:01
+
+No handles with labels found to put in legend.
+No handles with labels found to put in legend.
+3950X -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: $609.95
+Median Price: $611
+Past Week Average Price: $620.38
+Average Price: $630.28
+Total Sold: 529
+Total Sales: $333087.78
+PayPal Profit: $9818
+Est eBay Profit: $27617
+Est PayPal/eBay Profit: $37435
+Total Scalpers/eBay Profit: $-92578.68
+Estimated Scalper Profit: $-130015
+Estimated Break Even Point for Scalpers: $923
+Minimum Break Even Point for Scalpers: $761
+Runtime: 00:00:00
+
+3900X -combo -custom
+Past Week Median Price: $429.0
+Median Price: $414
+Past Week Average Price: $442.53
+Average Price: $421.61
+Total Sold: 950
+Total Sales: $400928.64
+PayPal Profit: $11911
+Est eBay Profit: $33528
+Est PayPal/eBay Profit: $45439
+Total Scalpers/eBay Profit: $-112154.48
+Estimated Scalper Profit: $-157443
+Estimated Break Even Point for Scalpers: $619
+Minimum Break Even Point for Scalpers: $507
+Runtime: 00:00:00
+
+3900XT -combo -custom
+Past Week Median Price: $451.945
+Median Price: $435
+Past Week Average Price: $458.19
+Average Price: $443.88
+Total Sold: 310
+Total Sales: $137875.77
+PayPal Profit: $4091
+Est eBay Profit: $10419
+Est PayPal/eBay Profit: $14510
+Total Scalpers/eBay Profit: $-28652.36
+Estimated Scalper Profit: $-43426
+Estimated Break Even Point for Scalpers: $616
+Minimum Break Even Point for Scalpers: $507
+Runtime: 00:00:00
+
+3800XT -combo -custom
+Past Week Median Price: $380.0
+Median Price: $349
+Past Week Average Price: $373.56
+Average Price: $344.72
+Total Sold: 280
+Total Sales: $96536.71
+PayPal Profit: $2883
+Est eBay Profit: $5767
+Est PayPal/eBay Profit: $8650
+Total Scalpers/eBay Profit: $-23299.79
+Estimated Scalper Profit: $-31951
+Estimated Break Even Point for Scalpers: $491
+Minimum Break Even Point for Scalpers: $406
+Runtime: 00:00:00
+
+3800X -combo -custom
+Past Week Median Price: $314.99
+Median Price: $317
+Past Week Average Price: $314.8
+Average Price: $317.25
+Total Sold: 376
+Total Sales: $119204.21
+PayPal Profit: $3569
+Est eBay Profit: $9992
+Est PayPal/eBay Profit: $13561
+Total Scalpers/eBay Profit: $-44027.73
+Estimated Scalper Profit: $-57519
+Estimated Break Even Point for Scalpers: $497
+Minimum Break Even Point for Scalpers: $406
+Runtime: 00:00:00
+
+3700X -combo -custom
+Past Week Median Price: $314.1
+Median Price: $299
+Past Week Average Price: $304.07
+Average Price: $299.31
+Total Sold: 1661
+Total Sales: $497581.96
+PayPal Profit: $14928
+Est eBay Profit: $41012
+Est PayPal/eBay Profit: $55940
+Total Scalpers/eBay Profit: $-99651.35
+Estimated Scalper Profit: $-155592
+Estimated Break Even Point for Scalpers: $412
+Minimum Break Even Point for Scalpers: $335
+Runtime: 00:00:01
+
+3600XT -combo -custom
+Past Week Median Price: $258.98
+Median Price: $253
+Past Week Average Price: $265.11
+Average Price: $262.63
+Total Sold: 183
+Total Sales: $48126.69
+PayPal Profit: $1450
+Est eBay Profit: $3683
+Est PayPal/eBay Profit: $5133
+Total Scalpers/eBay Profit: $-1928.84
+Estimated Scalper Profit: $-7063
+Estimated Break Even Point for Scalpers: $313
+Minimum Break Even Point for Scalpers: $253
+Runtime: 00:00:00
+
+3600X -combo -custom -roku
+Past Week Median Price: $222.5
+Median Price: $228
+Past Week Average Price: $230.15
+Average Price: $245.34
+Total Sold: 576
+Total Sales: $141451.39
+PayPal Profit: $4274
+Est eBay Profit: $10955
+Est PayPal/eBay Profit: $15229
+Total Scalpers/eBay Profit: $-16639.01
+Estimated Scalper Profit: $-31921
+Estimated Break Even Point for Scalpers: $314
+Minimum Break Even Point for Scalpers: $253
+Runtime: 00:00:00
+
+(AMD, Ryzen) 3600 -combo -custom -roku -3600x -3600xt
+Past Week Median Price: $190.79000000000002
+Median Price: $199
+Past Week Average Price: $191.54
+Average Price: $203.73
+Total Sold: 1934
+Total Sales: $395156.91
+PayPal Profit: $12039
+Est eBay Profit: $33243
+Est PayPal/eBay Profit: $45282
+Total Scalpers/eBay Profit: $-132849.26
+Estimated Scalper Profit: $-178074
+Estimated Break Even Point for Scalpers: $312
+Minimum Break Even Point for Scalpers: $253
+Runtime: 00:00:01
+
+3300X -combo -custom
+Past Week Median Price: $189.3
+Median Price: $219
+Past Week Average Price: $189.3
+Average Price: $219.09
+Total Sold: 40
+Total Sales: $8763.71
+PayPal Profit: $266
+Est eBay Profit: $567
+Est PayPal/eBay Profit: $833
+Total Scalpers/eBay Profit: $3263.71
+Estimated Scalper Profit: $2430
+Estimated Break Even Point for Scalpers: $157
+Minimum Break Even Point for Scalpers: $122
+Runtime: 00:00:00
+
+(AMD, Ryzen) 3100 -combo -custom -radeon
+Past Week Median Price: $179.99
+Median Price: $139
+Past Week Average Price: $173.17
+Average Price: $148.43
+Total Sold: 379
+Total Sales: $55753.82
+PayPal Profit: $1730
+Est eBay Profit: $3325
+Est PayPal/eBay Profit: $5055
+Total Scalpers/eBay Profit: $12624.57
+Estimated Scalper Profit: $7569
+Estimated Break Even Point for Scalpers: $130
+Minimum Break Even Point for Scalpers: $101
+Runtime: 00:00:00
+
+i9 10900k
+Past Week Median Price: $514.99
+Median Price: $519
+Past Week Average Price: $513.9
+Average Price: $546.61
+Total Sold: 868
+Total Sales: $474459.75
+PayPal Profit: $14019
+Est eBay Profit: $35448
+Est PayPal/eBay Profit: $49467
+Runtime: 00:00:00
+
+i9 9900k
+Past Week Median Price: $363.85
+Median Price: $348
+Past Week Average Price: $356.23
+Average Price: $348.18
+Total Sold: 1036
+Total Sales: $359915.2
+PayPal Profit: $10748
+Est eBay Profit: $28261
+Est PayPal/eBay Profit: $39009
+Runtime: 00:00:00
+
+i7 10700k
+Past Week Median Price: $348.0
+Median Price: $349
+Past Week Average Price: $342.78
+Average Price: $351.12
+Total Sold: 957
+Total Sales: $335586.36
+PayPal Profit: $10019
+Est eBay Profit: $27935
+Est PayPal/eBay Profit: $37954
+Runtime: 00:00:00
+
+i7 9700k
+Past Week Median Price: $269.99
+Median Price: $265
+Past Week Average Price: $270.46
+Average Price: $267.86
+Total Sold: 1286
+Total Sales: $344459.33
+PayPal Profit: $10375
+Est eBay Profit: $27163
+Est PayPal/eBay Profit: $37538
+Runtime: 00:00:00
+
+i7 8700k
+Past Week Median Price: $216.6
+Median Price: $228
+Past Week Average Price: $220.87
+Average Price: $231.55
+Total Sold: 663
+Total Sales: $152930.69
+PayPal Profit: $4633
+Est eBay Profit: $13291
+Est PayPal/eBay Profit: $17924
+Runtime: 00:00:00
+
+i7 7700k
+Past Week Median Price: $261.52
+Median Price: $270
+Past Week Average Price: $265.97
+Average Price: $273.68
+Total Sold: 827
+Total Sales: $225553.69
+PayPal Profit: $6789
+Est eBay Profit: $19312
+Est PayPal/eBay Profit: $26101
+Runtime: 00:00:00
+
+i7 6700k
+Past Week Median Price: $204.66
+Median Price: $204
+Past Week Average Price: $212.81
+Average Price: $207.0
+Total Sold: 936
+Total Sales: $192107.24
+PayPal Profit: $5851
+Est eBay Profit: $16340
+Est PayPal/eBay Profit: $22191
+Runtime: 00:00:00
+
+i7 4790k
+Past Week Median Price: $161.99
+Median Price: $165
+Past Week Average Price: $166.77
+Average Price: $172.39
+Total Sold: 1055
+Total Sales: $187725.53
+PayPal Profit: $5760
+Est eBay Profit: $13668
+Est PayPal/eBay Profit: $19428
+Runtime: 00:00:00
+
+i7 4770k
+Past Week Median Price: $126.99
+Median Price: $120
+Past Week Average Price: $135.16
+Average Price: $124.15
+Total Sold: 308
+Total Sales: $38828.38
+PayPal Profit: $1218
+Est eBay Profit: $3015
+Est PayPal/eBay Profit: $4233
+Runtime: 00:00:00
+
+i7 3770k
+Past Week Median Price: $130.88
+Median Price: $129
+Past Week Average Price: $131.62
+Average Price: $128.48
+Total Sold: 574
+Total Sales: $74053.64
+PayPal Profit: $2319
+Est eBay Profit: $4988
+Est PayPal/eBay Profit: $7307
+Runtime: 00:00:00
+
+i7 (2600k, 2700k)
+Past Week Median Price: $84.625
+Median Price: $80
+Past Week Average Price: $90.52
+Average Price: $85.08
+Total Sold: 399
+Total Sales: $34035.2
+PayPal Profit: $1106
+Est eBay Profit: $2405
+Est PayPal/eBay Profit: $3511
+Runtime: 00:00:00
+
+i7 (970, 980, 980X, 990X)
+Past Week Median Price: $106.625
+Median Price: $100
+Past Week Average Price: $98.33
+Average Price: $112.17
+Total Sold: 168
+Total Sales: $19032.13
+PayPal Profit: $602
+Est eBay Profit: $1331
+Est PayPal/eBay Profit: $1933
+Runtime: 00:00:00
+
+i7 (860, 970, 870k, 880)
+Past Week Median Price: $25.439999999999998
+Median Price: $24
+Past Week Average Price: $48.69
+Average Price: $34.04
+Total Sold: 916
+Total Sales: $23763.29
+PayPal Profit: $963
+Est eBay Profit: $1279
+Est PayPal/eBay Profit: $2242
+Runtime: 00:00:00
+
+i7 (920, 930, 940, 950, 960, 965, 975)
+Past Week Median Price: $25.0
+Median Price: $20
+Past Week Average Price: $36.28
+Average Price: $24.84
+Total Sold: 593
+Total Sales: $15086.01
+PayPal Profit: $615
+Est eBay Profit: $895
+Est PayPal/eBay Profit: $1510
+Runtime: 00:00:00
+
+(amd, ryzen) 1800X
+Past Week Median Price: $170.725
+Median Price: $160
+Past Week Average Price: $210.36
+Average Price: $171.9
+Total Sold: 95
+Total Sales: $16330.39
+PayPal Profit: $502
+Est eBay Profit: $1525
+Est PayPal/eBay Profit: $2027
+Total Scalpers/eBay Profit: $-34825.92
+Estimated Scalper Profit: $-36853
+Estimated Break Even Point for Scalpers: $617
+Minimum Break Even Point for Scalpers: $507
+Runtime: 00:00:00
+
+(amd, ryzen) 1700X
+Past Week Median Price: $150.15
+Median Price: $156
+Past Week Average Price: $165.75
+Average Price: $161.31
+Total Sold: 224
+Total Sales: $36132.73
+PayPal Profit: $1115
+Est eBay Profit: $3116
+Est PayPal/eBay Profit: $4231
+Total Scalpers/eBay Profit: $-60682.87
+Estimated Scalper Profit: $-64914
+Estimated Break Even Point for Scalpers: $495
+Minimum Break Even Point for Scalpers: $406
+Runtime: 00:00:00
+
+(amd, ryzen) 1700 -1700X
+Past Week Median Price: $167.63
+Median Price: $149
+Past Week Average Price: $165.22
+Average Price: $152.73
+Total Sold: 305
+Total Sales: $46941.36
+PayPal Profit: $1452
+Est eBay Profit: $3630
+Est PayPal/eBay Profit: $5082
+Total Scalpers/eBay Profit: $-62328.7
+Estimated Scalper Profit: $-67275
+Estimated Break Even Point for Scalpers: $410
+Minimum Break Even Point for Scalpers: $335
+Runtime: 00:00:00
+
+(amd, ryzen) 1600X
+Past Week Median Price: $112.1
+Median Price: $123
+Past Week Average Price: $113.1
+Average Price: $124.33
+Total Sold: 92
+Total Sales: $11438.59
+PayPal Profit: $359
+Est eBay Profit: $1106
+Est PayPal/eBay Profit: $1465
+Total Scalpers/eBay Profit: $-13660.16
+Estimated Scalper Profit: $-15126
+Estimated Break Even Point for Scalpers: $312
+Minimum Break Even Point for Scalpers: $253
+Runtime: 00:00:00
+
+(amd, ryzen) 1600
+Past Week Median Price: $125.55
+Median Price: $129
+Past Week Average Price: $126.91
+Average Price: $130.71
+Total Sold: 840
+Total Sales: $110264.8
+PayPal Profit: $3449
+Est eBay Profit: $8695
+Est PayPal/eBay Profit: $12144
+Total Scalpers/eBay Profit: $-92164.7
+Estimated Scalper Profit: $-104309
+Estimated Break Even Point for Scalpers: $276
+Minimum Break Even Point for Scalpers: $223
+Runtime: 00:00:00
+
+(amd, ryzen) 1500X
+Past Week Median Price: $108.02
+Median Price: $102
+Past Week Average Price: $112.38
+Average Price: $104.9
+Total Sold: 113
+Total Sales: $11885.08
+PayPal Profit: $378
+Est eBay Profit: $1029
+Est PayPal/eBay Profit: $1407
+Total Scalpers/eBay Profit: $-11935.6
+Estimated Scalper Profit: $-13344
+Estimated Break Even Point for Scalpers: $241
+Minimum Break Even Point for Scalpers: $192
+Runtime: 00:00:00
+
+(amd, ryzen) 1400
+Past Week Median Price: $100.0
+Median Price: $88
+Past Week Average Price: $99.64
+Average Price: $93.24
+Total Sold: 147
+Total Sales: $13705.71
+PayPal Profit: $441
+Est eBay Profit: $1205
+Est PayPal/eBay Profit: $1646
+Total Scalpers/eBay Profit: $-13413.95
+Estimated Scalper Profit: $-15061
+Estimated Break Even Point for Scalpers: $211
+Minimum Break Even Point for Scalpers: $172
+Runtime: 00:00:00
+
+(amd, ryzen) 1300X
+Past Week Median Price: $92.515
+Median Price: $86
+Past Week Average Price: $92.64
+Average Price: $86.56
+Total Sold: 95
+Total Sales: $7610.29
+PayPal Profit: $249
+Est eBay Profit: $665
+Est PayPal/eBay Profit: $914
+Total Scalpers/eBay Profit: $-6265.65
+Estimated Scalper Profit: $-7180
+Estimated Break Even Point for Scalpers: $167
+Minimum Break Even Point for Scalpers: $131
+Runtime: 00:00:00
+
+(amd, ryzen) 1200 -intel
+Past Week Median Price: $86.0
+Median Price: $79
+Past Week Average Price: $87.4
+Average Price: $81.93
+Total Sold: 286
+Total Sales: $23439.96
+PayPal Profit: $765
+Est eBay Profit: $1945
+Est PayPal/eBay Profit: $2710
+Total Scalpers/eBay Profit: $-11775.93
+Estimated Scalper Profit: $-14486
+Estimated Break Even Point for Scalpers: $141
+Minimum Break Even Point for Scalpers: $111
+Runtime: 00:00:00
+
+(amd, ryzen) 2700X
+Past Week Median Price: $199.225
+Median Price: $204
+Past Week Average Price: $205.1
+Average Price: $212.79
+Total Sold: 772
+Total Sales: $164196.0
+PayPal Profit: $4993
+Est eBay Profit: $13312
+Est PayPal/eBay Profit: $18305
+Total Scalpers/eBay Profit: $-113386.25
+Estimated Scalper Profit: $-131692
+Estimated Break Even Point for Scalpers: $412
+Minimum Break Even Point for Scalpers: $335
+Runtime: 00:00:00
+
+(amd, ryzen) 2700 -2700X
+Past Week Median Price: $184.19
+Median Price: $183
+Past Week Average Price: $179.18
+Average Price: $190.75
+Total Sold: 203
+Total Sales: $38582.34
+PayPal Profit: $1179
+Est eBay Profit: $3586
+Est PayPal/eBay Profit: $4765
+Total Scalpers/eBay Profit: $-27674.32
+Estimated Scalper Profit: $-32440
+Estimated Break Even Point for Scalpers: $374
+Minimum Break Even Point for Scalpers: $304
+Runtime: 00:00:00
+
+(amd, ryzen) 2600X
+Past Week Median Price: $155.345
+Median Price: $160
+Past Week Average Price: $161.79
+Average Price: $166.11
+Total Sold: 531
+Total Sales: $88217.27
+PayPal Profit: $2717
+Est eBay Profit: $6321
+Est PayPal/eBay Profit: $9038
+Total Scalpers/eBay Profit: $-45362.42
+Estimated Scalper Profit: $-54401
+Estimated Break Even Point for Scalpers: $288
+Minimum Break Even Point for Scalpers: $233
+Runtime: 00:00:00
+
+(amd, ryzen) 2600 -2600X
+Past Week Median Price: $147.99
+Median Price: $145
+Past Week Average Price: $144.74
+Average Price: $144.93
+Total Sold: 1120
+Total Sales: $161683.92
+PayPal Profit: $5024
+Est eBay Profit: $12343
+Est PayPal/eBay Profit: $17367
+Total Scalpers/eBay Profit: $-84422.08
+Estimated Scalper Profit: $-101790
+Estimated Break Even Point for Scalpers: $251
+Minimum Break Even Point for Scalpers: $202
+Runtime: 00:00:01
+
+(amd, ryzen) 1600 AF
+Past Week Median Price: $123.745
+Median Price: $134
+Past Week Average Price: $127.18
+Average Price: $137.67
+Total Sold: 118
+Total Sales: $16245.3
+PayPal Profit: $506
+Est eBay Profit: $1543
+Est PayPal/eBay Profit: $2049
+Total Scalpers/eBay Profit: $4420.23
+Estimated Scalper Profit: $2370
+Estimated Break Even Point for Scalpers: $114
+Minimum Break Even Point for Scalpers: $87
+Runtime: 00:00:00
+
+
+Process finished with exit code 0
