@@ -664,6 +664,7 @@ def median_plotting(dfs, names, title, msrps=[], min_msrp=100):
         dfs[i] = dfs[i][dfs[i]['Total Price'] > 0]
         dfs[i] = dfs[i][dfs[i]['Quantity'] > 0]
         dfs[i] = dfs[i].loc[dfs[i].index.repeat(dfs[i]['Quantity'])]
+        dfs[i]['Quantity'] = 1
 
         med_price = dfs[i].groupby(['Sold Date'])['Total Price'].median() / msrps[i] * 100
         min_msrp = min(min_msrp, min(med_price))
@@ -810,12 +811,17 @@ def brand_plot(dfs, title, brand_list, msrp):
     pd.set_option('display.max_columns', None)
 
     for i, df in enumerate(dfs):
+        dfs[i] = dfs[i][dfs[i]['Total Price'] > 0]
+        dfs[i] = dfs[i][dfs[i]['Quantity'] > 0]
+        dfs[i] = dfs[i].loc[dfs[i].index.repeat(dfs[i]['Quantity'])]
+        dfs[i]['Quantity'] = 1
+
         for b in brand_list:
             # Get average price by
             print(df['item'].iloc[0], b, round(
                 df[(df['Brand'] == b) & (df['Ignore'] == 0) & (df['Total Price'] <= 3000)]['Total Price'].mean(), 2),
                   round(
-                      df[(df['Brand'] == b) & (df['Ignore'] == 0) & (df['Total Price'] <= 3000)]['Total Price'].count(),
+                      df[(df['Brand'] == b) & (df['Ignore'] == 0) & (df['Total Price'] <= 3000)]['Quantity'].sum(),
                       2))
         dfs[i]['Total Price'] /= msrp[i]
 
@@ -842,6 +848,7 @@ def brand_plot(dfs, title, brand_list, msrp):
 
             brand_dict[b] = brand_dict[b][brand_dict[b]['Total Price'] > 0]
             brand_dict[b] = brand_dict[b].loc[brand_dict[b].index.repeat(brand_dict[b]['Quantity'])]
+            brand_dict[b]['Quantity'] = 1
 
             med_price = brand_dict[b].groupby(['Sold Date'])['Total Price'].median() * 100
             min_msrp = min(100, min(med_price))
@@ -962,10 +969,10 @@ def plot_profits(df, title, msrp, store_ebay_rate=0.04, non_store_ebay_rate=0.09
 run_all_feedback = True
 run_all_hist = True
 run_cached = False
-sleep_len = 5
+sleep_len = 4
 country = 'USA'
 debug = False
-days_before = 7
+days_before = 4
 
 comp_store_rate = 0.04
 comp_non_store_rate = 0.1
