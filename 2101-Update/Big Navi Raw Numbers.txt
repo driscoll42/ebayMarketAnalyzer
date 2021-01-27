@@ -1,0 +1,277 @@
+C:\Users\mdriscoll6\Anaconda3\python.exe C:/Users/mdriscoll6/Dropbox/PythonProjects/eBayScraper/temp3.py
+RX 6800 -XT -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: $909.9
+Median Price: $865
+Past Week Average Price: $921.76
+Average Price: $885.81
+Total Sold: 1169
+Total Sales: $1035858.01
+PayPal Profit: $30390
+Est eBay Profit: $84378
+Est eBay + PayPal Profit: $114768
+Total Scalpers/eBay Profit: $300746.97
+Estimated Scalper Profit: $185978
+Estimated Break Even Point for Scalpers: $720
+Minimum Break Even Point for Scalpers: $589
+Runtime: 00:00:01
+
+RX 6800 XT -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: $1319.98
+Median Price: $1229
+Past Week Average Price: $1300.44
+Average Price: $1227.9
+Total Sold: 1135
+Total Sales: $1394076.31
+PayPal Profit: $40768
+Est eBay Profit: $111153
+Est eBay + PayPal Profit: $151922
+Total Scalpers/eBay Profit: $592156.25
+Estimated Scalper Profit: $440234
+Estimated Break Even Point for Scalpers: $809
+Minimum Break Even Point for Scalpers: $660
+Runtime: 00:00:00
+
+RX 6900 -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: $1549.94
+Median Price: $1460
+Past Week Average Price: $1547.5
+Average Price: $1484.75
+Total Sold: 722
+Total Sales: $1072000.63
+PayPal Profit: $31304
+Est eBay Profit: $91192
+Est eBay + PayPal Profit: $122496
+Total Scalpers/eBay Profit: $295065.45
+Estimated Scalper Profit: $172569
+Estimated Break Even Point for Scalpers: $1234
+Minimum Break Even Point for Scalpers: $1015
+Runtime: 00:00:00
+
+No handles with labels found to put in legend.
+No handles with labels found to put in legend.
+6800 FOUNDER 912.7 13
+6800 ASUS 910.72 69
+6800 MSI 850.65 67
+6800 EVGA nan 0
+6800 GIGABYTE 867.59 153
+6800 ZOTAC nan 0
+6800 XFX 923.65 153
+6800 PNY nan 0
+6800 SAPPHIRE 894.76 305
+6800 COLORFUL nan 0
+6800 ASROCK 853.4 103
+6800 POWERCOLOR 876.19 66
+6800 INNO3D nan 0
+6800 PALIT nan 0
+6800 VISIONTEK nan 0
+6800 DELL nan 0
+6800XT FOUNDER 1255.85 6
+6800XT ASUS 1298.1 109
+6800XT MSI 1194.31 21
+6800XT EVGA nan 0
+6800XT GIGABYTE 1180.98 71
+6800XT ZOTAC nan 0
+6800XT XFX 1226.45 162
+6800XT PNY nan 0
+6800XT SAPPHIRE 1276.85 316
+6800XT COLORFUL nan 0
+6800XT ASROCK 1169.49 69
+6800XT POWERCOLOR 1293.22 71
+6800XT INNO3D nan 0
+6800XT PALIT nan 0
+6800XT VISIONTEK nan 0
+6800XT DELL nan 0
+6900 FOUNDER 1485.1 17
+6900 ASUS 1640.07 37
+6900 MSI 1453.64 32
+6900 EVGA nan 0
+6900 GIGABYTE 1409.07 21
+6900 ZOTAC nan 0
+6900 XFX 1465.13 83
+6900 PNY nan 0
+6900 SAPPHIRE 1508.55 148
+6900 COLORFUL nan 0
+6900 ASROCK 1404.19 170
+6900 POWERCOLOR 1514.65 113
+6900 INNO3D nan 0
+6900 PALIT nan 0
+6900 VISIONTEK nan 0
+6900 DELL nan 0
+FOUNDER 36
+ASUS 215
+MSI 120
+GIGABYTE 245
+XFX 398
+SAPPHIRE 769
+ASROCK 342
+POWERCOLOR 250
+6800 FOUNDER 912.7 13
+6800 ASUS 910.72 69
+6800 MSI 850.65 67
+6800 EVGA nan 0
+6800 GIGABYTE 867.59 153
+6800 ZOTAC nan 0
+6800 XFX 923.65 153
+6800 PNY nan 0
+6800 SAPPHIRE 894.76 305
+6800 COLORFUL nan 0
+6800 ASROCK 853.4 103
+6800 POWERCOLOR 876.19 66
+6800 INNO3D nan 0
+6800 PALIT nan 0
+6800 VISIONTEK nan 0
+6800 DELL nan 0
+6800XT FOUNDER 1255.85 6
+6800XT ASUS 1298.1 109
+6800XT MSI 1194.31 21
+6800XT EVGA nan 0
+6800XT GIGABYTE 1180.98 71
+6800XT ZOTAC nan 0
+6800XT XFX 1226.45 162
+6800XT PNY nan 0
+6800XT SAPPHIRE 1276.85 316
+6800XT COLORFUL nan 0
+6800XT ASROCK 1169.49 69
+6800XT POWERCOLOR 1293.22 71
+6800XT INNO3D nan 0
+6800XT PALIT nan 0
+6800XT VISIONTEK nan 0
+6800XT DELL nan 0
+6900 FOUNDER 1485.1 17
+6900 ASUS 1640.07 37
+6900 MSI 1453.64 32
+6900 EVGA nan 0
+6900 GIGABYTE 1409.07 21
+6900 ZOTAC nan 0
+6900 XFX 1465.13 83
+6900 PNY nan 0
+6900 SAPPHIRE 1508.55 148
+6900 COLORFUL nan 0
+6900 ASROCK 1404.19 170
+6900 POWERCOLOR 1514.65 113
+6900 INNO3D nan 0
+6900 PALIT nan 0
+6900 VISIONTEK nan 0
+6900 DELL nan 0
+FOUNDER 36
+ASUS 215
+MSI 120
+GIGABYTE 245
+XFX 398
+SAPPHIRE 769
+ASROCK 342
+POWERCOLOR 250
+rx 5500 xt
+Past Week Median Price: $339.0
+Median Price: $239
+Past Week Average Price: $340.73
+Average Price: $263.2
+Total Sold: 1021
+Total Sales: $276884.65
+PayPal Profit: $8335
+Est eBay Profit: $19563
+Est eBay + PayPal Profit: $27899
+Total Scalpers/eBay Profit: $83300.5
+Estimated Scalper Profit: $55442
+Estimated Break Even Point for Scalpers: $216
+Minimum Break Even Point for Scalpers: $172
+Runtime: 00:00:01
+
+rx 5600 xt
+Past Week Median Price: $480.05
+Median Price: $379
+Past Week Average Price: $486.96
+Average Price: $392.67
+Total Sold: 1719
+Total Sales: $705581.34
+PayPal Profit: $20977
+Est eBay Profit: $47943
+Est eBay + PayPal Profit: $68921
+Total Scalpers/eBay Profit: $176975.95
+Estimated Scalper Profit: $108347
+Estimated Break Even Point for Scalpers: $352
+Minimum Break Even Point for Scalpers: $284
+Runtime: 00:00:01
+
+rx 5700 -xt
+Past Week Median Price: $498.45
+Median Price: $374
+Past Week Average Price: $473.11
+Average Price: $394.25
+Total Sold: 382
+Total Sales: $150086.57
+PayPal Profit: $4467
+Est eBay Profit: $13746
+Est eBay + PayPal Profit: $18213
+Total Scalpers/eBay Profit: $3221.9
+Estimated Scalper Profit: $-15106
+Estimated Break Even Point for Scalpers: $440
+Minimum Break Even Point for Scalpers: $355
+Runtime: 00:00:00
+
+rx 5700 xt
+Past Week Median Price: $670.0
+Median Price: $480
+Past Week Average Price: $667.05
+Average Price: $520.6
+Total Sold: 5079
+Total Sales: $2736324.52
+PayPal Profit: $80877
+Est eBay Profit: $216266
+Est eBay + PayPal Profit: $297144
+Total Scalpers/eBay Profit: $-21051.88
+Estimated Scalper Profit: $-317383
+Estimated Break Even Point for Scalpers: $622
+Minimum Break Even Point for Scalpers: $507
+Runtime: 00:00:01
+
+rx vega 56
+Past Week Median Price: $400.05
+Median Price: $295
+Past Week Average Price: $385.16
+Average Price: $313.54
+Total Sold: 448
+Total Sales: $139552.13
+PayPal Profit: $4181
+Est eBay Profit: $13490
+Est eBay + PayPal Profit: $17671
+Total Scalpers/eBay Profit: $-56487.07
+Estimated Scalper Profit: $-74270
+Estimated Break Even Point for Scalpers: $501
+Minimum Break Even Point for Scalpers: $406
+Runtime: 00:00:00
+
+rx vega 64
+Past Week Median Price: $445.0
+Median Price: $342
+Past Week Average Price: $411.03
+Average Price: $349.73
+Total Sold: 544
+Total Sales: $188807.02
+PayPal Profit: $5638
+Est eBay Profit: $17905
+Est eBay + PayPal Profit: $23543
+Total Scalpers/eBay Profit: $-107720.58
+Estimated Scalper Profit: $-131264
+Estimated Break Even Point for Scalpers: $624
+Minimum Break Even Point for Scalpers: $507
+Runtime: 00:00:00
+
+Radeon VII
+Past Week Median Price: $1340.0
+Median Price: $902
+Past Week Average Price: $1257.42
+Average Price: $970.69
+Total Sold: 433
+Total Sales: $416326.22
+PayPal Profit: $12203
+Est eBay Profit: $40019
+Est eBay + PayPal Profit: $52222
+Total Scalpers/eBay Profit: $88585.27
+Estimated Scalper Profit: $36479
+Estimated Break Even Point for Scalpers: $867
+Minimum Break Even Point for Scalpers: $711
+Runtime: 00:00:00
+
+
+Process finished with exit code 0
