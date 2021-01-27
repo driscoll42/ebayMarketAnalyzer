@@ -1,0 +1,949 @@
+C:\Users\mdriscoll6\Anaconda3\python.exe C:/Users/mdriscoll6/Dropbox/PythonProjects/eBayScraper/temp3.py
+RTX 3060 -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: $799.99
+Median Price: $667
+Past Week Average Price: $786.0
+Average Price: $690.45
+Total Sold: 5539
+Total Sales: $3839423.91
+PayPal Profit: $113004
+Est eBay Profit: $321577
+Total Scalpers/eBay Profit: $1411472.5
+Estimated Scalper Profit: $974121
+Estimated Break Even Point for Scalpers: $501
+Minimum Break Even Point for Scalpers: $406
+Runtime: 00:00:01
+
+RTX 3070 -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: $867.8
+Median Price: $809
+Past Week Average Price: $873.15
+Average Price: $815.37
+Total Sold: 11684
+Total Sales: $9532680.17
+PayPal Profit: $279952
+Est eBay Profit: $797648
+Total Scalpers/eBay Profit: $3169719.82
+Estimated Scalper Profit: $2092119
+Estimated Break Even Point for Scalpers: $623
+Minimum Break Even Point for Scalpers: $507
+Runtime: 00:00:02
+
+RTX 3080 -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: $1449.0
+Median Price: $1300
+Past Week Average Price: $1421.06
+Average Price: $1371.58
+Total Sold: 14066
+Total Sales: $19246356.62
+PayPal Profit: $562364
+Est eBay Profit: $1671253
+Total Scalpers/eBay Profit: $8546526.25
+Estimated Scalper Profit: $6313471
+Estimated Break Even Point for Scalpers: $871
+Minimum Break Even Point for Scalpers: $711
+Runtime: 00:00:03
+
+RTX 3090 -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: $2109.85
+Median Price: $2159
+Past Week Average Price: $2210.28
+Average Price: $2241.23
+Total Sold: 7775
+Total Sales: $17426583.77
+PayPal Profit: $507703
+Est eBay Profit: $1466091
+Total Scalpers/eBay Profit: $4887938.46
+Estimated Scalper Profit: $2914143
+Estimated Break Even Point for Scalpers: $1849
+Minimum Break Even Point for Scalpers: $1523
+Runtime: 00:00:02
+
+No handles with labels found to put in legend.
+No handles with labels found to put in legend.
+3060 FOUNDER 682.28 1426
+3060 ASUS 724.18 766
+3060 MSI 688.98 812
+3060 EVGA 703.9 497
+3060 GIGABYTE 692.44 1045
+3060 ZOTAC 670.66 486
+3060 XFX nan 0
+3060 PNY 744.97 24
+3060 SAPPHIRE nan 0
+3060 COLORFUL nan 0
+3060 ASROCK nan 0
+3060 POWERCOLOR nan 0
+3060 INNO3D nan 0
+3060 PALIT nan 0
+3060 VISIONTEK nan 0
+3060 DELL nan 0
+3070 FOUNDER 823.53 3046
+3070 ASUS 842.89 1823
+3070 MSI 813.36 2131
+3070 EVGA 812.8 1536
+3070 GIGABYTE 812.1 1616
+3070 ZOTAC 765.59 886
+3070 XFX 950.95 1
+3070 PNY 771.99 347
+3070 SAPPHIRE nan 0
+3070 COLORFUL 832.33 3
+3070 ASROCK nan 0
+3070 POWERCOLOR nan 0
+3070 INNO3D nan 0
+3070 PALIT nan 0
+3070 VISIONTEK nan 0
+3070 DELL 810.0 1
+3080 FOUNDER 1442.12 2413
+3080 ASUS 1399.28 1870
+3080 MSI 1264.07 2197
+3080 EVGA 1287.19 3805
+3080 GIGABYTE 1322.16 1575
+3080 ZOTAC 1200.45 1290
+3080 XFX nan 0
+3080 PNY 1276.2 322
+3080 SAPPHIRE nan 0
+3080 COLORFUL 1169.33 3
+3080 ASROCK 1505.0 1
+3080 POWERCOLOR nan 0
+3080 INNO3D nan 0
+3080 PALIT 1255.68 6
+3080 VISIONTEK nan 0
+3080 DELL 1069.67 3
+3090 FOUNDER 2211.18 2915
+3090 ASUS 2397.48 1287
+3090 MSI 2099.08 686
+3090 EVGA 2231.06 1029
+3090 GIGABYTE 2153.45 544
+3090 ZOTAC 1952.14 543
+3090 XFX nan 0
+3090 PNY 2040.98 224
+3090 SAPPHIRE nan 0
+3090 COLORFUL nan 0
+3090 ASROCK 1505.0 1
+3090 POWERCOLOR nan 0
+3090 INNO3D 1716.23 2
+3090 PALIT 1888.0 2
+3090 VISIONTEK nan 0
+3090 DELL 1832.67 3
+FOUNDER 9868
+ASUS 5848
+MSI 5855
+EVGA 6961
+GIGABYTE 4786
+ZOTAC 3267
+PNY 931
+titan xp
+Past Week Median Price: $589.99
+Median Price: $589
+Past Week Average Price: $591.22
+Average Price: $627.04
+Total Sold: 256
+Total Sales: $158750.41
+PayPal Profit: $4680
+Est eBay Profit: $10224
+Total Scalpers/eBay Profit: $-171489.59
+Estimated Scalper Profit: $-186394
+Estimated Break Even Point for Scalpers: $1479
+Minimum Break Even Point for Scalpers: $1220
+Runtime: 00:00:00
+
+1080 Ti -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: $559.99
+Median Price: $461
+Past Week Average Price: $555.64
+Average Price: $476.79
+Total Sold: 5610
+Total Sales: $2676166.12
+PayPal Profit: $79291
+Est eBay Profit: $244489
+Total Scalpers/eBay Profit: $-1574460.76
+Estimated Scalper Profit: $-1898522
+Estimated Break Even Point for Scalpers: $868
+Minimum Break Even Point for Scalpers: $711
+Runtime: 00:00:02
+
+gtx 1080 -Ti -image -jpeg -img -picture -pic -jpg -1080p
+Past Week Median Price: $420.0
+Median Price: $330
+Past Week Average Price: $428.27
+Average Price: $347.15
+Total Sold: 3744
+Total Sales: $1301822.51
+PayPal Profit: $38876
+Est eBay Profit: $118673
+Total Scalpers/eBay Profit: $-1134913.09
+Estimated Scalper Profit: $-1293361
+Estimated Break Even Point for Scalpers: $745
+Minimum Break Even Point for Scalpers: $609
+Runtime: 00:00:01
+
+gtx 1070 -Ti -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: $335.0
+Median Price: $247
+Past Week Average Price: $343.42
+Average Price: $263.44
+Total Sold: 6979
+Total Sales: $1853389.17
+PayPal Profit: $55841
+Est eBay Profit: $159854
+Total Scalpers/eBay Profit: $-1054323.94
+Estimated Scalper Profit: $-1270020
+Estimated Break Even Point for Scalpers: $477
+Minimum Break Even Point for Scalpers: $385
+Runtime: 00:00:02
+
+gtx 1070 Ti -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: $375.0
+Median Price: $305
+Past Week Average Price: $376.4
+Average Price: $316.1
+Total Sold: 2454
+Total Sales: $777667.02
+PayPal Profit: $23288
+Est eBay Profit: $68154
+Total Scalpers/eBay Profit: $-428381.95
+Estimated Scalper Profit: $-519825
+Estimated Break Even Point for Scalpers: $562
+Minimum Break Even Point for Scalpers: $457
+Runtime: 00:00:01
+
+gtx 1060 -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: $209.9
+Median Price: $175
+Past Week Average Price: $214.27
+Average Price: $193.92
+Total Sold: 4984
+Total Sales: $958731.41
+PayPal Profit: $29298
+Est eBay Profit: $84153
+Total Scalpers/eBay Profit: $-428079.05
+Estimated Scalper Profit: $-540584
+Estimated Break Even Point for Scalpers: $318
+Minimum Break Even Point for Scalpers: $253
+Runtime: 00:00:01
+
+gtx 1650 -super -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: $255.0
+Median Price: $192
+Past Week Average Price: $260.43
+Average Price: $208.54
+Total Sold: 936
+Total Sales: $193823.72
+PayPal Profit: $5901
+Est eBay Profit: $13947
+Total Scalpers/eBay Profit: $34645.22
+Estimated Scalper Profit: $14796
+Estimated Break Even Point for Scalpers: $194
+Minimum Break Even Point for Scalpers: $152
+Runtime: 00:00:01
+
+gtx 1650 super -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: $284.145
+Median Price: $233
+Past Week Average Price: $287.63
+Average Price: $238.38
+Total Sold: 722
+Total Sales: $172577.11
+PayPal Profit: $5221
+Est eBay Profit: $13833
+Total Scalpers/eBay Profit: $41557.58
+Estimated Scalper Profit: $22503
+Estimated Break Even Point for Scalpers: $207
+Minimum Break Even Point for Scalpers: $162
+Runtime: 00:00:00
+
+gtx 1660 -ti -super -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: $350.0
+Median Price: $269
+Past Week Average Price: $348.48
+Average Price: $283.84
+Total Sold: 772
+Total Sales: $220093.31
+PayPal Profit: $6614
+Est eBay Profit: $17631
+Total Scalpers/eBay Profit: $31194.56
+Estimated Scalper Profit: $6949
+Estimated Break Even Point for Scalpers: $279
+Minimum Break Even Point for Scalpers: $223
+Runtime: 00:00:00
+
+gtx 1660 Super -ti -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: $399.99
+Median Price: $340
+Past Week Average Price: $397.94
+Average Price: $335.01
+Total Sold: 1374
+Total Sales: $460705.11
+PayPal Profit: $13772
+Est eBay Profit: $40159
+Total Scalpers/eBay Profit: $109150.03
+Estimated Scalper Profit: $55218
+Estimated Break Even Point for Scalpers: $292
+Minimum Break Even Point for Scalpers: $233
+Runtime: 00:00:00
+
+gtx 1660 Ti -super -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: $392.19
+Median Price: $315
+Past Week Average Price: $394.56
+Average Price: $328.99
+Total Sold: 1245
+Total Sales: $415417.34
+PayPal Profit: $12420
+Est eBay Profit: $36389
+Total Scalpers/eBay Profit: $30727.9
+Estimated Scalper Profit: $-18300
+Estimated Break Even Point for Scalpers: $353
+Minimum Break Even Point for Scalpers: $284
+Runtime: 00:00:00
+
+rtx 2060 -super
+Past Week Median Price: $470.65
+Median Price: $389
+Past Week Average Price: $473.49
+Average Price: $390.91
+Total Sold: 2418
+Total Sales: $944035.87
+PayPal Profit: $28102
+Est eBay Profit: $80739
+Total Scalpers/eBay Profit: $146851.49
+Estimated Scalper Profit: $38010
+Estimated Break Even Point for Scalpers: $377
+Minimum Break Even Point for Scalpers: $304
+Runtime: 00:00:01
+
+rtx 2060 super
+Past Week Median Price: $575.0
+Median Price: $494
+Past Week Average Price: $603.83
+Average Price: $531.05
+Total Sold: 2199
+Total Sales: $1177057.82
+PayPal Profit: $34794
+Est eBay Profit: $88194
+Total Scalpers/eBay Profit: $217881.51
+Estimated Scalper Profit: $95267
+Estimated Break Even Point for Scalpers: $499
+Minimum Break Even Point for Scalpers: $406
+Runtime: 00:00:01
+
+rtx 2070 -super
+Past Week Median Price: $570.0
+Median Price: $485
+Past Week Average Price: $812.01
+Average Price: $546.64
+Total Sold: 1352
+Total Sales: $742548.35
+PayPal Profit: $21939
+Est eBay Profit: $64384
+Total Scalpers/eBay Profit: $8767.25
+Estimated Scalper Profit: $-77556
+Estimated Break Even Point for Scalpers: $622
+Minimum Break Even Point for Scalpers: $507
+Runtime: 00:00:01
+
+rtx 2070 super
+Past Week Median Price: $640.0
+Median Price: $559
+Past Week Average Price: $647.67
+Average Price: $570.37
+Total Sold: 3496
+Total Sales: $2004866.15
+PayPal Profit: $59189
+Est eBay Profit: $176716
+Total Scalpers/eBay Profit: $107455.85
+Estimated Scalper Profit: $-128451
+Estimated Break Even Point for Scalpers: $622
+Minimum Break Even Point for Scalpers: $507
+Runtime: 00:00:01
+
+rtx 2080 -super -ti
+Past Week Median Price: $660.0
+Median Price: $589
+Past Week Average Price: $663.68
+Average Price: $596.88
+Total Sold: 1574
+Total Sales: $938540.7
+PayPal Profit: $27689
+Est eBay Profit: $83890
+Total Scalpers/eBay Profit: $-250714.68
+Estimated Scalper Profit: $-362255
+Estimated Break Even Point for Scalpers: $866
+Minimum Break Even Point for Scalpers: $711
+Runtime: 00:00:01
+
+rtx 2080 super -ti
+Past Week Median Price: $720.0
+Median Price: $670
+Past Week Average Price: $738.5
+Average Price: $684.19
+Total Sold: 1998
+Total Sales: $1380442.8
+PayPal Profit: $40632
+Est eBay Profit: $121042
+Total Scalpers/eBay Profit: $-131528.71
+Estimated Scalper Profit: $-293893
+Estimated Break Even Point for Scalpers: $867
+Minimum Break Even Point for Scalpers: $711
+Runtime: 00:00:01
+
+rtx 2080 ti -super
+Past Week Median Price: $949.5
+Median Price: $875
+Past Week Average Price: $960.34
+Average Price: $904.86
+Total Sold: 3952
+Total Sales: $3585263.96
+PayPal Profit: $105158
+Est eBay Profit: $322312
+Total Scalpers/eBay Profit: $-666445.84
+Estimated Scalper Profit: $-1093917
+Estimated Break Even Point for Scalpers: $1233
+Minimum Break Even Point for Scalpers: $1015
+Runtime: 00:00:01
+
+titan x -xp
+Past Week Median Price: $427.8
+Median Price: $372
+Past Week Average Price: $439.73
+Average Price: $390.51
+Total Sold: 219
+Total Sales: $84251.03
+PayPal Profit: $2508
+Est eBay Profit: $7181
+Total Scalpers/eBay Profit: $-198477.97
+Estimated Scalper Profit: $-208169
+Estimated Break Even Point for Scalpers: $1480
+Minimum Break Even Point for Scalpers: $1220
+Runtime: 00:00:00
+
+980 Ti
+Past Week Median Price: $266.985
+Median Price: $216
+Past Week Average Price: $280.29
+Average Price: $228.55
+Total Sold: 677
+Total Sales: $154638.43
+PayPal Profit: $4687
+Est eBay Profit: $14742
+Total Scalpers/eBay Profit: $-321944.18
+Estimated Scalper Profit: $-341374
+Estimated Break Even Point for Scalpers: $806
+Minimum Break Even Point for Scalpers: $660
+Runtime: 00:00:00
+
+980 -ti -optiplex
+Past Week Median Price: $204.64499999999998
+Median Price: $167
+Past Week Average Price: $206.09
+Average Price: $171.63
+Total Sold: 590
+Total Sales: $101349.28
+PayPal Profit: $3116
+Est eBay Profit: $7900
+Total Scalpers/eBay Profit: $-251035.6
+Estimated Scalper Profit: $-262052
+Estimated Break Even Point for Scalpers: $684
+Minimum Break Even Point for Scalpers: $558
+Runtime: 00:00:00
+
+970
+Past Week Median Price: $158.54
+Median Price: $121
+Past Week Average Price: $157.75
+Average Price: $129.32
+Total Sold: 1827
+Total Sales: $240350.91
+PayPal Profit: $7518
+Est eBay Profit: $21409
+Total Scalpers/eBay Profit: $-422507.53
+Estimated Scalper Profit: $-450522
+Estimated Break Even Point for Scalpers: $415
+Minimum Break Even Point for Scalpers: $335
+Runtime: 00:00:01
+
+960 -optiplex
+Past Week Median Price: $99.97
+Median Price: $87
+Past Week Average Price: $104.02
+Average Price: $91.82
+Total Sold: 830
+Total Sales: $75964.65
+PayPal Profit: $2451
+Est eBay Profit: $6417
+Total Scalpers/eBay Profit: $-109629.57
+Estimated Scalper Profit: $-118499
+Estimated Break Even Point for Scalpers: $255
+Minimum Break Even Point for Scalpers: $202
+Runtime: 00:00:00
+
+950 -950m
+Past Week Median Price: $87.0
+Median Price: $75
+Past Week Average Price: $92.69
+Average Price: $79.68
+Total Sold: 232
+Total Sales: $18495.92
+PayPal Profit: $605
+Est eBay Profit: $1650
+Total Scalpers/eBay Profit: $-23597.58
+Estimated Scalper Profit: $-25854
+Estimated Break Even Point for Scalpers: $207
+Minimum Break Even Point for Scalpers: $162
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 520 -nvs -quadro
+Past Week Median Price: $20.6
+Median Price: $19
+Past Week Average Price: $22.73
+Average Price: $22.46
+Total Sold: 110
+Total Sales: $2449.56
+PayPal Profit: $104
+Est eBay Profit: $150
+Total Scalpers/eBay Profit: $-5086.26
+Estimated Scalper Profit: $-5341
+Estimated Break Even Point for Scalpers: $78
+Minimum Break Even Point for Scalpers: $60
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 530 -nvs -quadro -tesla
+Past Week Median Price: $nan
+Median Price: $32
+Past Week Average Price: $nan
+Average Price: $33.43
+Total Sold: 9
+Total Sales: $300.9
+PayPal Profit: $11
+Est eBay Profit: $23
+Total Scalpers/eBay Profit: $-494.23
+Estimated Scalper Profit: $-529
+Estimated Break Even Point for Scalpers: $100
+Minimum Break Even Point for Scalpers: $77
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 545 -nvs -quadro
+Past Week Median Price: $nan
+Median Price: $28
+Past Week Average Price: $nan
+Average Price: $38.02
+Total Sold: 19
+Total Sales: $790.22
+PayPal Profit: $28
+Est eBay Profit: $46
+Total Scalpers/eBay Profit: $-1583.12
+Estimated Scalper Profit: $-1658
+Estimated Break Even Point for Scalpers: $142
+Minimum Break Even Point for Scalpers: $111
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 550 ti -nvs -quadro
+Past Week Median Price: $38.0
+Median Price: $36
+Past Week Average Price: $37.09
+Average Price: $36.37
+Total Sold: 187
+Total Sales: $6811.18
+PayPal Profit: $253
+Est eBay Profit: $500
+Total Scalpers/eBay Profit: $-24711.88
+Estimated Scalper Profit: $-25437
+Estimated Break Even Point for Scalpers: $192
+Minimum Break Even Point for Scalpers: $152
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 560 -ti -nvs -quadro
+Past Week Median Price: $35.0
+Median Price: $30
+Past Week Average Price: $43.88
+Average Price: $34.8
+Total Sold: 97
+Total Sales: $3406.24
+PayPal Profit: $127
+Est eBay Profit: $259
+Total Scalpers/eBay Profit: $-18179.9
+Estimated Scalper Profit: $-18568
+Estimated Break Even Point for Scalpers: $254
+Minimum Break Even Point for Scalpers: $202
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 570 -nvs -quadro
+Past Week Median Price: $42.650000000000006
+Median Price: $40
+Past Week Average Price: $45.61
+Average Price: $45.2
+Total Sold: 103
+Total Sales: $4656.32
+PayPal Profit: $165
+Est eBay Profit: $392
+Total Scalpers/eBay Profit: $-34773.37
+Estimated Scalper Profit: $-35332
+Estimated Break Even Point for Scalpers: $438
+Minimum Break Even Point for Scalpers: $355
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 580 -nvs -quadro
+Past Week Median Price: $54.99
+Median Price: $54
+Past Week Average Price: $54.54
+Average Price: $56.54
+Total Sold: 135
+Total Sales: $7535.56
+PayPal Profit: $259
+Est eBay Profit: $514
+Total Scalpers/eBay Profit: $-65642.88
+Estimated Scalper Profit: $-66417
+Estimated Break Even Point for Scalpers: $621
+Minimum Break Even Point for Scalpers: $507
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 590 -nvs -quadro
+Past Week Median Price: $110.625
+Median Price: $99
+Past Week Average Price: $108.83
+Average Price: $105.15
+Total Sold: 21
+Total Sales: $2285.54
+PayPal Profit: $72
+Est eBay Profit: $144
+Total Scalpers/eBay Profit: $-13602.8
+Estimated Scalper Profit: $-13848
+Estimated Break Even Point for Scalpers: $867
+Minimum Break Even Point for Scalpers: $711
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 605 -nvs -quadro
+Past Week Median Price: $21.99
+Median Price: $21
+Past Week Average Price: $21.99
+Average Price: $26.7
+Total Sold: 44
+Total Sales: $1167.58
+PayPal Profit: $47
+Est eBay Profit: $46
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 610 -nvs -quadro
+Past Week Median Price: $26.49
+Median Price: $25
+Past Week Average Price: $28.93
+Average Price: $29.15
+Total Sold: 343
+Total Sales: $10322.6
+PayPal Profit: $402
+Est eBay Profit: $643
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 630 -nvs -quadro
+Past Week Median Price: $34.99
+Median Price: $34
+Past Week Average Price: $36.72
+Average Price: $35.59
+Total Sold: 238
+Total Sales: $8266.22
+PayPal Profit: $311
+Est eBay Profit: $538
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 640 -nvs -quadro
+Past Week Median Price: $92.8
+Median Price: $92
+Past Week Average Price: $87.42
+Average Price: $72.96
+Total Sold: 245
+Total Sales: $17651.16
+PayPal Profit: $585
+Est eBay Profit: $1404
+Total Scalpers/eBay Profit: $-10340.09
+Estimated Scalper Profit: $-12327
+Estimated Break Even Point for Scalpers: $130
+Minimum Break Even Point for Scalpers: $102
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 650 -ti -nvs -quadro
+Past Week Median Price: $39.99
+Median Price: $42
+Past Week Average Price: $41.35
+Average Price: $42.29
+Total Sold: 143
+Total Sales: $6047.21
+PayPal Profit: $218
+Est eBay Profit: $438
+Total Scalpers/eBay Profit: $-12088.77
+Estimated Scalper Profit: $-12745
+Estimated Break Even Point for Scalpers: $144
+Minimum Break Even Point for Scalpers: $112
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 650 Ti -nvs -quadro
+Past Week Median Price: $49.99
+Median Price: $39
+Past Week Average Price: $52.01
+Average Price: $44.79
+Total Sold: 449
+Total Sales: $19299.47
+PayPal Profit: $694
+Est eBay Profit: $1809
+Total Scalpers/eBay Profit: $-56794.8
+Estimated Scalper Profit: $-59299
+Estimated Break Even Point for Scalpers: $193
+Minimum Break Even Point for Scalpers: $153
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 660 -ti -nvs -quadro
+Past Week Median Price: $59.894999999999996
+Median Price: $54
+Past Week Average Price: $63.74
+Average Price: $56.24
+Total Sold: 248
+Total Sales: $13990.07
+PayPal Profit: $480
+Est eBay Profit: $1242
+Total Scalpers/eBay Profit: $-49652.93
+Estimated Scalper Profit: $-51444
+Estimated Break Even Point for Scalpers: $293
+Minimum Break Even Point for Scalpers: $234
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 660 Ti -nvs -quadro
+Past Week Median Price: $71.75
+Median Price: $59
+Past Week Average Price: $72.93
+Average Price: $63.37
+Total Sold: 175
+Total Sales: $11089.57
+PayPal Profit: $374
+Est eBay Profit: $909
+Total Scalpers/eBay Profit: $-46940.43
+Estimated Scalper Profit: $-48224
+Estimated Break Even Point for Scalpers: $379
+Minimum Break Even Point for Scalpers: $305
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 670 -nvs -quadro
+Past Week Median Price: $84.95
+Median Price: $65
+Past Week Average Price: $99.54
+Average Price: $70.0
+Total Sold: 179
+Total Sales: $12492.61
+PayPal Profit: $415
+Est eBay Profit: $1055
+Total Scalpers/eBay Profit: $-66070.49
+Estimated Scalper Profit: $-67596
+Estimated Break Even Point for Scalpers: $502
+Minimum Break Even Point for Scalpers: $407
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 680 -nvs -quadro
+Past Week Median Price: $103.5
+Median Price: $129
+Past Week Average Price: $147.82
+Average Price: $148.57
+Total Sold: 266
+Total Sales: $39076.63
+PayPal Profit: $1213
+Est eBay Profit: $3199
+Total Scalpers/eBay Profit: $-105640.67
+Estimated Scalper Profit: $-110054
+Estimated Break Even Point for Scalpers: $623
+Minimum Break Even Point for Scalpers: $508
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 690 -nvs -quadro
+Past Week Median Price: $160.625
+Median Price: $114
+Past Week Average Price: $193.94
+Average Price: $135.61
+Total Sold: 57
+Total Sales: $8175.8
+PayPal Profit: $254
+Est eBay Profit: $607
+Total Scalpers/eBay Profit: $-53141.95
+Estimated Scalper Profit: $-54058
+Estimated Break Even Point for Scalpers: $1233
+Minimum Break Even Point for Scalpers: $1016
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 710 -nvs -quadro
+Past Week Median Price: $39.495000000000005
+Median Price: $39
+Past Week Average Price: $40.1
+Average Price: $40.92
+Total Sold: 710
+Total Sales: $30354.82
+PayPal Profit: $1093
+Est eBay Profit: $1745
+Total Scalpers/eBay Profit: $-5819.68
+Estimated Scalper Profit: $-8641
+Estimated Break Even Point for Scalpers: $58
+Minimum Break Even Point for Scalpers: $41
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 720 -nvs -quadro
+Past Week Median Price: $28.9
+Median Price: $29
+Past Week Average Price: $30.09
+Average Price: $30.37
+Total Sold: 93
+Total Sales: $3165.81
+PayPal Profit: $119
+Est eBay Profit: $188
+Total Scalpers/eBay Profit: $-2794.33
+Estimated Scalper Profit: $-3102
+Estimated Break Even Point for Scalpers: $73
+Minimum Break Even Point for Scalpers: $56
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 730 -nvs -quadro
+Past Week Median Price: $52.425
+Median Price: $48
+Past Week Average Price: $57.68
+Average Price: $55.23
+Total Sold: 900
+Total Sales: $55420.02
+PayPal Profit: $1877
+Est eBay Profit: $2856
+Total Scalpers/eBay Profit: $-24173.73
+Estimated Scalper Profit: $-28907
+Estimated Break Even Point for Scalpers: $101
+Minimum Break Even Point for Scalpers: $77
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 740 -nvs -quadro
+Past Week Median Price: $57.58
+Median Price: $54
+Past Week Average Price: $68.54
+Average Price: $59.46
+Total Sold: 91
+Total Sales: $5411.73
+PayPal Profit: $184
+Est eBay Profit: $396
+Total Scalpers/eBay Profit: $-4637.63
+Estimated Scalper Profit: $-5219
+Estimated Break Even Point for Scalpers: $126
+Minimum Break Even Point for Scalpers: $97
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 750 -ti -nvs -quadro
+Past Week Median Price: $58.2
+Median Price: $53
+Past Week Average Price: $56.15
+Average Price: $54.95
+Total Sold: 126
+Total Sales: $6923.86
+PayPal Profit: $238
+Est eBay Profit: $495
+Total Scalpers/eBay Profit: $-10405.86
+Estimated Scalper Profit: $-11140
+Estimated Break Even Point for Scalpers: $157
+Minimum Break Even Point for Scalpers: $121
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 750 Ti -nvs -quadro
+Past Week Median Price: $78.875
+Median Price: $71
+Past Week Average Price: $84.12
+Average Price: $78.63
+Total Sold: 705
+Total Sales: $55679.39
+PayPal Profit: $1826
+Est eBay Profit: $4991
+Total Scalpers/eBay Profit: $-63756.42
+Estimated Scalper Profit: $-70574
+Estimated Break Even Point for Scalpers: $193
+Minimum Break Even Point for Scalpers: $152
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 760 -nvs -quadro
+Past Week Median Price: $79.95
+Median Price: $69
+Past Week Average Price: $79.9
+Average Price: $73.08
+Total Sold: 381
+Total Sales: $27843.54
+PayPal Profit: $921
+Est eBay Profit: $2327
+Total Scalpers/eBay Profit: $-77263.88
+Estimated Scalper Profit: $-80513
+Estimated Break Even Point for Scalpers: $315
+Minimum Break Even Point for Scalpers: $253
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 770 -nvs -quadro
+Past Week Median Price: $99.9
+Median Price: $82
+Past Week Average Price: $109.61
+Average Price: $95.24
+Total Sold: 374
+Total Sales: $35644.85
+PayPal Profit: $1145
+Est eBay Profit: $2748
+Total Scalpers/eBay Profit: $-127401.38
+Estimated Scalper Profit: $-131290
+Estimated Break Even Point for Scalpers: $499
+Minimum Break Even Point for Scalpers: $406
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 780 -ti -nvs -quadro
+Past Week Median Price: $105.995
+Median Price: $98
+Past Week Average Price: $104.82
+Average Price: $109.99
+Total Sold: 217
+Total Sales: $23856.17
+PayPal Profit: $756
+Est eBay Profit: $1992
+Total Scalpers/eBay Profit: $-128718.16
+Estimated Scalper Profit: $-131512
+Estimated Break Even Point for Scalpers: $806
+Minimum Break Even Point for Scalpers: $660
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) 780 ti -nvs -quadro
+Past Week Median Price: $126.7
+Median Price: $112
+Past Week Average Price: $126.48
+Average Price: $120.56
+Total Sold: 206
+Total Sales: $23965.05
+PayPal Profit: $756
+Est eBay Profit: $1788
+Total Scalpers/eBay Profit: $-132118.58
+Estimated Scalper Profit: $-134664
+Estimated Break Even Point for Scalpers: $868
+Minimum Break Even Point for Scalpers: $711
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) titan black -nvs -quadro
+Past Week Median Price: $222.5
+Median Price: $231
+Past Week Average Price: $248.75
+Average Price: $231.4
+Total Sold: 50
+Total Sales: $11478.94
+PayPal Profit: $347
+Est eBay Profit: $840
+Total Scalpers/eBay Profit: $-42391.18
+Estimated Scalper Profit: $-43782
+Estimated Break Even Point for Scalpers: $1235
+Minimum Break Even Point for Scalpers: $1015
+Runtime: 00:00:00
+
+(nvidia, gtx, geforce, gt) titan Z -nvs -quadro
+Past Week Median Price: $370.0
+Median Price: $361
+Past Week Average Price: $370.0
+Average Price: $345.16
+Total Sold: 13
+Total Sales: $4487.03
+PayPal Profit: $134
+Est eBay Profit: $361
+Total Scalpers/eBay Profit: $-37196.4
+Estimated Scalper Profit: $-37692
+Estimated Break Even Point for Scalpers: $3679
+Minimum Break Even Point for Scalpers: $3047
+Runtime: 00:00:00
+
+
+Process finished with exit code 0
