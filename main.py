@@ -640,6 +640,7 @@ def ebay_search(query, adapter, msrp=0, min_price=0, max_price=10000, min_date=d
     print('Total Sales: $' + str(round(tot_sales, 2)))
     print('PayPal Profit: $' + str(int(pp_profit)))
     print('Est eBay Profit: $' + str(int(ebay_profit)))
+    print('Est eBay + PayPal Profit: $' + str(int(ebay_profit + pp_profit)))
     if msrp > 0:
         total_scalp_val = round(tot_sales - tot_sold * (msrp * 1.0625 + estimated_shipping), 2)
         print('Total Scalpers/eBay Profit: $' + str(total_scalp_val))
@@ -820,7 +821,7 @@ def ebay_seller_plot(query, df, extra_title_text=''):
                 y='Quantity Sold', title=title)
 
 
-def brand_plot(dfs, title, brand_list, msrp):
+def brand_plot(dfs, title, brand_list, msrp, roll=0):
     pd.set_option('display.max_columns', None)
 
     for i, df in enumerate(dfs):
@@ -854,7 +855,12 @@ def brand_plot(dfs, title, brand_list, msrp):
     plt.xlabel("Sale Date")
     plt.tick_params(axis='y')
     plt.tick_params(axis='x', rotation=30)
-    plt.title(title)
+
+    if roll > 0:
+        plt.title(title + ' ' + str(roll) + ' Rolling Average')
+    else:
+        plt.title(title)
+
     for i, b in enumerate(brand_list):
         ci = i % (len(colors) - 1)
         if len(brand_dict[b]) > 10:
@@ -865,13 +871,19 @@ def brand_plot(dfs, title, brand_list, msrp):
             brand_dict[b]['Quantity'] = 1
 
             med_price = brand_dict[b].groupby(['Sold Date'])['Total Price'].median() * 100
+            if roll > 0:
+                med_price = med_price.rolling(roll, min_periods=1).mean()
+
             min_msrp = min(100, min(med_price))
             max_msrp = min(300, max(med_price))
             plt.plot(med_price, colors[ci], label=brand_list[i])
     plt.ylim(bottom=min_msrp, top=max_msrp)
     plt.legend()
     plt.tight_layout()
-    plt.savefig('Images/' + title)
+    if roll > 0:
+        plt.savefig("Images/" + title + ' ' + str(roll) + ' Rolling Average')
+    else:
+        plt.savefig("Images/" + title)
 
     plt.show()
 
@@ -1104,6 +1116,9 @@ ebay_seller_plot('Big Navi', com_df, extra_title_text='')
 
 brand_plot([df_6800, df_6800xt, df_6900], 'Big Navi AIB Comparison', brand_list, [579, 649, 999])
 
+brand_plot([df_6800, df_6800xt, df_6900], 'Big Navi AIB Comparison', brand_list, [579, 649, 999], roll=7)
+
+
 # RTX 30 Series Analysis
 df_3060 = ebay_search('RTX 3060 -image -jpeg -img -picture -pic -jpg', http, 399, 200, 1300, feedback=run_all_feedback,
                       run_cached=run_cached, quantity_hist=run_all_hist, min_date=datetime.datetime(2020, 12, 1),
@@ -1143,6 +1158,8 @@ ebay_seller_plot('RTX 30 Series-Ampere', com_df, extra_title_text='')
 
 brand_plot([df_3060, df_3070, df_3080, df_3090], 'RTX 30 Series-Ampere AIB Comparison', brand_list,
            [399, 499, 699, 1499])
+brand_plot([df_3060, df_3070, df_3080, df_3090], 'RTX 30 Series-Ampere AIB Comparison', brand_list,
+           [399, 499, 699, 1499], roll=7)
 
 # Pascal GPUs
 df_titanxp = ebay_search('titan xp', http, 1200, 0, 2000, run_cached=run_cached, feedback=run_all_feedback,

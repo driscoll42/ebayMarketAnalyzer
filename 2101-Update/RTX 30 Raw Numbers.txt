@@ -8,11 +8,12 @@ Total Sold: 5539
 Total Sales: $3839423.91
 PayPal Profit: $113004
 Est eBay Profit: $321577
+Est eBay + PayPal Profit: $434582
 Total Scalpers/eBay Profit: $1411472.5
 Estimated Scalper Profit: $974121
 Estimated Break Even Point for Scalpers: $501
 Minimum Break Even Point for Scalpers: $406
-Runtime: 00:00:01
+Runtime: 00:00:02
 
 RTX 3070 -image -jpeg -img -picture -pic -jpg
 Past Week Median Price: $867.8
@@ -23,11 +24,12 @@ Total Sold: 11684
 Total Sales: $9532680.17
 PayPal Profit: $279952
 Est eBay Profit: $797648
+Est eBay + PayPal Profit: $1077600
 Total Scalpers/eBay Profit: $3169719.82
 Estimated Scalper Profit: $2092119
 Estimated Break Even Point for Scalpers: $623
 Minimum Break Even Point for Scalpers: $507
-Runtime: 00:00:02
+Runtime: 00:00:03
 
 RTX 3080 -image -jpeg -img -picture -pic -jpg
 Past Week Median Price: $1449.0
@@ -38,6 +40,7 @@ Total Sold: 14066
 Total Sales: $19246356.62
 PayPal Profit: $562364
 Est eBay Profit: $1671253
+Est eBay + PayPal Profit: $2233617
 Total Scalpers/eBay Profit: $8546526.25
 Estimated Scalper Profit: $6313471
 Estimated Break Even Point for Scalpers: $871
@@ -53,6 +56,7 @@ Total Sold: 7775
 Total Sales: $17426583.77
 PayPal Profit: $507703
 Est eBay Profit: $1466091
+Est eBay + PayPal Profit: $1973795
 Total Scalpers/eBay Profit: $4887938.46
 Estimated Scalper Profit: $2914143
 Estimated Break Even Point for Scalpers: $1849
@@ -141,6 +145,7 @@ Total Sold: 256
 Total Sales: $158750.41
 PayPal Profit: $4680
 Est eBay Profit: $10224
+Est eBay + PayPal Profit: $14904
 Total Scalpers/eBay Profit: $-171489.59
 Estimated Scalper Profit: $-186394
 Estimated Break Even Point for Scalpers: $1479
@@ -156,6 +161,7 @@ Total Sold: 5610
 Total Sales: $2676166.12
 PayPal Profit: $79291
 Est eBay Profit: $244489
+Est eBay + PayPal Profit: $323780
 Total Scalpers/eBay Profit: $-1574460.76
 Estimated Scalper Profit: $-1898522
 Estimated Break Even Point for Scalpers: $868
@@ -171,6 +177,7 @@ Total Sold: 3744
 Total Sales: $1301822.51
 PayPal Profit: $38876
 Est eBay Profit: $118673
+Est eBay + PayPal Profit: $157549
 Total Scalpers/eBay Profit: $-1134913.09
 Estimated Scalper Profit: $-1293361
 Estimated Break Even Point for Scalpers: $745
@@ -186,6 +193,7 @@ Total Sold: 6979
 Total Sales: $1853389.17
 PayPal Profit: $55841
 Est eBay Profit: $159854
+Est eBay + PayPal Profit: $215696
 Total Scalpers/eBay Profit: $-1054323.94
 Estimated Scalper Profit: $-1270020
 Estimated Break Even Point for Scalpers: $477
@@ -201,6 +209,7 @@ Total Sold: 2454
 Total Sales: $777667.02
 PayPal Profit: $23288
 Est eBay Profit: $68154
+Est eBay + PayPal Profit: $91443
 Total Scalpers/eBay Profit: $-428381.95
 Estimated Scalper Profit: $-519825
 Estimated Break Even Point for Scalpers: $562
@@ -216,6 +225,7 @@ Total Sold: 4984
 Total Sales: $958731.41
 PayPal Profit: $29298
 Est eBay Profit: $84153
+Est eBay + PayPal Profit: $113451
 Total Scalpers/eBay Profit: $-428079.05
 Estimated Scalper Profit: $-540584
 Estimated Break Even Point for Scalpers: $318
@@ -231,11 +241,12 @@ Total Sold: 936
 Total Sales: $193823.72
 PayPal Profit: $5901
 Est eBay Profit: $13947
+Est eBay + PayPal Profit: $19849
 Total Scalpers/eBay Profit: $34645.22
 Estimated Scalper Profit: $14796
 Estimated Break Even Point for Scalpers: $194
 Minimum Break Even Point for Scalpers: $152
-Runtime: 00:00:01
+Runtime: 00:00:00
 
 gtx 1650 super -image -jpeg -img -picture -pic -jpg
 Past Week Median Price: $284.145
@@ -246,6 +257,7 @@ Total Sold: 722
 Total Sales: $172577.11
 PayPal Profit: $5221
 Est eBay Profit: $13833
+Est eBay + PayPal Profit: $19054
 Total Scalpers/eBay Profit: $41557.58
 Estimated Scalper Profit: $22503
 Estimated Break Even Point for Scalpers: $207
@@ -261,6 +273,7 @@ Total Sold: 772
 Total Sales: $220093.31
 PayPal Profit: $6614
 Est eBay Profit: $17631
+Est eBay + PayPal Profit: $24245
 Total Scalpers/eBay Profit: $31194.56
 Estimated Scalper Profit: $6949
 Estimated Break Even Point for Scalpers: $279
@@ -276,6 +289,7 @@ Total Sold: 1374
 Total Sales: $460705.11
 PayPal Profit: $13772
 Est eBay Profit: $40159
+Est eBay + PayPal Profit: $53932
 Total Scalpers/eBay Profit: $109150.03
 Estimated Scalper Profit: $55218
 Estimated Break Even Point for Scalpers: $292
@@ -291,6 +305,7 @@ Total Sold: 1245
 Total Sales: $415417.34
 PayPal Profit: $12420
 Est eBay Profit: $36389
+Est eBay + PayPal Profit: $48810
 Total Scalpers/eBay Profit: $30727.9
 Estimated Scalper Profit: $-18300
 Estimated Break Even Point for Scalpers: $353
@@ -306,6 +321,7 @@ Total Sold: 2418
 Total Sales: $944035.87
 PayPal Profit: $28102
 Est eBay Profit: $80739
+Est eBay + PayPal Profit: $108841
 Total Scalpers/eBay Profit: $146851.49
 Estimated Scalper Profit: $38010
 Estimated Break Even Point for Scalpers: $377
@@ -321,6 +337,7 @@ Total Sold: 2199
 Total Sales: $1177057.82
 PayPal Profit: $34794
 Est eBay Profit: $88194
+Est eBay + PayPal Profit: $122988
 Total Scalpers/eBay Profit: $217881.51
 Estimated Scalper Profit: $95267
 Estimated Break Even Point for Scalpers: $499
@@ -336,11 +353,12 @@ Total Sold: 1352
 Total Sales: $742548.35
 PayPal Profit: $21939
 Est eBay Profit: $64384
+Est eBay + PayPal Profit: $86323
 Total Scalpers/eBay Profit: $8767.25
 Estimated Scalper Profit: $-77556
 Estimated Break Even Point for Scalpers: $622
 Minimum Break Even Point for Scalpers: $507
-Runtime: 00:00:01
+Runtime: 00:00:00
 
 rtx 2070 super
 Past Week Median Price: $640.0
@@ -351,6 +369,7 @@ Total Sold: 3496
 Total Sales: $2004866.15
 PayPal Profit: $59189
 Est eBay Profit: $176716
+Est eBay + PayPal Profit: $235906
 Total Scalpers/eBay Profit: $107455.85
 Estimated Scalper Profit: $-128451
 Estimated Break Even Point for Scalpers: $622
@@ -366,6 +385,7 @@ Total Sold: 1574
 Total Sales: $938540.7
 PayPal Profit: $27689
 Est eBay Profit: $83890
+Est eBay + PayPal Profit: $111580
 Total Scalpers/eBay Profit: $-250714.68
 Estimated Scalper Profit: $-362255
 Estimated Break Even Point for Scalpers: $866
@@ -381,6 +401,7 @@ Total Sold: 1998
 Total Sales: $1380442.8
 PayPal Profit: $40632
 Est eBay Profit: $121042
+Est eBay + PayPal Profit: $161674
 Total Scalpers/eBay Profit: $-131528.71
 Estimated Scalper Profit: $-293893
 Estimated Break Even Point for Scalpers: $867
@@ -396,6 +417,7 @@ Total Sold: 3952
 Total Sales: $3585263.96
 PayPal Profit: $105158
 Est eBay Profit: $322312
+Est eBay + PayPal Profit: $427470
 Total Scalpers/eBay Profit: $-666445.84
 Estimated Scalper Profit: $-1093917
 Estimated Break Even Point for Scalpers: $1233
@@ -411,6 +433,7 @@ Total Sold: 219
 Total Sales: $84251.03
 PayPal Profit: $2508
 Est eBay Profit: $7181
+Est eBay + PayPal Profit: $9690
 Total Scalpers/eBay Profit: $-198477.97
 Estimated Scalper Profit: $-208169
 Estimated Break Even Point for Scalpers: $1480
@@ -426,6 +449,7 @@ Total Sold: 677
 Total Sales: $154638.43
 PayPal Profit: $4687
 Est eBay Profit: $14742
+Est eBay + PayPal Profit: $19430
 Total Scalpers/eBay Profit: $-321944.18
 Estimated Scalper Profit: $-341374
 Estimated Break Even Point for Scalpers: $806
@@ -441,6 +465,7 @@ Total Sold: 590
 Total Sales: $101349.28
 PayPal Profit: $3116
 Est eBay Profit: $7900
+Est eBay + PayPal Profit: $11016
 Total Scalpers/eBay Profit: $-251035.6
 Estimated Scalper Profit: $-262052
 Estimated Break Even Point for Scalpers: $684
@@ -456,6 +481,7 @@ Total Sold: 1827
 Total Sales: $240350.91
 PayPal Profit: $7518
 Est eBay Profit: $21409
+Est eBay + PayPal Profit: $28927
 Total Scalpers/eBay Profit: $-422507.53
 Estimated Scalper Profit: $-450522
 Estimated Break Even Point for Scalpers: $415
@@ -471,6 +497,7 @@ Total Sold: 830
 Total Sales: $75964.65
 PayPal Profit: $2451
 Est eBay Profit: $6417
+Est eBay + PayPal Profit: $8869
 Total Scalpers/eBay Profit: $-109629.57
 Estimated Scalper Profit: $-118499
 Estimated Break Even Point for Scalpers: $255
@@ -486,6 +513,7 @@ Total Sold: 232
 Total Sales: $18495.92
 PayPal Profit: $605
 Est eBay Profit: $1650
+Est eBay + PayPal Profit: $2256
 Total Scalpers/eBay Profit: $-23597.58
 Estimated Scalper Profit: $-25854
 Estimated Break Even Point for Scalpers: $207
@@ -501,6 +529,7 @@ Total Sold: 110
 Total Sales: $2449.56
 PayPal Profit: $104
 Est eBay Profit: $150
+Est eBay + PayPal Profit: $254
 Total Scalpers/eBay Profit: $-5086.26
 Estimated Scalper Profit: $-5341
 Estimated Break Even Point for Scalpers: $78
@@ -516,6 +545,7 @@ Total Sold: 9
 Total Sales: $300.9
 PayPal Profit: $11
 Est eBay Profit: $23
+Est eBay + PayPal Profit: $34
 Total Scalpers/eBay Profit: $-494.23
 Estimated Scalper Profit: $-529
 Estimated Break Even Point for Scalpers: $100
@@ -531,6 +561,7 @@ Total Sold: 19
 Total Sales: $790.22
 PayPal Profit: $28
 Est eBay Profit: $46
+Est eBay + PayPal Profit: $74
 Total Scalpers/eBay Profit: $-1583.12
 Estimated Scalper Profit: $-1658
 Estimated Break Even Point for Scalpers: $142
@@ -546,6 +577,7 @@ Total Sold: 187
 Total Sales: $6811.18
 PayPal Profit: $253
 Est eBay Profit: $500
+Est eBay + PayPal Profit: $754
 Total Scalpers/eBay Profit: $-24711.88
 Estimated Scalper Profit: $-25437
 Estimated Break Even Point for Scalpers: $192
@@ -561,6 +593,7 @@ Total Sold: 97
 Total Sales: $3406.24
 PayPal Profit: $127
 Est eBay Profit: $259
+Est eBay + PayPal Profit: $387
 Total Scalpers/eBay Profit: $-18179.9
 Estimated Scalper Profit: $-18568
 Estimated Break Even Point for Scalpers: $254
@@ -576,6 +609,7 @@ Total Sold: 103
 Total Sales: $4656.32
 PayPal Profit: $165
 Est eBay Profit: $392
+Est eBay + PayPal Profit: $558
 Total Scalpers/eBay Profit: $-34773.37
 Estimated Scalper Profit: $-35332
 Estimated Break Even Point for Scalpers: $438
@@ -591,6 +625,7 @@ Total Sold: 135
 Total Sales: $7535.56
 PayPal Profit: $259
 Est eBay Profit: $514
+Est eBay + PayPal Profit: $773
 Total Scalpers/eBay Profit: $-65642.88
 Estimated Scalper Profit: $-66417
 Estimated Break Even Point for Scalpers: $621
@@ -606,6 +641,7 @@ Total Sold: 21
 Total Sales: $2285.54
 PayPal Profit: $72
 Est eBay Profit: $144
+Est eBay + PayPal Profit: $216
 Total Scalpers/eBay Profit: $-13602.8
 Estimated Scalper Profit: $-13848
 Estimated Break Even Point for Scalpers: $867
@@ -621,6 +657,7 @@ Total Sold: 44
 Total Sales: $1167.58
 PayPal Profit: $47
 Est eBay Profit: $46
+Est eBay + PayPal Profit: $93
 Runtime: 00:00:00
 
 (nvidia, gtx, geforce, gt) 610 -nvs -quadro
@@ -632,6 +669,7 @@ Total Sold: 343
 Total Sales: $10322.6
 PayPal Profit: $402
 Est eBay Profit: $643
+Est eBay + PayPal Profit: $1046
 Runtime: 00:00:00
 
 (nvidia, gtx, geforce, gt) 630 -nvs -quadro
@@ -643,6 +681,7 @@ Total Sold: 238
 Total Sales: $8266.22
 PayPal Profit: $311
 Est eBay Profit: $538
+Est eBay + PayPal Profit: $849
 Runtime: 00:00:00
 
 (nvidia, gtx, geforce, gt) 640 -nvs -quadro
@@ -654,6 +693,7 @@ Total Sold: 245
 Total Sales: $17651.16
 PayPal Profit: $585
 Est eBay Profit: $1404
+Est eBay + PayPal Profit: $1989
 Total Scalpers/eBay Profit: $-10340.09
 Estimated Scalper Profit: $-12327
 Estimated Break Even Point for Scalpers: $130
@@ -669,6 +709,7 @@ Total Sold: 143
 Total Sales: $6047.21
 PayPal Profit: $218
 Est eBay Profit: $438
+Est eBay + PayPal Profit: $656
 Total Scalpers/eBay Profit: $-12088.77
 Estimated Scalper Profit: $-12745
 Estimated Break Even Point for Scalpers: $144
@@ -684,6 +725,7 @@ Total Sold: 449
 Total Sales: $19299.47
 PayPal Profit: $694
 Est eBay Profit: $1809
+Est eBay + PayPal Profit: $2503
 Total Scalpers/eBay Profit: $-56794.8
 Estimated Scalper Profit: $-59299
 Estimated Break Even Point for Scalpers: $193
@@ -699,6 +741,7 @@ Total Sold: 248
 Total Sales: $13990.07
 PayPal Profit: $480
 Est eBay Profit: $1242
+Est eBay + PayPal Profit: $1722
 Total Scalpers/eBay Profit: $-49652.93
 Estimated Scalper Profit: $-51444
 Estimated Break Even Point for Scalpers: $293
@@ -714,6 +757,7 @@ Total Sold: 175
 Total Sales: $11089.57
 PayPal Profit: $374
 Est eBay Profit: $909
+Est eBay + PayPal Profit: $1284
 Total Scalpers/eBay Profit: $-46940.43
 Estimated Scalper Profit: $-48224
 Estimated Break Even Point for Scalpers: $379
@@ -729,6 +773,7 @@ Total Sold: 179
 Total Sales: $12492.61
 PayPal Profit: $415
 Est eBay Profit: $1055
+Est eBay + PayPal Profit: $1471
 Total Scalpers/eBay Profit: $-66070.49
 Estimated Scalper Profit: $-67596
 Estimated Break Even Point for Scalpers: $502
@@ -744,6 +789,7 @@ Total Sold: 266
 Total Sales: $39076.63
 PayPal Profit: $1213
 Est eBay Profit: $3199
+Est eBay + PayPal Profit: $4412
 Total Scalpers/eBay Profit: $-105640.67
 Estimated Scalper Profit: $-110054
 Estimated Break Even Point for Scalpers: $623
@@ -759,6 +805,7 @@ Total Sold: 57
 Total Sales: $8175.8
 PayPal Profit: $254
 Est eBay Profit: $607
+Est eBay + PayPal Profit: $861
 Total Scalpers/eBay Profit: $-53141.95
 Estimated Scalper Profit: $-54058
 Estimated Break Even Point for Scalpers: $1233
@@ -774,6 +821,7 @@ Total Sold: 710
 Total Sales: $30354.82
 PayPal Profit: $1093
 Est eBay Profit: $1745
+Est eBay + PayPal Profit: $2839
 Total Scalpers/eBay Profit: $-5819.68
 Estimated Scalper Profit: $-8641
 Estimated Break Even Point for Scalpers: $58
@@ -789,6 +837,7 @@ Total Sold: 93
 Total Sales: $3165.81
 PayPal Profit: $119
 Est eBay Profit: $188
+Est eBay + PayPal Profit: $307
 Total Scalpers/eBay Profit: $-2794.33
 Estimated Scalper Profit: $-3102
 Estimated Break Even Point for Scalpers: $73
@@ -804,6 +853,7 @@ Total Sold: 900
 Total Sales: $55420.02
 PayPal Profit: $1877
 Est eBay Profit: $2856
+Est eBay + PayPal Profit: $4733
 Total Scalpers/eBay Profit: $-24173.73
 Estimated Scalper Profit: $-28907
 Estimated Break Even Point for Scalpers: $101
@@ -819,6 +869,7 @@ Total Sold: 91
 Total Sales: $5411.73
 PayPal Profit: $184
 Est eBay Profit: $396
+Est eBay + PayPal Profit: $581
 Total Scalpers/eBay Profit: $-4637.63
 Estimated Scalper Profit: $-5219
 Estimated Break Even Point for Scalpers: $126
@@ -834,6 +885,7 @@ Total Sold: 126
 Total Sales: $6923.86
 PayPal Profit: $238
 Est eBay Profit: $495
+Est eBay + PayPal Profit: $733
 Total Scalpers/eBay Profit: $-10405.86
 Estimated Scalper Profit: $-11140
 Estimated Break Even Point for Scalpers: $157
@@ -849,6 +901,7 @@ Total Sold: 705
 Total Sales: $55679.39
 PayPal Profit: $1826
 Est eBay Profit: $4991
+Est eBay + PayPal Profit: $6817
 Total Scalpers/eBay Profit: $-63756.42
 Estimated Scalper Profit: $-70574
 Estimated Break Even Point for Scalpers: $193
@@ -864,6 +917,7 @@ Total Sold: 381
 Total Sales: $27843.54
 PayPal Profit: $921
 Est eBay Profit: $2327
+Est eBay + PayPal Profit: $3249
 Total Scalpers/eBay Profit: $-77263.88
 Estimated Scalper Profit: $-80513
 Estimated Break Even Point for Scalpers: $315
@@ -879,6 +933,7 @@ Total Sold: 374
 Total Sales: $35644.85
 PayPal Profit: $1145
 Est eBay Profit: $2748
+Est eBay + PayPal Profit: $3894
 Total Scalpers/eBay Profit: $-127401.38
 Estimated Scalper Profit: $-131290
 Estimated Break Even Point for Scalpers: $499
@@ -894,6 +949,7 @@ Total Sold: 217
 Total Sales: $23856.17
 PayPal Profit: $756
 Est eBay Profit: $1992
+Est eBay + PayPal Profit: $2749
 Total Scalpers/eBay Profit: $-128718.16
 Estimated Scalper Profit: $-131512
 Estimated Break Even Point for Scalpers: $806
@@ -909,6 +965,7 @@ Total Sold: 206
 Total Sales: $23965.05
 PayPal Profit: $756
 Est eBay Profit: $1788
+Est eBay + PayPal Profit: $2545
 Total Scalpers/eBay Profit: $-132118.58
 Estimated Scalper Profit: $-134664
 Estimated Break Even Point for Scalpers: $868
@@ -924,6 +981,7 @@ Total Sold: 50
 Total Sales: $11478.94
 PayPal Profit: $347
 Est eBay Profit: $840
+Est eBay + PayPal Profit: $1188
 Total Scalpers/eBay Profit: $-42391.18
 Estimated Scalper Profit: $-43782
 Estimated Break Even Point for Scalpers: $1235
@@ -939,6 +997,7 @@ Total Sold: 13
 Total Sales: $4487.03
 PayPal Profit: $134
 Est eBay Profit: $361
+Est eBay + PayPal Profit: $495
 Total Scalpers/eBay Profit: $-37196.4
 Estimated Scalper Profit: $-37692
 Estimated Break Even Point for Scalpers: $3679
