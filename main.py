@@ -705,11 +705,6 @@ def median_plotting(dfs, names, title, roll=0, msrps=[], min_msrp=100):
     for i in range(len(dfs)):
         ci = i % (len(colors) - 1)
 
-        dfs[i] = dfs[i][dfs[i]['Total Price'] > 0]
-        dfs[i] = dfs[i][dfs[i]['Quantity'] > 0]
-        dfs[i] = dfs[i].loc[dfs[i].index.repeat(dfs[i]['Quantity'])]
-        dfs[i]['Quantity'] = 1
-
         med_price = dfs[i].groupby(['Sold Date'])['Total Price'].median()
 
         if roll > 0:
@@ -1033,7 +1028,7 @@ def plot_profits(df, title, msrp, store_ebay_rate=0.04, non_store_ebay_rate=0.09
 
 run_all_feedback = True
 run_all_hist = True
-run_cached = False
+run_cached = True
 sleep_len = 4
 country = 'USA'
 debug = False
@@ -1144,7 +1139,8 @@ df_6900 = ebay_search('RX 6900 -image -jpeg -img -picture -pic -jpg', http, 999,
 # Big Navi Plotting
 median_plotting([df_6800, df_6800xt, df_6900], ['RX 6800', 'RX 6800 XT', 'RX 6900'], 'Big Navi Median Pricing', roll=0,
                 msrps=[579, 649, 999])
-
+median_plotting([df_6800, df_6800xt, df_6900], ['RX 6800', 'RX 6800 XT', 'RX 6900'], 'Big Navi Median Pricing', roll=7,
+                msrps=[579, 649, 999])
 df_6800 = df_6800.assign(item='6800')
 df_6800xt = df_6800xt.assign(item='6800XT')
 df_6900 = df_6900.assign(item='6900')
@@ -1182,8 +1178,9 @@ df_3090 = ebay_search('RTX 3090 -image -jpeg -img -picture -pic -jpg', http, 149
 
 # RTX 30 Series/Ampere Plotting
 median_plotting([df_3060, df_3070, df_3080, df_3090], ['3060', '3070', '3080', '3090'], 'RTX 30 Series Median Pricing',
-                roll=0,
-                msrps=[399, 499, 699, 1499])
+                roll=0,                msrps=[399, 499, 699, 1499])
+median_plotting([df_3060, df_3070, df_3080, df_3090], ['3060', '3070', '3080', '3090'], 'RTX 30 Series Median Pricing',
+                roll=7,                msrps=[399, 499, 699, 1499])
 
 df_3060 = df_3060.assign(item='3060')
 df_3070 = df_3070.assign(item='3070')
@@ -1252,6 +1249,9 @@ frames = [df_1060, df_1070ti, df_1070, df_1080, df_1080ti, df_titanxp]
 median_plotting(frames, ['1060', '1070', '1070 Ti', '1080', '1080 Ti', 'Titan XP'],
                 'Pascal (GTX 10) series Median Pricing', roll=0,
                 msrps=[249, 599, 599, 599, 699, 1200])
+median_plotting(frames, ['1060', '1070', '1070 Ti', '1080', '1080 Ti', 'Titan XP'],
+                'Pascal (GTX 10) series Median Pricing', roll=7,
+                msrps=[249, 599, 599, 599, 699, 1200])
 
 # Turing 16 series
 df_1650 = ebay_search('gtx 1650 -super -image -jpeg -img -picture -pic -jpg', http, 149, 50, 600,
@@ -1298,6 +1298,8 @@ df_1660Ti = df_1660Ti.assign(item='1660Ti')
 frames = [df_1650, df_1650S, df_1660, df_1660S, df_1660Ti]
 
 median_plotting(frames, ['1650', '1650S', '1660', '1660S', '1660 Ti'], 'Turing (RTX 16) Series Median Pricing', roll=0,
+                msrps=[149, 159, 249, 229, 279])
+median_plotting(frames, ['1650', '1650S', '1660', '1660S', '1660 Ti'], 'Turing (RTX 16) Series Median Pricing', roll=7,
                 msrps=[149, 159, 249, 229, 279])
 
 # Turing GPUs
@@ -1357,6 +1359,10 @@ frames = [df_2060, df_2060S, df_2070, df_2080, df_2080S, df_2080Ti]
 median_plotting(frames,
                 ['2060', '2060S', '2070', '2080', '2080S', '2080 Ti'],
                 'Turing (RTX 20) Series Median Pricing', roll=0,
+                msrps=[299, 399, 499, 499, 699, 699, 999])
+median_plotting(frames,
+                ['2060', '2060S', '2070', '2080', '2080S', '2080 Ti'],
+                'Turing (RTX 20) Series Median Pricing', roll=7,
                 msrps=[299, 399, 499, 499, 699, 699, 999])
 
 # Vega and Radeon RX 5000 Series (not bothering to separate out 4 vs 8 GB models nor the 50th anniversary
@@ -1472,6 +1478,9 @@ frames = [df_950, df_960, df_970, df_980, df_980Ti, df_titanx]
 median_plotting(frames, ['950', '960', '970', '980', '980 Ti', 'Titan X'], 'Maxwell (GTX 900) Series Median Pricing',
                 roll=0,
                 msrps=[159, 199, 329, 549, 649, 1200])
+median_plotting(frames, ['950', '960', '970', '980', '980 Ti', 'Titan X'], 'Maxwell (GTX 900) Series Median Pricing',
+                roll=7,
+                msrps=[159, 199, 329, 549, 649, 1200])
 
 # Zen 2 data
 df_3950X = ebay_search('3950X -image -jpeg -img -picture -pic -jpg', http, 749, 350, 1200, run_cached=run_cached,
@@ -1553,6 +1562,11 @@ median_plotting(frames,
                 'Zen 2 Median Pricing', roll=0,
                 msrps=[99, 120, 249, 249, 249, 329, 399, 399, 499, 499, 749]
                 )
+median_plotting(frames,
+                ['3100', '3300X', '3600', '3600X', '3600XT', '3700X', '3800X', '3800XT', '3900XT', '3900X', '3950X'],
+                'Zen 2 Median Pricing', roll=7,
+                msrps=[99, 120, 249, 249, 249, 329, 399, 399, 499, 499, 749]
+                )
 
 df_i9_10900k = ebay_search('i9 10900k', http, 0, 300, 1000, feedback=run_all_feedback,
                            run_cached=run_cached, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
@@ -1576,6 +1590,9 @@ median_plotting(frames,
                 ['i9 9900k', 'i9 10900k'], 'i9 Median Pricing', roll=0,
                 msrps=[488, 488])
 
+median_plotting(frames,
+                ['i9 9900k', 'i9 10900k'], 'i9 Median Pricing', roll=7,
+                msrps=[488, 488])
 # i7 Plotting
 df_i7_10700k = ebay_search('i7 10700k', http, 374, 100, 1000, feedback=run_all_feedback,
                            run_cached=run_cached, quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
@@ -1663,6 +1680,11 @@ median_plotting(frames,
                  'i7 7700k', 'i7 8700k', 'i7 9700K', 'i7 10700k'],
                 'i7 Median Pricing', roll=0,
                 msrps=[284, 284, 583, 332, 342, 339, 339, 339, 339, 359, 374, 374])
+median_plotting(frames,
+                ['i7 Nehalem', 'i7 Lynnfield', 'i7 970+', 'i7 2700k', 'i7 3770k', 'i7 4770k', 'i7 4790k', 'i7 6700k',
+                 'i7 7700k', 'i7 8700k', 'i7 9700K', 'i7 10700k'],
+                'i7 Median Pricing', roll=7,
+                msrps=[284, 284, 583, 332, 342, 339, 339, 339, 339, 359, 374, 374])
 
 #  Zen Series
 
@@ -1731,6 +1753,10 @@ median_plotting(frames,
                 ['1200', '1300X', '1400', '1500X', '1600', '1600X', '1700', '1700X', '1800X'],
                 'Zen Median Pricing', roll=0,
                 msrps=[109, 129, 169, 189, 219, 249, 329, 399, 499])
+median_plotting(frames,
+                ['1200', '1300X', '1400', '1500X', '1600', '1600X', '1700', '1700X', '1800X'],
+                'Zen Median Pricing', roll=7,
+                msrps=[109, 129, 169, 189, 219, 249, 329, 399, 499])
 
 #  Zen+ Series
 
@@ -1781,6 +1807,11 @@ median_plotting(frames,
                 'Zen+ Median Pricing', roll=0,
                 msrps=[85, 199, 229, 299, 329]
                 )
+median_plotting(frames,
+                ['1600AF', '2600', '2600X', '2700', '2700X'],
+                'Zen+ Median Pricing', roll=7,
+                msrps=[85, 199, 229, 299, 329]
+                )
 
 # PS4 Analysis
 df_ps4 = ebay_search('ps4 -pro -repair -box -broken -parts -bad', http, 399, 60, 5000, run_cached=run_cached,
@@ -1800,6 +1831,8 @@ df_ps4_pro = df_ps4_pro.assign(item='PS4 Pro')
 frames = [df_ps4, df_ps4_pro]
 
 median_plotting(frames, ['PS4', 'PS4 Pro'], 'PS4 Median Pricing', roll=0,
+                msrps=[399, 399])
+median_plotting(frames, ['PS4', 'PS4 Pro'], 'PS4 Median Pricing', roll=7,
                 msrps=[399, 399])
 
 # Xbox One Analysis
@@ -1823,6 +1856,8 @@ frames = [df_xbox_one_s, df_xbox_one_x]
 
 median_plotting(frames, ['Xbox One S', 'Xbox One X'], 'Xbox One Median Pricing', roll=0,
                 msrps=[299, 499])
+median_plotting(frames, ['Xbox One S', 'Xbox One X'], 'Xbox One Median Pricing', roll=7,
+                msrps=[299, 499])
 
 # PS5 Analysis (All time)
 df_ps5_digital = ebay_search('PS5 Digital -image -jpeg -img -picture -pic -jpg', http, 399, 300, 11000,
@@ -1839,8 +1874,6 @@ df_ps5_disc = ebay_search('PS5 -digital -image -jpeg -img -picture -pic -jpg', h
                           non_store_rate=vg_non_store_rate)
 
 # PS5 Plotting
-median_plotting([df_ps5_digital, df_ps5_disc], ['PS5 Digital', 'PS5 Disc'], 'PS5 Median Pricing', roll=0,
-                msrps=[299, 499])
 
 df_ps5_digital = df_ps5_digital.assign(item='PS5 Digital')
 df_ps5_disc = df_ps5_disc.assign(item='PS5 Disc')
@@ -1848,6 +1881,11 @@ df_ps5_disc = df_ps5_disc.assign(item='PS5 Disc')
 frames = [df_ps5_digital, df_ps5_disc]
 com_df = pd.concat(frames)
 ebay_seller_plot('PS5', com_df, extra_title_text='')
+median_plotting([df_ps5_digital, df_ps5_disc], ['PS5 Digital', 'PS5 Disc'], 'PS5 Median Pricing', roll=0,
+                msrps=[299, 499])
+median_plotting([df_ps5_digital, df_ps5_disc], ['PS5 Digital', 'PS5 Disc'], 'PS5 Median Pricing', roll=7,
+                msrps=[299, 499])
+
 
 # Xbox Analysis (All time)
 df_xbox_s = ebay_search('Xbox Series S -image -jpeg -img -picture -pic -jpg', http, 299, 250, 11000,
@@ -1864,8 +1902,7 @@ df_xbox_x = ebay_search('Xbox Series X -image -jpeg -img -picture -pic -jpg', ht
                         non_store_rate=vg_non_store_rate)
 
 # Xbox Plotting
-median_plotting([df_xbox_s, df_xbox_x], ['Xbox Series S', 'Xbox Series X'], 'Xbox Median Pricing',
-                roll=0, msrps=[299, 499])
+
 
 df_xbox_s = df_xbox_s.assign(item='Xbox Series S')
 df_xbox_x = df_xbox_x.assign(item='Xbox Series X')
@@ -1873,6 +1910,10 @@ df_xbox_x = df_xbox_x.assign(item='Xbox Series X')
 frames = [df_xbox_s, df_xbox_x]
 com_df = pd.concat(frames)
 ebay_seller_plot('Xbox', com_df, extra_title_text='')
+median_plotting([df_xbox_s, df_xbox_x], ['Xbox Series S', 'Xbox Series X'], 'Xbox Median Pricing',
+                roll=0, msrps=[299, 499])
+median_plotting([df_xbox_s, df_xbox_x], ['Xbox Series S', 'Xbox Series X'], 'Xbox Median Pricing',
+                roll=7, msrps=[299, 499])
 
 # Nintendo Switch
 df_switch = ebay_search('nintendo switch -lite', http, 300, 0, 2800, run_cached=run_cached, feedback=run_all_feedback,
@@ -1889,8 +1930,7 @@ df_switch_lite = ebay_search('nintendo switch lite', http, 200, 0, 2800, run_cac
                              sacat=139971)
 
 # Nintendo Switch Plotting
-median_plotting([df_switch_lite, df_switch], ['Lite', 'Standard'], 'Nintendo Switch Median Pricing', roll=0,
-                msrps=[200, 300])
+
 
 df_switch_lite = df_switch_lite.assign(item='Lite')
 df_switch = df_switch.assign(item='Standard')
@@ -1898,6 +1938,10 @@ df_switch = df_switch.assign(item='Standard')
 frames = [df_switch_lite, df_switch]
 com_df = pd.concat(frames)
 ebay_seller_plot('Nintendo Switch', com_df, extra_title_text='')
+median_plotting([df_switch_lite, df_switch], ['Lite', 'Standard'], 'Nintendo Switch Median Pricing', roll=0,
+                msrps=[200, 300])
+median_plotting([df_switch_lite, df_switch], ['Lite', 'Standard'], 'Nintendo Switch Median Pricing', roll=7,
+                msrps=[200, 300])
 
 df_520 = ebay_search('(nvidia, gtx, geforce, gt) 520 -nvs -quadro', http, 59, 0, 2000, run_cached=run_cached,
                      feedback=run_all_feedback,
@@ -1965,6 +2009,9 @@ frames = [df_520, df_530, df_545, df_550ti, df_560, df_570, df_580, df_590]
 median_plotting(frames, ['520', '530', '545', '550 Ti', '560', '570', '580', '590'],
                 'Fermi (GTX 500) Series Median Pricing',
                 roll=0, msrps=[59, 75, 109, 149, 199, 349, 499, 699])
+median_plotting(frames, ['520', '530', '545', '550 Ti', '560', '570', '580', '590'],
+                'Fermi (GTX 500) Series Median Pricing',
+                roll=7, msrps=[59, 75, 109, 149, 199, 349, 499, 699])
 
 df_605 = ebay_search('(nvidia, gtx, geforce, gt) 605 -nvs -quadro', http, 0, 0, 2000, run_cached=run_cached,
                      feedback=run_all_feedback,
@@ -2292,20 +2339,17 @@ df_R9FURYX = df_R9FURYX.assign(item='R9 Fury X')
 df_R9NANO = df_R9NANO.assign(item='R9 Nano')
 df_RADEONPRODUO = df_RADEONPRODUO.assign(item='Radeon Pro Duo')
 
-frames = [df_R7350, df_R7360, df_R9370X, df_R9380X, df_R9390, df_R9390X, df_R9FURY, df_R9FURYX, df_R9NANO,
-          df_RADEONPRODUO]
+frames = [df_R7350, df_R7360, df_R9380X, df_R9390, df_R9390X, df_R9FURY, df_R9FURYX, df_R9NANO, df_RADEONPRODUO]
 
 median_plotting(frames,
-                ['R7 350', 'R7 360', 'R9 370X', 'R9 380X', 'R9 390', 'R9 380X', 'R9 Fury', 'R9 Fury X', 'R9 Nano',
-                 'Radeon Pro Duo'],
-                'R5/R7/R9 Series Median Pricing', roll=0,
-                msrps=[89, 109, 179, 199, 229, 329, 429, 549, 649, 649, 1499])
+                ['R7 350', 'R7 360',  'R9 380X', 'R9 390', 'R9 380X', 'R9 Fury', 'R9 Fury X', 'R9 Nano', 'Radeon Pro Duo'],
+                'R5-R7-R9 Series Median Pricing', roll=0,
+                msrps=[89, 109,  199, 229, 329, 429, 549, 649, 649, 1499])
 
 median_plotting(frames,
-                ['R7 350', 'R7 360', 'R9 370X', 'R9 380X', 'R9 390', 'R9 380X', 'R9 Fury', 'R9 Fury X', 'R9 Nano',
-                 'Radeon Pro Duo'],
-                'R5/R7/R9 Series Median Pricing', roll=7,
-                msrps=[89, 109, 179, 199, 229, 329, 429, 549, 649, 649, 1499])
+                ['R7 350', 'R7 360', 'R9 380X', 'R9 390', 'R9 380X', 'R9 Fury', 'R9 Fury X', 'R9 Nano', 'Radeon Pro Duo'],
+                'R5-R7-R9 Series Median Pricing', roll=7,
+                msrps=[89, 109,  199, 229, 329, 429, 549, 649, 649, 1499])
 
 # RX 400 Series
 df_RX460 = ebay_search('rx 460', http, 109, 0, 400, run_cached=run_cached, feedback=run_all_feedback,
