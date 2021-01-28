@@ -673,13 +673,14 @@ def median_plotting(dfs, names, title, roll=0, msrps=[], min_msrp=100):
         dfs[i] = dfs[i].loc[dfs[i].index.repeat(dfs[i]['Quantity'])]
         dfs[i]['Quantity'] = 1
 
-        med_price = dfs[i].groupby(['Sold Date'])['Total Price'].median() / msrps[i] * 100
+        med_price_scaled = dfs[i].groupby(['Sold Date'])['Total Price'].median() / msrps[i] * 100
 
         if roll > 0:
-            med_price = med_price.rolling(roll, min_periods=1).mean()
+            med_price_scaled = med_price_scaled.rolling(roll, min_periods=1).mean()
 
-        min_msrp = min(min_msrp, min(med_price))
-        plt.plot(med_price, colors[ci], label=names[i])
+
+        min_msrp = min(min_msrp, min(med_price_scaled))
+        plt.plot(med_price_scaled, colors[ci], label=names[i])
     plt.ylim(bottom=min_msrp)
     plt.legend()
     plt.tight_layout()
@@ -687,6 +688,44 @@ def median_plotting(dfs, names, title, roll=0, msrps=[], min_msrp=100):
         plt.savefig("Images/" + title + ' ' + str(roll) + ' Rolling Average')
     else:
         plt.savefig("Images/" + title)
+    plt.show()
+
+
+    # Plotting the non-scaled graph
+    plt.figure()  # In this example, all the plots will be in one figure.
+    fig, ax = plt.subplots()
+    plt.ylabel("Median Sale Price ($)")
+    plt.xlabel("Sale Date")
+    plt.tick_params(axis='y')
+    plt.tick_params(axis='x', rotation=30)
+    if roll > 0:
+        plt.title(title + ' ' + str(roll) + ' Rolling Average - Raw Dollars')
+    else:
+        plt.title(title + ' - Raw Dollars')
+    for i in range(len(dfs)):
+        ci = i % (len(colors) - 1)
+
+        dfs[i] = dfs[i][dfs[i]['Total Price'] > 0]
+        dfs[i] = dfs[i][dfs[i]['Quantity'] > 0]
+        dfs[i] = dfs[i].loc[dfs[i].index.repeat(dfs[i]['Quantity'])]
+        dfs[i]['Quantity'] = 1
+
+        med_price = dfs[i].groupby(['Sold Date'])['Total Price'].median()
+
+        if roll > 0:
+            med_price = med_price.rolling(roll, min_periods=1).mean()
+
+        min_msrp = min(min_msrp, min(med_price))
+        plt.plot(med_price, colors[ci], label=names[i])
+    plt.ylim(bottom=min_msrp)
+    formatter = ticker.FormatStrFormatter('$%1.0f')
+    ax.yaxis.set_major_formatter(formatter)
+    plt.legend()
+    plt.tight_layout()
+    if roll > 0:
+        plt.savefig("Images/" + title + ' ' + str(roll) + ' Rolling Average - Raw Dollars')
+    else:
+        plt.savefig("Images/" + title + ' - Raw Dollars')
     plt.show()
 
 
@@ -994,11 +1033,11 @@ def plot_profits(df, title, msrp, store_ebay_rate=0.04, non_store_ebay_rate=0.09
 
 run_all_feedback = True
 run_all_hist = True
-run_cached = True
-sleep_len = 10
+run_cached = False
+sleep_len = 4
 country = 'USA'
 debug = False
-days_before = 4
+days_before = 7
 
 comp_store_rate = 0.04
 comp_non_store_rate = 0.1
@@ -1117,7 +1156,6 @@ ebay_seller_plot('Big Navi', com_df, extra_title_text='')
 brand_plot([df_6800, df_6800xt, df_6900], 'Big Navi AIB Comparison', brand_list, [579, 649, 999])
 
 brand_plot([df_6800, df_6800xt, df_6900], 'Big Navi AIB Comparison', brand_list, [579, 649, 999], roll=7)
-
 
 # RTX 30 Series Analysis
 df_3060 = ebay_search('RTX 3060 -image -jpeg -img -picture -pic -jpg', http, 399, 200, 1300, feedback=run_all_feedback,
@@ -1379,6 +1417,10 @@ frames = [df_5500XT, df_5600XT, df_5700, df_5700XT, df_vega56, df_vega64, df_rad
 median_plotting(frames,
                 ['RX 5500 XT', 'RX 5600 XT', 'RX 5700', 'RX 5700 XT', 'RX Vega 56', 'RX Vega 64', 'Radeon VII'],
                 'RX 5000 and Vega Series Median Pricing', roll=0,
+                msrps=[169, 279, 349, 499, 399, 499, 699])
+median_plotting(frames,
+                ['RX 5500 XT', 'RX 5600 XT', 'RX 5700', 'RX 5700 XT', 'RX Vega 56', 'RX Vega 64', 'Radeon VII'],
+                'RX 5000 and Vega Series Median Pricing', roll=7,
                 msrps=[169, 279, 349, 499, 399, 499, 699])
 
 # Maxwell Series
@@ -1857,49 +1899,54 @@ frames = [df_switch_lite, df_switch]
 com_df = pd.concat(frames)
 ebay_seller_plot('Nintendo Switch', com_df, extra_title_text='')
 
+df_520 = ebay_search('(nvidia, gtx, geforce, gt) 520 -nvs -quadro', http, 59, 0, 2000, run_cached=run_cached,
+                     feedback=run_all_feedback,
+                     quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                     brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                     debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                     sacat=graphics_card_sacat)
 
+df_530 = ebay_search('(nvidia, gtx, geforce, gt) 530 -nvs -quadro -tesla', http, 75, 0, 400, run_cached=run_cached,
+                     feedback=run_all_feedback,
+                     quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                     brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                     debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                     sacat=graphics_card_sacat)
 
+df_545 = ebay_search('(nvidia, gtx, geforce, gt) 545 -nvs -quadro', http, 109, 0, 2000, run_cached=run_cached,
+                     feedback=run_all_feedback,
+                     quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                     brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                     debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                     sacat=graphics_card_sacat)
 
-df_520 = ebay_search('(nvidia, gtx, geforce, gt) 520 -nvs -quadro', http, 59, 0, 2000, run_cached=run_cached, feedback=run_all_feedback,
+df_550ti = ebay_search('(nvidia, gtx, geforce, gt) 550 ti -nvs -quadro', http, 149, 0, 400, run_cached=run_cached,
+                       feedback=run_all_feedback,
                        quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                        brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
                        debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
                        sacat=graphics_card_sacat)
-
-df_530 = ebay_search('(nvidia, gtx, geforce, gt) 530 -nvs -quadro -tesla', http, 75, 0, 400, run_cached=run_cached, feedback=run_all_feedback,
+df_560 = ebay_search('(nvidia, gtx, geforce, gt) 560 -ti -nvs -quadro', http, 199, 0, 400, run_cached=run_cached,
+                     feedback=run_all_feedback,
                      quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                      brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
                      debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
                      sacat=graphics_card_sacat)
 
-df_545 = ebay_search('(nvidia, gtx, geforce, gt) 545 -nvs -quadro', http, 109, 0, 2000, run_cached=run_cached, feedback=run_all_feedback,
+df_570 = ebay_search('(nvidia, gtx, geforce, gt) 570 -nvs -quadro', http, 349, 0, 400, run_cached=run_cached,
+                     feedback=run_all_feedback,
                      quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                      brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
                      debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
                      sacat=graphics_card_sacat)
-
-df_550ti = ebay_search('(nvidia, gtx, geforce, gt) 550 ti -nvs -quadro', http, 149, 0, 400, run_cached=run_cached, feedback=run_all_feedback,
+df_580 = ebay_search('(nvidia, gtx, geforce, gt) 580 -nvs -quadro', http, 499, 0, 400, run_cached=run_cached,
+                     feedback=run_all_feedback,
                      quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                      brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
                      debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
                      sacat=graphics_card_sacat)
-df_560 = ebay_search('(nvidia, gtx, geforce, gt) 560 -ti -nvs -quadro', http, 199, 0, 400, run_cached=run_cached, feedback=run_all_feedback,
-                     quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
-                     brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                     debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
-                     sacat=graphics_card_sacat)
-
-df_570 = ebay_search('(nvidia, gtx, geforce, gt) 570 -nvs -quadro', http, 349, 0, 400, run_cached=run_cached, feedback=run_all_feedback,
-                     quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
-                     brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                     debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
-                     sacat=graphics_card_sacat)
-df_580 = ebay_search('(nvidia, gtx, geforce, gt) 580 -nvs -quadro', http, 499, 0, 400, run_cached=run_cached, feedback=run_all_feedback,
-                     quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
-                     brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                     debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
-                     sacat=graphics_card_sacat)
-df_590 = ebay_search('(nvidia, gtx, geforce, gt) 590 -nvs -quadro', http, 699, 0, 400, run_cached=run_cached, feedback=run_all_feedback,
+df_590 = ebay_search('(nvidia, gtx, geforce, gt) 590 -nvs -quadro', http, 699, 0, 400, run_cached=run_cached,
+                     feedback=run_all_feedback,
                      quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                      brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
                      debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
@@ -1915,16 +1962,16 @@ df_580 = df_580.assign(item='580')
 df_590 = df_590.assign(item='590')
 
 frames = [df_520, df_530, df_545, df_550ti, df_560, df_570, df_580, df_590]
-median_plotting(frames, ['520', '530', '545', '550 Ti', '560', '570', '580', '590'], 'Fermi (GTX 500) Series Median Pricing',
+median_plotting(frames, ['520', '530', '545', '550 Ti', '560', '570', '580', '590'],
+                'Fermi (GTX 500) Series Median Pricing',
                 roll=0, msrps=[59, 75, 109, 149, 199, 349, 499, 699])
 
-
 df_605 = ebay_search('(nvidia, gtx, geforce, gt) 605 -nvs -quadro', http, 0, 0, 2000, run_cached=run_cached,
-                       feedback=run_all_feedback,
-                       quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
-                       brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
-                       sacat=graphics_card_sacat)
+                     feedback=run_all_feedback,
+                     quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                     brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                     debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                     sacat=graphics_card_sacat)
 
 df_610 = ebay_search('(nvidia, gtx, geforce, gt) 610 -nvs -quadro', http, 0, 0, 2000, run_cached=run_cached,
                      feedback=run_all_feedback,
@@ -1932,7 +1979,6 @@ df_610 = ebay_search('(nvidia, gtx, geforce, gt) 610 -nvs -quadro', http, 0, 0, 
                      brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
                      debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
                      sacat=graphics_card_sacat)
-
 
 df_630 = ebay_search('(nvidia, gtx, geforce, gt) 630 -nvs -quadro', http, 0, 0, 400, run_cached=run_cached,
                      feedback=run_all_feedback,
@@ -1956,11 +2002,11 @@ df_650 = ebay_search('(nvidia, gtx, geforce, gt) 650 -ti -nvs -quadro', http, 11
                      sacat=graphics_card_sacat)
 
 df_650ti = ebay_search('(nvidia, gtx, geforce, gt) 650 Ti -nvs -quadro', http, 150, 0, 400, run_cached=run_cached,
-                     feedback=run_all_feedback,
-                     quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
-                     brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                     debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
-                     sacat=graphics_card_sacat)
+                       feedback=run_all_feedback,
+                       quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                       brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                       sacat=graphics_card_sacat)
 df_660 = ebay_search('(nvidia, gtx, geforce, gt) 660 -ti -nvs -quadro', http, 230, 0, 400, run_cached=run_cached,
                      feedback=run_all_feedback,
                      quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
@@ -1968,11 +2014,11 @@ df_660 = ebay_search('(nvidia, gtx, geforce, gt) 660 -ti -nvs -quadro', http, 23
                      debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
                      sacat=graphics_card_sacat)
 df_660ti = ebay_search('(nvidia, gtx, geforce, gt) 660 Ti -nvs -quadro', http, 300, 0, 400, run_cached=run_cached,
-                     feedback=run_all_feedback,
-                     quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
-                     brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                     debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
-                     sacat=graphics_card_sacat)
+                       feedback=run_all_feedback,
+                       quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                       brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                       sacat=graphics_card_sacat)
 df_670 = ebay_search('(nvidia, gtx, geforce, gt) 670 -nvs -quadro', http, 400, 0, 400, run_cached=run_cached,
                      feedback=run_all_feedback,
                      quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
@@ -2012,72 +2058,82 @@ median_plotting(frames, ['605', '610', '630', '640', '650', '650 Ti', '660', '66
                 'Kepler (GTX 600) Series Median Pricing',
                 roll=7, msrps=[40, 59, 75, 100, 110, 150, 230, 300, 400, 500, 1000])
 
-df_710 = ebay_search('(nvidia, gtx, geforce, gt) 710 -nvs -quadro', http, 40, 0, 2000, run_cached=run_cached, feedback=run_all_feedback,
+df_710 = ebay_search('(nvidia, gtx, geforce, gt) 710 -nvs -quadro', http, 40, 0, 2000, run_cached=run_cached,
+                     feedback=run_all_feedback,
+                     quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                     brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                     debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                     sacat=graphics_card_sacat)
+
+df_720 = ebay_search('(nvidia, gtx, geforce, gt) 720 -nvs -quadro', http, 55, 0, 2000, run_cached=run_cached,
+                     feedback=run_all_feedback,
+                     quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                     brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                     debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                     sacat=graphics_card_sacat)
+
+df_730 = ebay_search('(nvidia, gtx, geforce, gt) 730 -nvs -quadro', http, 75, 0, 400, run_cached=run_cached,
+                     feedback=run_all_feedback,
+                     quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                     brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                     debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                     sacat=graphics_card_sacat)
+df_740 = ebay_search('(nvidia, gtx, geforce, gt) 740 -nvs -quadro', http, 95, 0, 400, run_cached=run_cached,
+                     feedback=run_all_feedback,
+                     quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                     brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                     debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                     sacat=graphics_card_sacat)
+df_750 = ebay_search('(nvidia, gtx, geforce, gt) 750 -ti -nvs -quadro', http, 119, 0, 400, run_cached=run_cached,
+                     feedback=run_all_feedback,
+                     quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                     brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                     debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                     sacat=graphics_card_sacat)
+
+df_750ti = ebay_search('(nvidia, gtx, geforce, gt) 750 Ti -nvs -quadro', http, 149, 0, 400, run_cached=run_cached,
+                       feedback=run_all_feedback,
                        quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
                        brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
                        debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
                        sacat=graphics_card_sacat)
+df_760 = ebay_search('(nvidia, gtx, geforce, gt) 760 -nvs -quadro', http, 249, 0, 400, run_cached=run_cached,
+                     feedback=run_all_feedback,
+                     quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                     brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                     debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                     sacat=graphics_card_sacat)
+df_770 = ebay_search('(nvidia, gtx, geforce, gt) 770 -nvs -quadro', http, 399, 0, 400, run_cached=run_cached,
+                     feedback=run_all_feedback,
+                     quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                     brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                     debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                     sacat=graphics_card_sacat)
+df_780 = ebay_search('(nvidia, gtx, geforce, gt) 780 -ti -nvs -quadro', http, 649, 0, 400, run_cached=run_cached,
+                     feedback=run_all_feedback,
+                     quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                     brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                     debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                     sacat=graphics_card_sacat)
+df_780ti = ebay_search('(nvidia, gtx, geforce, gt) 780 ti -nvs -quadro', http, 699, 0, 400, run_cached=run_cached,
+                       feedback=run_all_feedback,
+                       quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                       brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                       sacat=graphics_card_sacat)
+df_titanblack = ebay_search('(nvidia, gtx, geforce, gt) titan black -nvs -quadro', http, 999, 0, 400,
+                            run_cached=run_cached, feedback=run_all_feedback,
+                            quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                            brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                            debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                            sacat=graphics_card_sacat)
 
-df_720 = ebay_search('(nvidia, gtx, geforce, gt) 720 -nvs -quadro', http, 55, 0, 2000, run_cached=run_cached, feedback=run_all_feedback,
-                     quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
-                     brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                     debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
-                     sacat=graphics_card_sacat)
-
-df_730 = ebay_search('(nvidia, gtx, geforce, gt) 730 -nvs -quadro', http, 75, 0, 400, run_cached=run_cached, feedback=run_all_feedback,
-                     quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
-                     brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                     debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
-                     sacat=graphics_card_sacat)
-df_740 = ebay_search('(nvidia, gtx, geforce, gt) 740 -nvs -quadro', http, 95, 0, 400, run_cached=run_cached, feedback=run_all_feedback,
-                     quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
-                     brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                     debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
-                     sacat=graphics_card_sacat)
-df_750 = ebay_search('(nvidia, gtx, geforce, gt) 750 -ti -nvs -quadro', http, 119, 0, 400, run_cached=run_cached, feedback=run_all_feedback,
-                     quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
-                     brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                     debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
-                     sacat=graphics_card_sacat)
-
-df_750ti = ebay_search('(nvidia, gtx, geforce, gt) 750 Ti -nvs -quadro', http, 149, 0, 400, run_cached=run_cached, feedback=run_all_feedback,
-                     quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
-                     brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                     debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
-                     sacat=graphics_card_sacat)
-df_760 = ebay_search('(nvidia, gtx, geforce, gt) 760 -nvs -quadro', http, 249, 0, 400, run_cached=run_cached, feedback=run_all_feedback,
-                     quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
-                     brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                     debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
-                     sacat=graphics_card_sacat)
-df_770 = ebay_search('(nvidia, gtx, geforce, gt) 770 -nvs -quadro', http, 399, 0, 400, run_cached=run_cached, feedback=run_all_feedback,
-                     quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
-                     brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                     debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
-                     sacat=graphics_card_sacat)
-df_780 = ebay_search('(nvidia, gtx, geforce, gt) 780 -ti -nvs -quadro', http, 649, 0, 400, run_cached=run_cached, feedback=run_all_feedback,
-                     quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
-                     brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                     debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
-                     sacat=graphics_card_sacat)
-df_780ti = ebay_search('(nvidia, gtx, geforce, gt) 780 ti -nvs -quadro', http, 699, 0, 400, run_cached=run_cached, feedback=run_all_feedback,
-                     quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
-                     brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                     debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
-                     sacat=graphics_card_sacat)
-df_titanblack = ebay_search('(nvidia, gtx, geforce, gt) titan black -nvs -quadro', http, 999, 0, 400, run_cached=run_cached, feedback=run_all_feedback,
-                     quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
-                     brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                     debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
-                     sacat=graphics_card_sacat)
-
-df_titanz = ebay_search('(nvidia, gtx, geforce, gt) titan Z -nvs -quadro', http, 2999, 0, 400, run_cached=run_cached, feedback=run_all_feedback,
-                     quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
-                     brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
-                     debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
-                     sacat=graphics_card_sacat)
-
-
+df_titanz = ebay_search('(nvidia, gtx, geforce, gt) titan Z -nvs -quadro', http, 2999, 0, 400, run_cached=run_cached,
+                        feedback=run_all_feedback,
+                        quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                        brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                        debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                        sacat=graphics_card_sacat)
 
 df_710 = df_710.assign(item='710')
 df_720 = df_720.assign(item='720')
@@ -2093,14 +2149,198 @@ df_titanblack = df_titanblack.assign(item='Titan Black')
 df_titanz = df_titanz.assign(item='Titan Z')
 
 frames = [df_710, df_720, df_730, df_740, df_750, df_750ti, df_760, df_770, df_780, df_780ti, df_titanblack, df_titanz]
-median_plotting(frames, ['710', '720', '730', '740', '750', '750 Ti', '760', '770', '780', '780 Ti', 'Titan Black', 'Titan Z'],
+median_plotting(frames,
+                ['710', '720', '730', '740', '750', '750 Ti', '760', '770', '780', '780 Ti', 'Titan Black', 'Titan Z'],
                 'Maxwell-Kepler (GTX 700) Series Median Pricing',
                 roll=0, msrps=[40, 55, 75, 95, 119, 149, 249, 399, 649, 699, 999, 2999])
-median_plotting(frames, ['710', '720', '730', '740', '750', '750 Ti', '760', '770', '780', '780 Ti', 'Titan Black', 'Titan Z'],
+median_plotting(frames,
+                ['710', '720', '730', '740', '750', '750 Ti', '760', '770', '780', '780 Ti', 'Titan Black', 'Titan Z'],
                 'Maxwell-Kepler (GTX 700) Series Median Pricing',
                 roll=7, msrps=[40, 55, 75, 95, 119, 149, 249, 399, 649, 699, 999, 2999])
 
+# RX 500 Series
+df_RX550 = ebay_search('rx 550 -550x', http, 79, 0, 400, run_cached=run_cached, feedback=run_all_feedback,
+                       quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                       brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                       sacat=graphics_card_sacat)
 
+df_RX550X = ebay_search('rx 550x', http, 79, 0, 750, run_cached=run_cached, feedback=run_all_feedback,
+                        quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                        brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                        debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                        sacat=graphics_card_sacat)
+
+df_RX560 = ebay_search('rx 560', http, 99, 0, 550, run_cached=run_cached, feedback=run_all_feedback,
+                       quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                       brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                       sacat=graphics_card_sacat)
+
+df_RX570 = ebay_search('rx 570', http, 169, 0, 850, run_cached=run_cached, feedback=run_all_feedback,
+                       quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                       brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                       sacat=graphics_card_sacat)
+
+df_RX580 = ebay_search('rx 580', http, 199, 0, 500, run_cached=run_cached, feedback=run_all_feedback,
+                       quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                       brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                       sacat=graphics_card_sacat)
+
+df_RX590 = ebay_search('rx 590', http, 279, 0, 800, run_cached=run_cached, feedback=run_all_feedback,
+                       quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                       brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                       sacat=graphics_card_sacat)
+
+df_RX550 = df_RX550.assign(item='RX 550')
+df_RX550X = df_RX550X.assign(item='RX 550X')
+df_RX560 = df_RX560.assign(item='RX 560')
+df_RX570 = df_RX570.assign(item='RX 570')
+df_RX580 = df_RX580.assign(item='RX 580')
+df_RX590 = df_RX590.assign(item='RX 590')
+
+frames = [df_RX550, df_RX550X, df_RX560, df_RX570, df_RX580, df_RX590]
+
+median_plotting(frames,
+                ['RX 550', 'RX 550X', 'RX 560', 'RX 570', 'RX 580', 'RX 590'],
+                'RX 5000 and Vega Series Median Pricing', roll=0,
+                msrps=[79, 79, 99, 169, 199, 279])
+
+median_plotting(frames,
+                ['RX 550', 'RX 550X', 'RX 560', 'RX 570', 'RX 580', 'RX 590'],
+                'RX 5000 and Vega Series Median Pricing', roll=7,
+                msrps=[79, 79, 99, 169, 199, 279])
+
+# R5/R7/R9 Series
+df_R7350 = ebay_search('r7 350', http, 89, 0, 850, run_cached=run_cached, feedback=run_all_feedback,
+                       quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                       brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                       sacat=graphics_card_sacat)
+
+df_R7360 = ebay_search('r7 360', http, 109, 0, 500, run_cached=run_cached, feedback=run_all_feedback,
+                       quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                       brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                       sacat=graphics_card_sacat)
+
+df_R9370X = ebay_search('r9 370X', http, 179, 0, 800, run_cached=run_cached, feedback=run_all_feedback,
+                        quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                        brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                        debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                        sacat=graphics_card_sacat)
+
+df_R9380 = ebay_search('r9 380 -380X', http, 199, 0, 800, run_cached=run_cached, feedback=run_all_feedback,
+                       quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                       brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                       sacat=graphics_card_sacat)
+
+df_R9380X = ebay_search('r9 380X', http, 229, 0, 800, run_cached=run_cached, feedback=run_all_feedback,
+                        quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                        brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                        debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                        sacat=graphics_card_sacat)
+
+df_R9390 = ebay_search('r9 390', http, 329, 0, 800, run_cached=run_cached, feedback=run_all_feedback,
+                       quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                       brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                       sacat=graphics_card_sacat)
+
+df_R9390X = ebay_search('r9 390X', http, 429, 0, 800, run_cached=run_cached, feedback=run_all_feedback,
+                        quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                        brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                        debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                        sacat=graphics_card_sacat)
+
+df_R9FURY = ebay_search('r9 fury -X', http, 549, 0, 800, run_cached=run_cached, feedback=run_all_feedback,
+                        quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                        brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                        debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                        sacat=graphics_card_sacat)
+
+df_R9FURYX = ebay_search('r9 fury x', http, 649, 0, 800, run_cached=run_cached, feedback=run_all_feedback,
+                         quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                         brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                         debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                         sacat=graphics_card_sacat)
+
+df_R9NANO = ebay_search('r9 nano', http, 649, 0, 800, run_cached=run_cached, feedback=run_all_feedback,
+                        quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                        brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                        debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                        sacat=graphics_card_sacat)
+
+df_RADEONPRODUO = ebay_search('radeon pro duo', http, 1499, 0, 2000, run_cached=run_cached, feedback=run_all_feedback,
+                              quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                              brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                              debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                              sacat=graphics_card_sacat)
+
+df_R7350 = df_R7350.assign(item='R7 350')
+df_R7360 = df_R7360.assign(item='R7 360')
+df_R9370X = df_R9370X.assign(item='R9 370X')
+df_R9380X = df_R9380X.assign(item='R9 380X')
+df_R9390 = df_R9390.assign(item='R9 390')
+df_R9390X = df_R9390X.assign(item='R9 390X')
+df_R9FURY = df_R9FURY.assign(item='R9 Fury')
+df_R9FURYX = df_R9FURYX.assign(item='R9 Fury X')
+df_R9NANO = df_R9NANO.assign(item='R9 Nano')
+df_RADEONPRODUO = df_RADEONPRODUO.assign(item='Radeon Pro Duo')
+
+frames = [df_R7350, df_R7360, df_R9370X, df_R9380X, df_R9390, df_R9390X, df_R9FURY, df_R9FURYX, df_R9NANO,
+          df_RADEONPRODUO]
+
+median_plotting(frames,
+                ['R7 350', 'R7 360', 'R9 370X', 'R9 380X', 'R9 390', 'R9 380X', 'R9 Fury', 'R9 Fury X', 'R9 Nano',
+                 'Radeon Pro Duo'],
+                'R5/R7/R9 Series Median Pricing', roll=0,
+                msrps=[89, 109, 179, 199, 229, 329, 429, 549, 649, 649, 1499])
+
+median_plotting(frames,
+                ['R7 350', 'R7 360', 'R9 370X', 'R9 380X', 'R9 390', 'R9 380X', 'R9 Fury', 'R9 Fury X', 'R9 Nano',
+                 'Radeon Pro Duo'],
+                'R5/R7/R9 Series Median Pricing', roll=7,
+                msrps=[89, 109, 179, 199, 229, 329, 429, 549, 649, 649, 1499])
+
+# RX 400 Series
+df_RX460 = ebay_search('rx 460', http, 109, 0, 400, run_cached=run_cached, feedback=run_all_feedback,
+                       quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                       brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                       sacat=graphics_card_sacat)
+
+df_RX470 = ebay_search('rx 470', http, 179, 0, 750, run_cached=run_cached, feedback=run_all_feedback,
+                       quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                       brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                       sacat=graphics_card_sacat)
+
+df_RX480 = ebay_search('rx 480', http, 199, 0, 550, run_cached=run_cached, feedback=run_all_feedback,
+                       quantity_hist=run_all_hist, extra_title_text='', sleep_len=sleep_len,
+                       brand_list=brand_list, model_list=model_list, country=country, days_before=days_before,
+                       debug=debug, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate,
+                       sacat=graphics_card_sacat)
+
+df_RX460 = df_RX460.assign(item='RX 460')
+df_RX470 = df_RX470.assign(item='RX 470')
+df_RX480 = df_RX480.assign(item='RX 480')
+
+frames = [df_RX460, df_RX470, df_RX480]
+
+median_plotting(frames,
+                ['RX 460', 'RX 470', 'RX 480'],
+                'RX 400 Series Median Pricing', roll=0,
+                msrps=[109, 179, 199])
+
+median_plotting(frames,
+                ['RX 460', 'RX 470', 'RX 480'],
+                'RX 400 Series Median Pricing', roll=7,
+                msrps=[109, 179, 199])
 
 '''df_b550 = ebay_search('b550', http, 0, 0, 600, run_cached=run_cached,
                       feedback=run_all_feedback, quantity_hist=run_all_hist, extra_title_text='',
