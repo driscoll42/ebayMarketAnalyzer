@@ -1,0 +1,69 @@
+C:\Users\mdriscoll6\Anaconda3\python.exe C:/Users/mdriscoll6/Dropbox/PythonProjects/eBayScraper/temp3.py
+Xbox Series S -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: $437.99
+Median Price: $460
+Past Week Average Price: $444.49
+Average Price: $466.61
+Total Sold: 18339
+Total Sales: $8572489.5
+PayPal Profit: $254160
+Est eBay Profit: $833579
+Est eBay + PayPal Profit: $1087740
+Total Scalpers/eBay Profit: $2379638.44
+Estimated Scalper Profit: $1292467
+Estimated Break Even Point for Scalpers: $385
+Minimum Break Even Point for Scalpers: $304
+Runtime: 00:00:04
+
+Xbox Series X -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: $749.99
+Median Price: $836
+Past Week Average Price: $766.72
+Average Price: $848.21
+Total Sold: 50990
+Total Sales: $43253935.86
+PayPal Profit: $1269661
+Est eBay Profit: $4248477
+Est eBay + PayPal Profit: $5518138
+Total Scalpers/eBay Profit: $14689975.24
+Estimated Scalper Profit: $9171837
+Estimated Break Even Point for Scalpers: $639
+Minimum Break Even Point for Scalpers: $507
+Runtime: 00:00:09
+
+No handles with labels found to put in legend.
+No handles with labels found to put in legend.
+xbox one s -pro -series -repair -box -broken -parts -bad
+Past Week Median Price: $247.13
+Median Price: $229
+Past Week Average Price: $264.85
+Average Price: $248.01
+Total Sold: 16724
+Total Sales: $4159492.51
+PayPal Profit: $125642
+Est eBay Profit: $407362
+Est eBay + PayPal Profit: $533005
+Total Scalpers/eBay Profit: $-1487993.24
+Estimated Scalper Profit: $-2020999
+Estimated Break Even Point for Scalpers: $385
+Minimum Break Even Point for Scalpers: $304
+Runtime: 00:00:04
+
+xbox one x -repair -series -box -broken -parts -bad
+Past Week Median Price: $299.935
+Median Price: $280
+Past Week Average Price: $316.5
+Average Price: $309.03
+Total Sold: 11653
+Total Sales: $3605990.58
+PayPal Profit: $108069
+Est eBay Profit: $354236
+Est eBay + PayPal Profit: $462306
+Total Scalpers/eBay Profit: $-2847295.16
+Estimated Scalper Profit: $-3310650
+Estimated Break Even Point for Scalpers: $633
+Minimum Break Even Point for Scalpers: $507
+Runtime: 00:00:03
+
+
+Process finished with exit code 0
