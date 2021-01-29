@@ -1,0 +1,67 @@
+C:\Users\mdriscoll6\Anaconda3\python.exe C:/Users/mdriscoll6/Dropbox/PythonProjects/eBayScraper/temp7.py
+ps4 -pro -repair -box -broken -parts -bad
+Past Week Median Price: $265.6
+Median Price: $265
+Past Week Average Price: $281.14
+Average Price: $286.29
+Total Sold: 16085
+Total Sales: $4616693.7
+PayPal Profit: $138709
+Est eBay Profit: $447571
+Est eBay + PayPal Profit: $586280
+Total Scalpers/eBay Profit: $-2524040.99
+Estimated Scalper Profit: $-3110322
+Estimated Break Even Point for Scalpers: $507
+Minimum Break Even Point for Scalpers: $406
+Runtime: 00:00:03
+
+PS4 pro -repair -box -broken -parts -bad
+Past Week Median Price: $340.115
+Median Price: $346
+Past Week Average Price: $382.53
+Average Price: $379.04
+Total Sold: 7719
+Total Sales: $2924324.52
+PayPal Profit: $87121
+Est eBay Profit: $284751
+Est eBay + PayPal Profit: $371872
+Total Scalpers/eBay Profit: $-545269.49
+Estimated Scalper Profit: $-917142
+Estimated Break Even Point for Scalpers: $513
+Minimum Break Even Point for Scalpers: $406
+Runtime: 00:00:02
+
+PS5 Digital -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: $799.0
+Median Price: $894
+Past Week Average Price: $800.93
+Average Price: $907.06
+Total Sold: 18329
+Total Sales: $16622294.79
+PayPal Profit: $487545
+Est eBay Profit: $1627054
+Est eBay + PayPal Profit: $2114599
+Total Scalpers/eBay Profit: $8215928.05
+Estimated Scalper Profit: $6104994
+Estimated Break Even Point for Scalpers: $522
+Minimum Break Even Point for Scalpers: $406
+Runtime: 00:00:03
+
+PS5 -digital -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: $849.0
+Median Price: $987
+Past Week Average Price: $882.48
+Average Price: $1028.56
+Total Sold: 61586
+Total Sales: $63354245.36
+PayPal Profit: $1855748
+Est eBay Profit: $6208680
+Est eBay + PayPal Profit: $8064429
+Total Scalpers/eBay Profit: $28269470.98
+Estimated Scalper Profit: $20205041
+Estimated Break Even Point for Scalpers: $649
+Minimum Break Even Point for Scalpers: $507
+Runtime: 00:00:11
+
+No handles with labels found to put in legend.
+No handles with labels found to put in legend.
