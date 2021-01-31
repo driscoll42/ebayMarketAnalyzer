@@ -557,6 +557,9 @@ def ebay_search(query, adapter, msrp=0, min_price=0, max_price=10000, min_date=d
         df = pd.DataFrame(dict)
         df = df.astype({'Brand': 'object'})
         df = df.astype({'Model': 'object'})
+        if run_cached:
+            print('WARNING: In order to use run_cached = True an extract must already exists. Try setting run_cached=False first and rerunning.')
+            return
 
     if not run_cached:
         price_ranges = [min_price, max_price]
