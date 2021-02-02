@@ -6,8 +6,8 @@ This program is built to scrape all sold item data from eBay for any particular 
 
 Examples:
 
-![PS5 Example](https://github.com/driscoll42/ebayScraper/blob/master/Images/PS5.png)
-![RTX 3080 Example](https://github.com/driscoll42/ebayScraper/blob/master/Images/RTX%203080.png)
+![PS5 Example](https://github.com/driscoll42/ebayScraper/blob/master/2101-Update/PS5%20-digital%20-image%20-jpeg%20-img%20-picture%20-pic%20-jpg.png?raw=true)
+![PS5 Rolling Average Example](https://github.com/driscoll42/ebayScraper/blob/master/2101-Update/PS5%20Median%20Pricing%207%20Rolling%20Average_.png?raw=true)
 
 # Install Instructions
 
@@ -46,6 +46,8 @@ Examples:
 * Debugging parameters
    * debug - Default: False - If True prints out exceptions. If verbose=True this is effectively True
    * verbose - Default: False - If True prints out all the data as soon as its pulled
+
+
 
 ## Release History
 
