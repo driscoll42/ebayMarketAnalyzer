@@ -12,8 +12,7 @@ Examples:
 # Install Instructions
 
 * Create an Anaconda 3.8 python environment
-* Run "pip install matplotlib==3.2.2, numpy, pandas==1.1.0, beautifulsoup==4.9.1, lxml==4.6.2, openpyxl==3.0.5, requests==2.25.0, scipy==1.5.4, xlrd==1.2.0, lxml, requests_cache
-* Note: This code requires matplotlib 3.2.2, newer versions break the trend line
+* Run "pip install matplotlib==3.3.4, numpy, pandas==1.1.0, beautifulsoup==4.9.1, lxml==4.6.2, openpyxl==3.0.5, requests==2.25.0, scipy==1.5.4, xlrd==1.2.0, lxml, requests_cache
 
 # How to Run
 * In main.py update update the ebay_search() parameters for whatever product you are searching for as described below 
