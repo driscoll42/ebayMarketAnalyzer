@@ -1,6 +1,7 @@
 # Moving all the calls of the code out of the main.py to reduce confusion/overhead.
 
 import datetime
+import os
 
 import pandas as pd
 
@@ -11,7 +12,7 @@ from main import median_plotting
 
 run_all_feedback = True
 run_all_hist = True
-run_cached = False
+run_cached = True
 sleep_len = 5
 country = 'USA'
 debug = False
@@ -40,6 +41,12 @@ model_list = [['XC3', 'EVGA'], ['TRINITY', 'ZOTAC'], ['FTW3', 'EVGA'], ['FOUNDER
               ['EVOKE', 'MSI'], ['TRIO', 'MSI'], ['KINGPIN', 'EVGA'], ['K|NGP|N', 'EVGA'], ['AORUS', 'GIGABYTE'],
               ['WATERFORCE', 'GIGABYTE'], ['XTREME', 'GIGABYTE'], ['MASTER', 'GIGABYTE'], ['AMP', 'ZOTAC'],
               [' FE ', 'FOUNDER'], ['TWIN EDGE', 'ZOTAC'], ['POWER COLOR', 'POWERCOLOR'], ['ALIENWARE', 'DELL']]
+
+for x in os.listdir():
+    if x.endswith(".sqlite"):
+        os.remove(x)
+
+
 
 
 df_darkhero = ebay_search('ASUS Dark Hero -image -jpeg -img -picture -pic -jpg', 399, 400, 1000,
