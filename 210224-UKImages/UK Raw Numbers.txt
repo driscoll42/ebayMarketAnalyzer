@@ -1,0 +1,501 @@
+C:\Users\mdriscoll6\Anaconda3\python.exe C:/Users/mdriscoll6/Dropbox/PythonProjects/eBayScraper/temp9.py
+5950X -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: £950.0
+Median Price: £920
+Past Week Average Price: £948.5
+Average Price: £935.01
+Total Sold: 162
+Total Sales: £152495.74
+PayPal Profit: £4470
+Est eBay Profit: £14103
+Est eBay + PayPal Profit: £18574
+Total Scalpers/eBay Profit: £29376.55
+Estimated Scalper Profit: £10802
+Estimated Break Even Point for Scalpers: £871
+Minimum Break Even Point for Scalpers: £762
+Runtime: 00:00:01
+
+5900X -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: £781.925
+Median Price: £670
+Past Week Average Price: £784.78
+Average Price: £687.62
+Total Sold: 239
+Total Sales: £164341.65
+PayPal Profit: £4837
+Est eBay Profit: £15932
+Est eBay + PayPal Profit: £20770
+Total Scalpers/eBay Profit: £40073.6
+Estimated Scalper Profit: £19303
+Estimated Break Even Point for Scalpers: £596
+Minimum Break Even Point for Scalpers: £518
+Runtime: 00:00:01
+
+5800X -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: £409.995
+Median Price: £439
+Past Week Average Price: £412.49
+Average Price: £459.56
+Total Sold: 246
+Total Sales: £113050.69
+PayPal Profit: £3352
+Est eBay Profit: £8973
+Est eBay + PayPal Profit: £12325
+Total Scalpers/eBay Profit: £8360.47
+Estimated Scalper Profit: £-3965
+Estimated Break Even Point for Scalpers: £488
+Minimum Break Even Point for Scalpers: £427
+Runtime: 00:00:01
+
+5600X -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: £314.85
+Median Price: £324
+Past Week Average Price: £314.75
+Average Price: £339.61
+Total Sold: 460
+Total Sales: £154828.95
+PayPal Profit: £4628
+Est eBay Profit: £14062
+Est eBay + PayPal Profit: £18690
+Total Scalpers/eBay Profit: £23344.85
+Estimated Scalper Profit: £4654
+Estimated Break Even Point for Scalpers: £328
+Minimum Break Even Point for Scalpers: £285
+Runtime: 00:00:01
+
+RX 6800 -XT -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: £925.0
+Median Price: £749
+Past Week Average Price: £917.79
+Average Price: £771.78
+Total Sold: 269
+Total Sales: £207179.01
+PayPal Profit: £6088
+Est eBay Profit: £20527
+Est eBay + PayPal Profit: £26616
+Total Scalpers/eBay Profit: £48226.91
+Estimated Scalper Profit: £21610
+Estimated Break Even Point for Scalpers: £677
+Minimum Break Even Point for Scalpers: £589
+Runtime: 00:00:00
+
+RX 6800 XT -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: £1099.0
+Median Price: £1025
+Past Week Average Price: £1095.24
+Average Price: £1042.94
+Total Sold: 249
+Total Sales: £260209.77
+PayPal Profit: £7620
+Est eBay Profit: £25645
+Est eBay + PayPal Profit: £33265
+Total Scalpers/eBay Profit: £94875.02
+Estimated Scalper Profit: £61609
+Estimated Break Even Point for Scalpers: £760
+Minimum Break Even Point for Scalpers: £660
+Runtime: 00:00:00
+
+RX 6900 -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: £1439.44
+Median Price: £1288
+Past Week Average Price: £1461.22
+Average Price: £1271.71
+Total Sold: 112
+Total Sales: £142409.71
+PayPal Profit: £4163
+Est eBay Profit: £13582
+Est eBay + PayPal Profit: £17746
+Total Scalpers/eBay Profit: £32649.71
+Estimated Scalper Profit: £14903
+Estimated Break Even Point for Scalpers: £1121
+Minimum Break Even Point for Scalpers: £966
+Runtime: 00:00:00
+
+6800 FOUNDER 740.19 5
+6800 ASUS 755.83 18
+6800 MSI 840.95 17
+6800 EVGA nan 0
+6800 GIGABYTE 829.57 13
+6800 ZOTAC nan 0
+6800 XFX 847.42 9
+6800 PNY nan 0
+6800 SAPPHIRE 783.56 67
+6800 COLORFUL nan 0
+6800 ASROCK 889.25 3
+6800 POWERCOLOR 798.55 41
+6800 INNO3D nan 0
+6800 PALIT nan 0
+6800 VISIONTEK nan 0
+6800 DELL nan 0
+6800XT FOUNDER 1126.17 7
+6800XT ASUS 1262.83 4
+6800XT MSI 1027.63 24
+6800XT EVGA nan 0
+6800XT GIGABYTE 1029.34 41
+6800XT ZOTAC nan 0
+6800XT XFX 1061.99 33
+6800XT PNY nan 0
+6800XT SAPPHIRE 1036.55 59
+6800XT COLORFUL nan 0
+6800XT ASROCK 1019.99 3
+6800XT POWERCOLOR 1036.67 33
+6800XT INNO3D nan 0
+6800XT PALIT nan 0
+6800XT VISIONTEK nan 0
+6800XT DELL nan 0
+6900 FOUNDER 1290.91 3
+6900 ASUS 1347.26 11
+6900 MSI 1064.17 1
+6900 EVGA nan 0
+6900 GIGABYTE 1310.6 21
+6900 ZOTAC nan 0
+6900 XFX 1273.18 12
+6900 PNY nan 0
+6900 SAPPHIRE 1236.29 16
+6900 COLORFUL nan 0
+6900 ASROCK 1249.75 8
+6900 POWERCOLOR 1257.09 15
+6900 INNO3D nan 0
+6900 PALIT nan 0
+6900 VISIONTEK nan 0
+6900 DELL nan 0
+FOUNDER 15
+ASUS 33
+MSI 42
+GIGABYTE 75
+XFX 54
+SAPPHIRE 142
+ASROCK 14
+POWERCOLOR 89
+6800 FOUNDER 740.19 5
+6800 ASUS 755.83 18
+6800 MSI 840.95 17
+6800 EVGA nan 0
+6800 GIGABYTE 829.57 13
+6800 ZOTAC nan 0
+6800 XFX 847.42 9
+6800 PNY nan 0
+6800 SAPPHIRE 783.56 67
+6800 COLORFUL nan 0
+6800 ASROCK 889.25 3
+6800 POWERCOLOR 798.55 41
+6800 INNO3D nan 0
+6800 PALIT nan 0
+6800 VISIONTEK nan 0
+6800 DELL nan 0
+6800XT FOUNDER 1126.17 7
+6800XT ASUS 1262.83 4
+6800XT MSI 1027.63 24
+6800XT EVGA nan 0
+6800XT GIGABYTE 1029.34 41
+6800XT ZOTAC nan 0
+6800XT XFX 1061.99 33
+6800XT PNY nan 0
+6800XT SAPPHIRE 1036.55 59
+6800XT COLORFUL nan 0
+6800XT ASROCK 1019.99 3
+6800XT POWERCOLOR 1036.67 33
+6800XT INNO3D nan 0
+6800XT PALIT nan 0
+6800XT VISIONTEK nan 0
+6800XT DELL nan 0
+6900 FOUNDER 1290.91 3
+6900 ASUS 1347.26 11
+6900 MSI 1064.17 1
+6900 EVGA nan 0
+6900 GIGABYTE 1310.6 21
+6900 ZOTAC nan 0
+6900 XFX 1273.18 12
+6900 PNY nan 0
+6900 SAPPHIRE 1236.29 16
+6900 COLORFUL nan 0
+6900 ASROCK 1249.75 8
+6900 POWERCOLOR 1257.09 15
+6900 INNO3D nan 0
+6900 PALIT nan 0
+6900 VISIONTEK nan 0
+6900 DELL nan 0
+FOUNDER 15
+ASUS 33
+MSI 42
+GIGABYTE 75
+XFX 54
+SAPPHIRE 142
+ASROCK 14
+POWERCOLOR 89
+RTX 3060 -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: £862.995
+Median Price: £604
+Past Week Average Price: £847.6
+Average Price: £657.15
+Total Sold: 1658
+Total Sales: £1101932.72
+PayPal Profit: £32453
+Est eBay Profit: £101125
+Est eBay + PayPal Profit: £133579
+Total Scalpers/eBay Profit: £422152.72
+Estimated Scalper Profit: £288573
+Estimated Break Even Point for Scalpers: £469
+Minimum Break Even Point for Scalpers: £406
+Runtime: 00:00:01
+
+RTX 3070 -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: £885.5
+Median Price: £700
+Past Week Average Price: £882.39
+Average Price: £726.18
+Total Sold: 4121
+Total Sales: £2995859.05
+PayPal Profit: £88116
+Est eBay Profit: £295963
+Est eBay + PayPal Profit: £384079
+Total Scalpers/eBay Profit: £1021900.05
+Estimated Scalper Profit: £637821
+Estimated Break Even Point for Scalpers: £549
+Minimum Break Even Point for Scalpers: £477
+Runtime: 00:00:01
+
+RTX 3080 -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: £1794.495
+Median Price: £1155
+Past Week Average Price: £1833.8
+Average Price: £1396.43
+Total Sold: 2849
+Total Sales: £4038997.08
+PayPal Profit: £117985
+Est eBay Profit: £341042
+Est eBay + PayPal Profit: £459028
+Total Scalpers/eBay Profit: £2147261.08
+Estimated Scalper Profit: £1688233
+Estimated Break Even Point for Scalpers: £760
+Minimum Break Even Point for Scalpers: £660
+Runtime: 00:00:01
+
+RTX 3090 -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: £2249.5
+Median Price: £1742
+Past Week Average Price: £2253.02
+Average Price: £1820.05
+Total Sold: 1367
+Total Sales: £2487569.43
+PayPal Profit: £72549
+Est eBay Profit: £241346
+Est eBay + PayPal Profit: £313896
+Total Scalpers/eBay Profit: £554631.43
+Estimated Scalper Profit: £240735
+Estimated Break Even Point for Scalpers: £1621
+Minimum Break Even Point for Scalpers: £1422
+Runtime: 00:00:01
+
+3060 FOUNDER 630.9 444
+3060 ASUS 704.54 70
+3060 MSI 674.92 234
+3060 EVGA 638.72 40
+3060 GIGABYTE 656.9 340
+3060 ZOTAC 624.6 237
+3060 XFX nan 0
+3060 PNY 583.67 25
+3060 SAPPHIRE nan 0
+3060 COLORFUL nan 0
+3060 ASROCK nan 0
+3060 POWERCOLOR nan 0
+3060 INNO3D 662.33 3
+3060 PALIT 590.52 121
+3060 VISIONTEK nan 0
+3060 DELL nan 0
+3070 FOUNDER 672.28 1212
+3070 ASUS 768.63 372
+3070 MSI 763.46 624
+3070 EVGA 745.4 76
+3070 GIGABYTE 761.44 903
+3070 ZOTAC 734.17 484
+3070 XFX nan 0
+3070 PNY 698.44 61
+3070 SAPPHIRE nan 0
+3070 COLORFUL nan 0
+3070 ASROCK nan 0
+3070 POWERCOLOR 781.0 1
+3070 INNO3D 604.95 1
+3070 PALIT 701.59 263
+3070 VISIONTEK nan 0
+3070 DELL nan 0
+3080 FOUNDER 1167.56 464
+3080 ASUS 1218.62 220
+3080 MSI 1210.6 435
+3080 EVGA 1158.95 221
+3080 GIGABYTE 1134.06 382
+3080 ZOTAC 1111.82 231
+3080 XFX nan 0
+3080 PNY 1051.29 37
+3080 SAPPHIRE 1150.0 1
+3080 COLORFUL nan 0
+3080 ASROCK nan 0
+3080 POWERCOLOR nan 0
+3080 INNO3D 1004.46 13
+3080 PALIT 1057.18 237
+3080 VISIONTEK nan 0
+3080 DELL 2899.99 1
+3090 FOUNDER 1744.07 763
+3090 ASUS 2193.39 100
+3090 MSI 1899.52 154
+3090 EVGA 1964.44 46
+3090 GIGABYTE 1935.33 74
+3090 ZOTAC 1739.34 94
+3090 XFX nan 0
+3090 PNY 1639.17 14
+3090 SAPPHIRE nan 0
+3090 COLORFUL nan 0
+3090 ASROCK nan 0
+3090 POWERCOLOR nan 0
+3090 INNO3D 1700.0 2
+3090 PALIT 1854.31 90
+3090 VISIONTEK nan 0
+3090 DELL nan 0
+FOUNDER 2896
+ASUS 772
+MSI 1453
+EVGA 391
+GIGABYTE 1705
+ZOTAC 1068
+PNY 139
+INNO3D 19
+PALIT 711
+3060 FOUNDER 630.9 444
+3060 ASUS 704.54 70
+3060 MSI 674.92 234
+3060 EVGA 638.72 40
+3060 GIGABYTE 656.9 340
+3060 ZOTAC 624.6 237
+3060 XFX nan 0
+3060 PNY 583.67 25
+3060 SAPPHIRE nan 0
+3060 COLORFUL nan 0
+3060 ASROCK nan 0
+3060 POWERCOLOR nan 0
+3060 INNO3D 662.33 3
+3060 PALIT 590.52 121
+3060 VISIONTEK nan 0
+3060 DELL nan 0
+3070 FOUNDER 672.28 1212
+3070 ASUS 768.63 372
+3070 MSI 763.46 624
+3070 EVGA 745.4 76
+3070 GIGABYTE 761.44 903
+3070 ZOTAC 734.17 484
+3070 XFX nan 0
+3070 PNY 698.44 61
+3070 SAPPHIRE nan 0
+3070 COLORFUL nan 0
+3070 ASROCK nan 0
+3070 POWERCOLOR 781.0 1
+3070 INNO3D 604.95 1
+3070 PALIT 701.59 263
+3070 VISIONTEK nan 0
+3070 DELL nan 0
+3080 FOUNDER 1167.56 464
+3080 ASUS 1218.62 220
+3080 MSI 1210.6 435
+3080 EVGA 1158.95 221
+3080 GIGABYTE 1134.06 382
+3080 ZOTAC 1111.82 231
+3080 XFX nan 0
+3080 PNY 1051.29 37
+3080 SAPPHIRE 1150.0 1
+3080 COLORFUL nan 0
+3080 ASROCK nan 0
+3080 POWERCOLOR nan 0
+3080 INNO3D 1004.46 13
+3080 PALIT 1057.18 237
+3080 VISIONTEK nan 0
+3080 DELL 2899.99 1
+3090 FOUNDER 1744.07 763
+3090 ASUS 2193.39 100
+3090 MSI 1899.52 154
+3090 EVGA 1964.44 46
+3090 GIGABYTE 1935.33 74
+3090 ZOTAC 1739.34 94
+3090 XFX nan 0
+3090 PNY 1639.17 14
+3090 SAPPHIRE nan 0
+3090 COLORFUL nan 0
+3090 ASROCK nan 0
+3090 POWERCOLOR nan 0
+3090 INNO3D 1700.0 2
+3090 PALIT 1854.31 90
+3090 VISIONTEK nan 0
+3090 DELL nan 0
+FOUNDER 2896
+ASUS 772
+MSI 1453
+EVGA 391
+GIGABYTE 1705
+ZOTAC 1068
+PNY 139
+INNO3D 19
+PALIT 711
+PS5 Digital -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: £579.995
+Median Price: £650
+Past Week Average Price: £583.06
+Average Price: £667.49
+Total Sold: 6935
+Total Sales: £4619620.67
+PayPal Profit: £136049
+Est eBay Profit: £449230
+Est eBay + PayPal Profit: £585279
+Total Scalpers/eBay Profit: £1984390.02
+Estimated Scalper Profit: £1399110
+Estimated Break Even Point for Scalpers: £434
+Minimum Break Even Point for Scalpers: £366
+Runtime: 00:00:02
+
+PS5 -digital -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: £669.0
+Median Price: £750
+Past Week Average Price: £691.47
+Average Price: £799.72
+Total Sold: 24251
+Total Sales: £19382893.79
+PayPal Profit: £569379
+Est eBay Profit: £1868934
+Est eBay + PayPal Profit: £2438313
+Total Scalpers/eBay Profit: £7937149.32
+Estimated Scalper Profit: £5499321
+Estimated Break Even Point for Scalpers: £539
+Minimum Break Even Point for Scalpers: £458
+Runtime: 00:00:05
+
+Xbox Series S -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: £323.0
+Median Price: £319
+Past Week Average Price: £329.38
+Average Price: £327.33
+Total Sold: 7983
+Total Sales: £2655529.68
+PayPal Profit: £79405
+Est eBay Profit: £249280
+Est eBay + PayPal Profit: £328685
+Total Scalpers/eBay Profit: £579949.68
+Estimated Scalper Profit: £251264
+Estimated Break Even Point for Scalpers: £297
+Minimum Break Even Point for Scalpers: £254
+Runtime: 00:00:02
+
+Xbox Series X -image -jpeg -img -picture -pic -jpg
+Past Week Median Price: £579.0
+Median Price: £620
+Past Week Average Price: £585.02
+Average Price: £646.81
+Total Sold: 19566
+Total Sales: £12684250.13
+PayPal Profit: £373713
+Est eBay Profit: £1188216
+Est eBay + PayPal Profit: £1561929
+Total Scalpers/eBay Profit: £3488230.13
+Estimated Scalper Profit: £1926301
+Estimated Break Even Point for Scalpers: £537
+Minimum Break Even Point for Scalpers: £458
+Runtime: 00:00:04
+
+
+Process finished with exit code 0
