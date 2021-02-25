@@ -1,0 +1,12 @@
+name: base
+channels:
+  - defaults
+dependencies:
+  - python=3.8
+  - matplotlib
+  - beautifulsoup4
+  - requests
+  - pandas
+  - scipy
+  - pip:
+    - requests-cache==0.5.2
