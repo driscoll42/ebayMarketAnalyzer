@@ -1,21 +1,22 @@
 # Initial Code: https://oaref.blogspot.com/2019/01/web-scraping-using-python-part-2.html
 
-import time
 import datetime
-import matplotlib
-from bs4 import BeautifulSoup
-import requests
-import pandas as pd
-import numpy as np
-from matplotlib import pyplot as plt
-import matplotlib.ticker as ticker
-from scipy import stats
-import random
-import requests_cache
 import math
+import random
 import re
+import time
+
+import matplotlib
+import matplotlib.ticker as ticker
+import numpy as np
+import pandas as pd
+import requests
+import requests_cache
+from bs4 import BeautifulSoup
+from matplotlib import pyplot as plt
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
+from scipy import stats
 
 
 # XML Formatter: https://jsonformatter.org/xml-formatter
@@ -102,9 +103,9 @@ def get_quantity_hist(sold_hist_url, sold_list, adapter, sleep_len=0.4, verbose=
 
 def ebay_scrape(base_url, df, adapter, min_date='', feedback=False, quantity_hist=False, sleep_len=0.4, brand_list=[],
                 model_list=[], verbose=False, country='USA', debug=False, days_before=999):
-    min_date = datetime.datetime.today()
-    min_date = min_date.replace(hour=0, minute=0, second=0, microsecond=0)
-    comp_date = min_date - datetime.timedelta(days=days_before)
+    days_before_date = datetime.datetime.today()
+    days_before_date = days_before_date.replace(hour=0, minute=0, second=0, microsecond=0)
+    comp_date = days_before_date - datetime.timedelta(days=days_before)
 
     for x in range(1, 5):
 
@@ -151,7 +152,7 @@ def ebay_scrape(base_url, df, adapter, min_date='', feedback=False, quantity_his
                         item_datetime = item_datetime.replace(year=last_year)
 
                     item_date = item_datetime.replace(hour=0, minute=0)
-                    min_date = min(item_date, min_date)
+                    days_before_date = min(item_date, days_before_date)
 
                 except Exception as e:
                     if debug or verbose: print('ebay_scrape-orig_item_datetime', e, item_link)
@@ -162,14 +163,14 @@ def ebay_scrape(base_url, df, adapter, min_date='', feedback=False, quantity_his
 
                         item_date = datetime.datetime.strptime(orig_item_datetime, '%d %b %Y')
                         item_date = item_date.replace(hour=0, minute=0, second=0, microsecond=0)
-                        min_date = min(item_date, min_date)
+                        days_before_date = min(item_date, days_before_date)
 
                     except Exception as e:
                         item_datetime = 'None'
                         item_date = 'None'
                         if debug or verbose: print('ebay_scrape-item_datetime', e, item_link)
 
-                if min_date < comp_date:
+                if days_before_date < comp_date or days_before_date < min_date:
                     time_break = True
                     break
 
@@ -612,6 +613,23 @@ def ebay_search(query, adapter, msrp=0, min_price=0, max_price=10000, min_date=d
                 'WARNING: In order to use run_cached = True an extract must already exists. Try setting run_cached=False first and rerunning.')
             return
 
+
+    try:
+        df_sum = pd.read_excel('summary.xlsx', index_col=0, engine='openpyxl')
+
+    except:
+        # if file does not exist, create it
+        dict_sum = {'Run Datetime'                         : [], 'query': [], 'MSRP': [], 'Past Week Median Price': [],
+                    'Median Price'                         : [], 'Past Week Average Price': [],
+                    'Average Price'                        : [], 'Total Sold': [], 'Total Sales': [],
+                    'PayPal Profit'                        : [], 'Est eBay Profit': [],
+                    'Est eBay + PayPal Profit'             : [], 'Total Scalpers/eBay Profit': [],
+                    'Estimated Scalper Profit'             : [], 'Estimated Break Even Point for Scalpers': [],
+                    'Minimum Break Even Point for Scalpers': []}
+        df_sum = pd.DataFrame(dict_sum)
+
+    start_datetime = datetime.datetime.now()
+
     if not run_cached:
         price_ranges = [min_price, max_price]
 
@@ -705,6 +723,43 @@ def ebay_search(query, adapter, msrp=0, min_price=0, max_price=10000, min_date=d
     elapsed = time.time() - start
     print("Runtime: %02d:%02d:%02d" % (elapsed // 3600, elapsed // 60 % 60, elapsed % 60))
     print('')
+
+    if msrp > 0:
+        dict_sum_new = {'Run Datetime'                           : start_datetime,
+                        'query'                                  : query, 'MSRP': msrp,
+                        'Past Week Median Price'                 : last_week['Total Price'].median(),
+                        'Median Price'                           : median_price,
+                        'Past Week Average Price'                : round(last_week['Total Price'].mean(), 2),
+                        'Average Price'                          : round(df['Total Price'].mean(), 2),
+                        'Total Sold'                             : tot_sold,
+                        'Total Sales'                            : round(tot_sales, 2),
+                        'PayPal Profit'                          : round(pp_profit, 2),
+                        'Est eBay Profit'                        : int(ebay_profit),
+                        'Est eBay + PayPal Profit'               : int(ebay_profit + pp_profit),
+                        'Total Scalpers/eBay Profit'             : total_scalp_val,
+                        'Estimated Scalper Profit'               : round(scalp_profit),
+                        'Estimated Break Even Point for Scalpers': est_break_even,
+                        'Minimum Break Even Point for Scalpers'  : min_break_even}
+    else:
+        dict_sum_new = {'Run Datetime'                           : start_datetime,
+                        'query'                                  : query, 'MSRP': msrp,
+                        'Past Week Median Price'                 : last_week['Total Price'].median(),
+                        'Median Price'                           : median_price,
+                        'Past Week Average Price'                : round(last_week['Total Price'].mean(), 2),
+                        'Average Price'                          : round(df['Total Price'].mean(), 2),
+                        'Total Sold'                             : tot_sold,
+                        'Total Sales'                            : round(tot_sales, 2),
+                        'PayPal Profit'                          : round(pp_profit, 2),
+                        'Est eBay Profit'                        : int(ebay_profit),
+                        'Est eBay + PayPal Profit'               : int(ebay_profit + pp_profit),
+                        'Total Scalpers/eBay Profit'             : '',
+                        'Estimated Scalper Profit'               : '',
+                        'Estimated Break Even Point for Scalpers': '',
+                        'Minimum Break Even Point for Scalpers'  : ''}
+    df_sum = df_sum.append(dict_sum_new, ignore_index=True)
+
+    df_sum.to_excel('summary.xlsx', engine='openpyxl')
+
     return df
 
 
@@ -1081,12 +1136,12 @@ def plot_profits(df, title, msrp, store_ebay_rate=0.04, non_store_ebay_rate=0.09
 
 run_all_feedback = True
 run_all_hist = True
-run_cached = True
+run_cached = False
 sleep_len = 5
 country = 'USA'
 debug = False
 verbose = False
-days_before = 20
+days_before = 5
 
 comp_store_rate = 0.04
 comp_non_store_rate = 0.1
@@ -1213,12 +1268,16 @@ brand_plot([df_6800, df_6800xt, df_6900], 'Big Navi AIB Comparison', brand_list,
 brand_plot([df_6800, df_6800xt, df_6900], 'Big Navi AIB Comparison', brand_list, [579, 649, 999], roll=7)
 
 # RTX 30 Series Analysis
-df_3060 = ebay_search('RTX 3060 -image -jpeg -img -picture -pic -jpg', http, 399, 200, 1300, feedback=run_all_feedback,
+df_3060 = ebay_search('RTX 3060 -Ti -3060ti -image -jpeg -img -picture -pic -jpg', http, 329, 200, 2000, feedback=run_all_feedback,
+                      run_cached=run_cached, quantity_hist=run_all_hist, min_date=datetime.datetime(2021, 2, 25),
+                      extra_title_text='', sleep_len=sleep_len, brand_list=brand_list, model_list=model_list,
+                      country=country, days_before=days_before, debug=debug, verbose=verbose,
+                      store_rate=comp_store_rate, non_store_rate=comp_non_store_rate, sacat=graphics_card_sacat)
+df_3060ti = ebay_search('RTX (3060 Ti, 3060Ti) -image -jpeg -img -picture -pic -jpg', http, 399, 200, 1300, feedback=run_all_feedback,
                       run_cached=run_cached, quantity_hist=run_all_hist, min_date=datetime.datetime(2020, 12, 1),
                       extra_title_text='', sleep_len=sleep_len, brand_list=brand_list, model_list=model_list,
                       country=country, days_before=days_before, debug=debug, verbose=verbose,
-                      store_rate=comp_store_rate,
-                      non_store_rate=comp_non_store_rate, sacat=graphics_card_sacat)
+                      store_rate=comp_store_rate, non_store_rate=comp_non_store_rate, sacat=graphics_card_sacat)
 df_3070 = ebay_search('RTX 3070 -image -jpeg -img -picture -pic -jpg', http, 499, 499, 1300, feedback=run_all_feedback,
                       run_cached=run_cached, quantity_hist=run_all_hist, min_date=datetime.datetime(2020, 10, 29),
                       extra_title_text='', sleep_len=sleep_len, brand_list=brand_list, model_list=model_list,
@@ -1240,24 +1299,25 @@ df_3090 = ebay_search('RTX 3090 -image -jpeg -img -picture -pic -jpg', http, 149
                       non_store_rate=comp_non_store_rate, sacat=graphics_card_sacat)
 
 # RTX 30 Series/Ampere Plotting
-median_plotting([df_3060, df_3070, df_3080, df_3090], ['3060', '3070', '3080', '3090'], 'RTX 30 Series Median Pricing',
-                roll=0, msrps=[399, 499, 699, 1499])
-median_plotting([df_3060, df_3070, df_3080, df_3090], ['3060', '3070', '3080', '3090'], 'RTX 30 Series Median Pricing',
-                roll=7, msrps=[399, 499, 699, 1499])
+median_plotting([df_3060, df_3060ti, df_3070, df_3080, df_3090], ['3060', '3060 Ti', '3070', '3080', '3090'], 'RTX 30 Series Median Pricing',
+                roll=0, msrps=[329, 399, 499, 699, 1499])
+median_plotting([df_3060, df_3060ti, df_3070, df_3080, df_3090], ['3060', '3060 Ti', '3070', '3080', '3090'], 'RTX 30 Series Median Pricing',
+                roll=7, msrps=[329, 399, 499, 699, 1499])
 
 df_3060 = df_3060.assign(item='3060')
+df_3060ti = df_3060ti.assign(item='3060 Ti')
 df_3070 = df_3070.assign(item='3070')
 df_3080 = df_3080.assign(item='3080')
 df_3090 = df_3090.assign(item='3090')
 
-frames = [df_3060, df_3070, df_3080, df_3090]
+frames = [df_3060, df_3060ti, df_3070, df_3080, df_3090]
 com_df = pd.concat(frames)
 ebay_seller_plot('RTX 30 Series-Ampere', com_df, extra_title_text='')
 
-brand_plot([df_3060, df_3070, df_3080, df_3090], 'RTX 30 Series-Ampere AIB Comparison', brand_list,
-           [399, 499, 699, 1499])
-brand_plot([df_3060, df_3070, df_3080, df_3090], 'RTX 30 Series-Ampere AIB Comparison', brand_list,
-           [399, 499, 699, 1499], roll=7)
+brand_plot([df_3060, df_3060ti, df_3070, df_3080, df_3090], 'RTX 30 Series-Ampere AIB Comparison', brand_list,
+           [329, 399, 499, 699, 1499])
+brand_plot([df_3060, df_3060ti, df_3070, df_3080, df_3090], 'RTX 30 Series-Ampere AIB Comparison', brand_list,
+           [329, 399, 499, 699, 1499], roll=7)
 
 # Pascal GPUs
 df_titanxp = ebay_search('titan xp', http, 1200, 0, 2000, run_cached=run_cached, feedback=run_all_feedback,
@@ -2527,43 +2587,13 @@ df_ssd = ebay_search('ssd -portable -nas -external', http, 0, 0, 20000, run_cach
                      feedback=run_all_feedback, quantity_hist=run_all_hist, extra_title_text='',
                      sleep_len=sleep_len, brand_list=brand_list, model_list=model_list, debug=debug, verbose=verbose, sacat=ssd_sacat,
                      days_before=days_before, store_rate=comp_store_rate, non_store_rate=comp_non_store_rate)
-
-# Xbox Analysis (Post Launch)
-df_xbox_s_ld = ebay_search('Xbox Series S -image -jpeg -img -picture -pic -jpg', http, 299, 250, 11000,
-                           min_date=datetime.datetime(2020, 11, 10), run_cached=True, extra_title_text=' (Post Launch)',
-                           country=country, days_before=days_before, debug=debug, verbose=verbose, store_rate=vg_store_rate,
-                           non_store_rate=vg_non_store_rate)
-df_xbox_x_ld = ebay_search('Xbox Series X -image -jpeg -img -picture -pic -jpg', http, 499, 350, 11000,
-                           min_date=datetime.datetime(2020, 11, 10), run_cached=True, extra_title_text=' (Post Launch)',
-                           country=country, days_before=days_before, debug=debug, verbose=verbose, store_rate=vg_store_rate,
-                           non_store_rate=vg_non_store_rate)
-median_plotting([df_xbox_s_ld, df_xbox_x_ld], ['Xbox Series S', 'Xbox Series X'], 'Xbox Median Pricing (Post Launch)',
-                [299, 499])
-
-# PS5 Analysis (Post Launch)
-df_ps5_digital_ld = ebay_search('PS5 Digital -image -jpeg -img -picture -pic -jpg', http, 399, 300, 11000,
-                                min_date=datetime.datetime(2020, 11, 12), run_cached=True,
-                                extra_title_text=' (Post Launch)', country=country, days_before=days_before,
-                                debug=debug, verbose=verbose, store_rate=vg_store_rate, non_store_rate=vg_non_store_rate)
-df_ps5_disc_ld = ebay_search('PS5 -digital -image -jpeg -img -picture -pic -jpg', http, 499, 450, 11000,
-                             min_date=datetime.datetime(2020, 11, 12), run_cached=True,
-                             extra_title_text=' (Post Launch)', country=country, days_before=days_before, debug=debug, verbose=verbose,
-                             store_rate=vg_store_rate, non_store_rate=vg_non_store_rate)
-median_plotting([df_ps5_disc_ld, df_ps5_digital_ld], ['PS5 Digital', 'PS5 Disc'], 'PS5 Median Pricing (Post Launch)',
-                [299, 499])'''
+'''
 
 # TODO: Model MSRP https://db.premiumbuilds.com/graphics-cards/
-# TODO: Rerun multis, delete all first
 # TODO: Get stockx listings (need to be manual)
 # TODO: Count CL, FB, OfferUp listings
-# TODO: Run all for UK
-# TODO: Size dots at given price point
+# TODO: Add License
 
-# TODO: Anonymize data
-
-# TODO: "in 24 hours"
-
-# TODO: Determine ebay "stock"
 '''
 Ways to predict future pricing:
 1. Simple Moving Averages (SMA)
