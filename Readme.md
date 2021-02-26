@@ -1,8 +1,21 @@
 # eBay Sold Price Scraper
 
+This code is free for use and I encourage others to use it for their projects. If you do I would love to see how you used it, shoot me an email or message if you're willing to share. Further feel free to open up new issues for defects or new features. I can't promise to get to all of them but I can try. 
+
 Note: This works as of the last commit. It's very likely some change in eBay's website will break this at some point after I stop maintaining.
 
-This program is built to scrape all sold item data from eBay for any particular item. It will save the data to an excel file and create a scatter plot of the sold prices by date along with the median plot line and trendline. Further if you enter in the MSRP, it will plot a line for that and the break even prices of scalpers (particularly relevant when this was written during the PS5, Zen 3, and Xbox Series X launch). 
+This program is built to scrape all sold item data from eBay for any particular item. It will save the data to an excel file and create a scatter plot of the sold prices by date along with the median plot line and trendline. Further if you enter in the MSRP, it will plot a line for that and the break even prices of scalpers (particularly relevant when this was written during the PS5, Zen 3, and Xbox Series X launch).
+
+The code was used in a series of articles I wrote in late 2020 to early 2021:
+
+* [An analysis of the $82 million eBay Scalping Market for Xbox, PS5, AMD, and NVIDIA](https://dev.to/driscoll42/an-analysis-of-the-80-million-ebay-scalping-market-for-xbox-ps5-amd-and-nvidia-f35)
+* [An analysis of the $6 million Zen 3 Scalping Market](https://dev.to/driscoll42/zen-3-scalping-market-analysis-4hhf)
+* [An analysis of the $62 million RTX 30 Series Scalping Market](https://dev.to/driscoll42/nvidia-ampere-rtx-30-series-scalping-market-analysis-4gad)
+* [An analysis of the $4 million Big Navi/RDNA2 Scalping Market](https://dev.to/driscoll42/big-navi-rdna2-series-scalping-market-analysis-2c3k)
+* [An analysis of the $80 million Xbox Series S/X Scalping Market](https://dev.to/driscoll42/xbox-series-s-x-scalping-market-analysis-l3m)
+* [An analysis of the $143 million PS5 Scalping Market](https://dev.to/driscoll42/an-analysis-of-the-143-million-ps5-scalping-market-414d)
+* [An analysis of the UK £54 million PS5/Xbox and computer hardware Scalping Market](https://dev.to/driscoll42/an-analysis-of-the-uk-54-million-ps5-xbox-and-computer-hardware-scalping-market-4i79)
+
 
 Examples:
 

@@ -12,7 +12,7 @@ from main import median_plotting
 
 run_all_feedback = True
 run_all_hist = True
-run_cached = True
+run_cached = False
 sleep_len = 5
 country = 'USA'
 debug = False

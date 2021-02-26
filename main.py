@@ -102,6 +102,8 @@ def get_quantity_hist(sold_hist_url, sold_list, adapter, sleep_len=0.4, verbose=
     return sold_list
 
 
+
+
 def ebay_scrape(base_url, df, adapter, days_before=999, min_date='', feedback=False, quantity_hist=False, sleep_len=0.4,
                 brand_list=[], model_list=[], country='USA', debug=False, verbose=False):
     days_before_date = datetime.datetime.today()
@@ -688,7 +690,7 @@ def ebay_search(query, msrp=0, min_price=0, max_price=10000, min_date=datetime.d
 
             if verbose: print(price_ranges[i], price_ranges[i + 1], url)
 
-            df = ebay_scrape(url, df, adapter, min_date, feedback=feedback, quantity_hist=quantity_hist,
+            df = ebay_scrape(url, df, adapter, min_date=min_date, feedback=feedback, quantity_hist=quantity_hist,
                              sleep_len=sleep_len,
                              brand_list=brand_list, model_list=model_list, verbose=verbose, country=country,
                              debug=debug, days_before=days_before)
