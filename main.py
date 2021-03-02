@@ -102,8 +102,6 @@ def get_quantity_hist(sold_hist_url, sold_list, adapter, sleep_len=0.4, verbose=
     return sold_list
 
 
-
-
 def ebay_scrape(base_url, df, adapter, days_before=999, min_date='', feedback=False, quantity_hist=False, sleep_len=0.4,
                 brand_list=[], model_list=[], country='USA', debug=False, verbose=False):
     days_before_date = datetime.datetime.today()
@@ -487,11 +485,16 @@ def ebay_plot(query, msrp, df, extra_title_text='', est_tax=0.0625, ccode='$'):
     count_sold = df.groupby(['Sold Date'])['Quantity'].sum()
     est_break_even = 0
     min_break_even = 0
+    plt.style.use('ggplot')
+
 
     fig, ax1 = plt.subplots(figsize=(10, 8))
+
     color = 'tab:blue'
-    plt.title(query.replace("+", " ").split('-', 1)[0].strip() + extra_title_text + ' eBay Sold Prices Over Time')
-    ax1.scatter(df['Sold Date'], df['Total Price'], s=10, label='Sold Listing', color=color)
+    plt.title(query.replace("+", " ").split('-', 1)[0].strip() + extra_title_text + ' eBay Sold Prices Over Time',
+              size=20)
+
+    ax1.scatter(df['Sold Date'], df['Total Price'], alpha=0.5, s=10, label='Sold Listing', color=color)
     estimated_shipping = 0
 
     if msrp > 0:
@@ -514,8 +517,10 @@ def ebay_plot(query, msrp, df, extra_title_text='', est_tax=0.0625, ccode='$'):
         min_break_even = round((msrp * (1 - msrp_discount)) / (1 - min_be_ebay_fee - pp_fee_per) + pp_flat_fee)
 
         ax1.axhline(y=est_break_even, label=f'Est. Scalper Break Even - {ccode}{int(est_break_even)}', color=color,
+                    linestyle='dashed',
                     dashes=[2, 2])
         ax1.axhline(y=min_break_even, label=f'Min Scalper Break Even - {ccode}{int(min_break_even)}', color=color,
+                    linestyle='dashed',
                     dashes=[4, 1])
 
         # Estimated assuming 6.25% tax, $15 shipping, and the multiplier for ebay/Paypal fees determined by
@@ -523,7 +528,7 @@ def ebay_plot(query, msrp, df, extra_title_text='', est_tax=0.0625, ccode='$'):
         # paying with PayPal with Item Category being Computers/Tablets & Networking
 
         ax1.axhline(y=msrp, label=f'MSRP - {ccode}{msrp}', color=color)
-    ax1.plot(med_price, color='cyan', label=f'Median Price - {ccode}{median_price}')
+    ax1.plot(med_price, linewidth=3, color='dimgray', label=f'Median Price - {ccode}{median_price}', zorder=999)
     # plt.plot(sold_date, m * sold_date + b)
     ax1.set_ylabel("Sold Price", color=color)
     ax1.tick_params(axis='y', labelcolor=color)
@@ -534,11 +539,11 @@ def ebay_plot(query, msrp, df, extra_title_text='', est_tax=0.0625, ccode='$'):
     ax1.set_ylim(top=min(1.5 * max_med, max_max), bottom=min(min_min * 0.95, msrp * 0.95))
 
     color = 'tab:red'
-    ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
-    ax2.set_ylabel("Quantity Sold", color=color)
-    ax2.tick_params(axis='y', labelcolor=color)
+    #ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
+    #ax2.set_ylabel("Quantity Sold", color=color)
+    #ax2.tick_params(axis='y', labelcolor=color)
     tot_sold = int(df['Quantity'].sum())
-    ax2.plot(count_sold[:-1], color=color, label=f'Total Sold - {tot_sold}')
+    # ax2.plot(count_sold[:-1], color=color, label=f'Total Sold - {tot_sold}')
 
     # Plotting Trendline
     y = df['Total Price']
@@ -559,9 +564,13 @@ def ebay_plot(query, msrp, df, extra_title_text='', est_tax=0.0625, ccode='$'):
             msrp = 0
 
     if slope >= 0:
-        ax3.plot(df['Sold Date'], mymodel, dashes=[4, 1], label='Linear Trend Line')
+        ax3.plot(df['Sold Date'], mymodel, label='Linear Trend Line', color='blue')
     elif msrp > 0:
-        ax3.plot(df['Sold Date'], mymodel, dashes=[4, 1], label=f'Linear Trend Line - Est MSRP Date - {est_msrp}')
+        ax3.plot(df['Sold Date'], mymodel,  color='red',                 label=f'Linear Trend Line - Est MSRP Date - {est_msrp}')
+
+        #med_price = med_price.rolling(7, min_periods=1).mean()
+
+        #ax3.plot(med_price, color='red')
 
     ax3.set_ylim(top=min(1.5 * max_med, max_max), bottom=min(min_min * 0.95, msrp * 0.95))
     ax3.set(yticklabels=[])
@@ -576,9 +585,17 @@ def ebay_plot(query, msrp, df, extra_title_text='', est_tax=0.0625, ccode='$'):
     ax3.xaxis.set_major_formatter(f)
 
     lines, labels = ax1.get_legend_handles_labels()
-    lines2, labels2 = ax2.get_legend_handles_labels()
+    #lines2, labels2 = ax2.get_legend_handles_labels()
     lines3, labels3 = ax3.get_legend_handles_labels()
-    ax1.legend(lines + lines2 + lines3, labels + labels2 + labels3)
+    plt.subplots_adjust(bottom=0.225)
+
+    ax1.legend(lines + lines3, labels + labels3, bbox_to_anchor=(0, -0.325, 1, 0), loc="lower left",
+               mode="expand", ncol=2)
+
+    #ax2.grid(False)
+    ax3.grid(False)
+    #ax1.set_ylim(top=min(1.5 * max_med, max_max), bottom=0)
+    #ax3.set_ylim(top=min(1.5 * max_med, max_max), bottom=0)
 
     plt.savefig('Images/' + query + extra_title_text)
     plt.show()
@@ -789,7 +806,7 @@ def median_plotting(dfs, names, title, roll=0, msrps=[], min_msrp=100, ccode='$'
     plt.tick_params(axis='y')
     plt.tick_params(axis='x', rotation=30)
     if roll > 0:
-        plt.title(f"{title} {roll} Rolling Average - % MSRP")
+        plt.title(f"{title} {roll} Day Rolling Average - % MSRP")
     else:
         plt.title(f"{title} - % MSRP")
     for i in range(len(dfs)):
@@ -815,7 +832,7 @@ def median_plotting(dfs, names, title, roll=0, msrps=[], min_msrp=100, ccode='$'
     plt.legend()
     plt.tight_layout()
     if roll > 0:
-        plt.savefig(f"Images/{title} {roll} Rolling Average - % MSRP")
+        plt.savefig(f"Images/{title} {roll} Day Rolling Average - % MSRP")
     else:
         plt.savefig(f"Images/{title} - % MSRP")
     plt.show()
@@ -828,7 +845,7 @@ def median_plotting(dfs, names, title, roll=0, msrps=[], min_msrp=100, ccode='$'
     plt.tick_params(axis='y')
     plt.tick_params(axis='x', rotation=30)
     if roll > 0:
-        plt.title(f"{title} {roll} Rolling Average - {ccode}")
+        plt.title(f"{title} {roll} Day Rolling Average - {ccode}")
     else:
         plt.title(f"{title} - {ccode}")
     for i in range(len(dfs)):
@@ -847,7 +864,7 @@ def median_plotting(dfs, names, title, roll=0, msrps=[], min_msrp=100, ccode='$'
     plt.legend()
     plt.tight_layout()
     if roll > 0:
-        plt.savefig(f"Images/{title} {roll} Rolling Average - {ccode}")
+        plt.savefig(f"Images/{title} {roll} Day Rolling Average - {ccode}")
     else:
         plt.savefig(f"Images/{title} - {ccode}")
     plt.show()
@@ -1019,7 +1036,7 @@ def brand_plot(dfs, title, brand_list, msrp, roll=0):
     plt.tick_params(axis='x', rotation=30)
 
     if roll > 0:
-        plt.title(f"{title} {roll} Rolling Average")
+        plt.title(f"{title} {roll} Day Rolling Average")
     else:
         plt.title(title)
 
@@ -1043,7 +1060,7 @@ def brand_plot(dfs, title, brand_list, msrp, roll=0):
     plt.legend()
     plt.tight_layout()
     if roll > 0:
-        plt.savefig(f"Images/{title} {roll} Rolling Average")
+        plt.savefig(f"Images/{title} {roll} Day Rolling Average")
     else:
         plt.savefig(f"Images/{title}")
 
