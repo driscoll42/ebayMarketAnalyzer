@@ -3,7 +3,10 @@ from typing import List
 
 
 @dataclass
-class ebay_variables:
+class ebayVariables:
+    """
+
+    """
     # General Parameters
     run_cached: bool = field(default=False)
     sleep_len: float = field(default=5)

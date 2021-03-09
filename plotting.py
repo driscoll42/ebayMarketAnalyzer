@@ -3,21 +3,35 @@
 import math
 from copy import deepcopy
 from datetime import datetime
-from typing import List, Union, Tuple
+from typing import List, Tuple
 
-import matplotlib
 import matplotlib.ticker as ticker
 import pandas as pd
+from matplotlib import dates as mpdates
 from matplotlib import pyplot as plt
 from scipy import stats
 
-from classes import ebay_variables
+from classes import ebayVariables
 
 
 def ebay_plot(query: str,
               msrp: float,
               df: pd.DataFrame,
-              e_vars: ebay_variables) -> Tuple[int, float, float, int, float]:
+              e_vars: ebayVariables) -> Tuple[int, float, float, int, float]:
+    """
+
+    Parameters
+    ----------
+    query : str
+    msrp : float
+    df : DataFrame
+    e_vars : ebayVariables
+
+    Returns
+    -------
+
+    """
+
     # Make Linear Regression Trend Line
     # https://stackoverflow.com/questions/59723501/plotting-a-linear-regression-with-dates-in-matplotlib-pyplot
     df_calc = df[df['Total Price'] > 0]
@@ -131,8 +145,8 @@ def ebay_plot(query: str,
     ax3.tick_params(left=False, right=False)
 
     # instruct matplotlib on how to convert the numbers back into dates for the x-axis
-    l = matplotlib.dates.AutoDateLocator()
-    f = matplotlib.dates.AutoDateFormatter(l)
+    l = mpdates.AutoDateLocator()
+    f = mpdates.AutoDateFormatter(l)
 
     ax3.xaxis.set_major_locator(l)
     ax3.xaxis.set_major_formatter(f)
@@ -160,7 +174,20 @@ def ebay_plot(query: str,
 def plot_profits(df: pd.DataFrame,
                  title: str,
                  msrp: float,
-                 e_vars: ebay_variables) -> Union[float, float, float]:
+                 e_vars: ebayVariables) -> Tuple[float, float, float]:
+    """
+
+    Parameters
+    ----------
+    df :
+    title :
+    msrp :
+    e_vars :
+
+    Returns
+    -------
+
+    """
     df = df.copy()
 
     df = df[df['Ignore'] == 0]
@@ -188,9 +215,9 @@ def plot_profits(df: pd.DataFrame,
 
     df['PayPal Profits'] = df['Total Price'] * 0.029 + 0.30
 
-    df['Scalper Profits'] = df['Store'] * (df['Total Price'] \
-                                           - (msrp * (1.0 + e_vars.tax_rate) + estimated_shipping) \
-                                           - (df['Total Price'] * e_vars.store_rate) \
+    df['Scalper Profits'] = df['Store'] * (df['Total Price']
+                                           - (msrp * (1.0 + e_vars.tax_rate) + estimated_shipping)
+                                           - (df['Total Price'] * e_vars.store_rate)
                                            - (df['Total Price'] * 0.029 + 0.30)) + ((1 - df['Store']) * (
             df['Total Price'] \
             - (msrp * (1.0 + e_vars.tax_rate) + estimated_shipping) \
@@ -266,9 +293,23 @@ def plot_profits(df: pd.DataFrame,
 
 def median_plotting(dfs: List[pd.DataFrame],
                     title: str,
-                    e_vars: ebay_variables,
+                    e_vars: ebayVariables,
                     roll: int = 0,
                     min_msrp: int = 100) -> None:
+    """
+
+    Parameters
+    ----------
+    dfs :
+    title :
+    e_vars :
+    roll :
+    min_msrp :
+
+    Returns
+    -------
+
+    """
     dfs = deepcopy(dfs)
     colors = ['#000000', '#7f0000', '#808000', '#008080', '#000080', '#ff8c00', '#2f4f4f', '#00ff00', '#0000ff',
               '#ff00ff', '#6495ed', '#ff1493', '#98fb98', '#ffdab9']
@@ -347,13 +388,32 @@ def median_plotting(dfs: List[pd.DataFrame],
 def pareto_plot(df: pd.DataFrame,
                 df2: pd.DataFrame,
                 df3: pd.DataFrame,
-                e_vars: ebay_variables,
+                e_vars: ebayVariables,
                 df_name: str = '',
                 df2_name: str = '',
                 x: str = '',
                 y: str = '',
                 title: str = '',
                 show_pct_y: bool = False) -> None:
+    """
+
+    Parameters
+    ----------
+    df :
+    df2 :
+    df3 :
+    e_vars :
+    df_name :
+    df2_name :
+    x :
+    y :
+    title :
+    show_pct_y :
+
+    Returns
+    -------
+
+    """
     xlabel = x
     ylabel = y
 
@@ -401,7 +461,19 @@ def pareto_plot(df: pd.DataFrame,
 
 def ebay_seller_plot(dfs: List[pd.DataFrame],
                      title_text: str,
-                     e_vars: ebay_variables) -> None:
+                     e_vars: ebayVariables) -> None:
+    """
+
+    Parameters
+    ----------
+    dfs :
+    title_text :
+    e_vars :
+
+    Returns
+    -------
+
+    """
     df = pd.concat(dfs)
     # eBay Seller Feedback vs Quantity Sold
 
@@ -490,8 +562,21 @@ def ebay_seller_plot(dfs: List[pd.DataFrame],
 
 def brand_plot(dfs: List[pd.DataFrame],
                title: str,
-               e_vars: ebay_variables,
+               e_vars: ebayVariables,
                roll: int = 0) -> None:
+    """
+
+    Parameters
+    ----------
+    dfs :
+    title :
+    e_vars :
+    roll :
+
+    Returns
+    -------
+
+    """
     dfs = deepcopy(dfs)
     pd.set_option('display.max_columns', None)
 

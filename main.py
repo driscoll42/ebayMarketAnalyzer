@@ -16,7 +16,7 @@ from bs4 import BeautifulSoup
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
-from classes import ebay_variables
+from classes import ebayVariables
 from plotting import ebay_plot
 from plotting import plot_profits
 
@@ -26,7 +26,20 @@ from plotting import plot_profits
 def get_quantity_hist(sold_hist_url: str,
                       sold_list: List[Union[float, int, datetime, datetime]],
                       adapter: requests,
-                      e_vars: ebay_variables) -> List[Union[float, int, datetime, datetime]]:
+                      e_vars: ebayVariables) -> List[Union[float, int, datetime, datetime]]:
+    """
+
+    Parameters
+    ----------
+    sold_hist_url :
+    sold_list :
+    adapter :
+    e_vars :
+
+    Returns
+    -------
+
+    """
     time.sleep(
             e_vars.sleep_len * random.uniform(0,
                                               1))  # eBays servers will kill your connection if you hit them too frequently
@@ -58,15 +71,14 @@ def get_quantity_hist(sold_hist_url: str,
                 sold_time = tds[4].text.split()[1]
 
                 try:
-                    sold_datetime = datetime.strptime(sold_date + ' ' + sold_time, '%b-%d-%y %H:%M:%S')
-                    sold_datetime = sold_datetime.replace(second=0, microsecond=0)
-
-                    sold_date = datetime.strptime(tds[4].text.split()[0], '%b-%d-%y')
+                    sold_date = datetime.strptime(sold_date, '%b-%d-%y')
                 except Exception as e:
-                    sold_datetime = datetime.strptime(sold_date + ' ' + sold_time, '%d-%b-%y %H:%M:%S')
-                    sold_datetime = sold_datetime.replace(second=0, microsecond=0)
+                    sold_date = datetime.strptime(sold_date, '%d-%b-%y')
 
-                    sold_date = datetime.strptime(tds[4].text.split()[0], '%d-%b-%y')
+                sold_time = datetime.strptime(sold_time, '%H:%M:%S').time()
+                sold_time = sold_time.replace(second=0, microsecond=0)
+                sold_datetime = datetime.combine(sold_date, sold_time)
+
                 if e_vars.verbose: print(price, quantity, sold_datetime)
 
                 sold_list.append([price, quantity, sold_date, sold_datetime])
@@ -86,15 +98,13 @@ def get_quantity_hist(sold_hist_url: str,
                     sold_time = tds[4].text.split()[1]
 
                     try:
-                        sold_datetime = datetime.strptime(sold_date + ' ' + sold_time, '%b-%d-%y %H:%M:%S')
-                        sold_datetime = sold_datetime.replace(second=0, microsecond=0)
-
-                        sold_date = datetime.strptime(tds[4].text.split()[0], '%b-%d-%y')
+                        sold_date = datetime.strptime(sold_date, '%b-%d-%y')
                     except Exception as e:
-                        sold_datetime = datetime.strptime(sold_date + ' ' + sold_time, '%d-%b-%y %H:%M:%S')
-                        sold_datetime = sold_datetime.replace(second=0, microsecond=0)
+                        sold_date = datetime.strptime(sold_date, '%d-%b-%y')
 
-                        sold_date = datetime.strptime(tds[4].text.split()[0], '%d-%b-%y')
+                    sold_time = datetime.strptime(sold_time, '%H:%M:%S').time()
+                    sold_time = sold_time.replace(second=0, microsecond=0)
+                    sold_datetime = datetime.combine(sold_date, sold_time)
 
                     if accepted == 'Accepted':
                         if e_vars.verbose: print(accepted, quantity, sold_datetime)
@@ -110,8 +120,22 @@ def get_quantity_hist(sold_hist_url: str,
 def ebay_scrape(base_url: str,
                 df: pd.DataFrame,
                 adapter: requests,
-                e_vars: ebay_variables,
+                e_vars: ebayVariables,
                 min_date: datetime = datetime(2020, 1, 1)) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    base_url :
+    df :
+    adapter :
+    e_vars :
+    min_date :
+
+    Returns
+    -------
+
+    """
     days_before_date = datetime.today()
     days_before_date = days_before_date.replace(hour=0, minute=0, second=0, microsecond=0)
     comp_date = days_before_date - timedelta(days=e_vars.days_before)
@@ -388,9 +412,8 @@ def ebay_scrape(base_url: str,
                     model = ''
                     for m in e_vars.model_list:
                         if m[0].upper() in title.upper():
-                            m[0] = m[0].replace(' ', '')
-                            model = m[0]
-                            brand = m[1]
+                            model = m[0].replace(' ', '')
+                            brand = m[1].replace(' ', '')
                     if e_vars.verbose: print('Brand', brand)
                     if e_vars.verbose: print('Model', model)
 
@@ -477,18 +500,35 @@ def ebay_scrape(base_url: str,
 
 
 def ebay_search(query: str,
-                e_vars: ebay_variables,
+                e_vars: ebayVariables,
                 queryexclusions: List[str] = [],
                 msrp: int = 0,
                 min_price: int = 0,
                 max_price: int = 10000,
                 min_date: datetime = datetime.now() - timedelta(days=90)) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    query :
+    e_vars :
+    queryexclusions :
+    msrp :
+    min_price :
+    max_price :
+    min_date :
+
+    Returns
+    -------
+
+    """
     start = time.time()
     print(query)
 
     start_datetime = datetime.today().strftime("%Y%m%d%H%M%S")
     # https://realpython.com/caching-external-api-requests/
     curr_path = pathlib.Path(__file__).parent.absolute()
+    print(curr_path)
     cache_name = f"{curr_path}\\cache_{start_datetime}"
 
     requests_cache.install_cache(cache_name, backend='sqlite', expire_after=300)
@@ -505,12 +545,14 @@ def ebay_search(query: str,
     adapter.mount("http://", http)
 
     # https://stackoverflow.com/questions/35807605/create-a-file-if-it-doesnt-exist?lq=1
+    filename = query + e_vars.extra_title_text + '.xlsx'
+
     try:
-        df = pd.read_excel('Spreadsheets/' + query + e_vars.extra_title_text + '.xlsx', index_col=0, engine='openpyxl')
+        df = pd.read_excel('Spreadsheets/' + filename, index_col=0, engine='openpyxl')
         df = df.astype({'Brand': 'object'})
         df = df.astype({'Model': 'object'})
 
-    except:
+    except Exception as e:
         # if file does not exist, create it
         dict = {'Title'      : [], 'Brand': [], 'Model': [], 'description': [], 'Price': [], 'Shipping': [],
                 'Total Price': [],
@@ -520,10 +562,11 @@ def ebay_search(query: str,
         df = pd.DataFrame(dict)
         df = df.astype({'Brand': 'object'})
         df = df.astype({'Model': 'object'})
+        if e_vars.verbose or e_vars.debug: print('ebay_search df_load: ', e)
         if e_vars.run_cached:
             print(
-                    'WARNING: In order to use run_cached = True an extract must already exists. Try setting run_cached=False first and rerunning.')
-            return
+                    f'WARNING: Cannot find "{filename}". In order to use run_cached = True an extract must already exists. Try setting run_cached=False first and rerunning.')
+            return None
 
     try:
         df_sum = pd.read_excel('summary.xlsx', index_col=0, engine='openpyxl')
@@ -658,11 +701,7 @@ def ebay_search(query: str,
         print(f"Estimated Scalper Profit: {e_vars.ccode}{round(scalp_profit)}")
         print(f"Estimated Break Even Point for Scalpers: {e_vars.ccode}{est_break_even}")
         print(f"Minimum Break Even Point for Scalpers: {e_vars.ccode}{min_break_even}")
-    elapsed = time.time() - start
-    print("Runtime: %02d:%02d:%02d" % (elapsed // 3600, elapsed // 60 % 60, elapsed % 60))
-    print('')
 
-    if msrp > 0:
         dict_sum_new = {'Run Datetime'                           : start_datetime,
                         'Country'                                : e_vars.country,
                         'query'                                  : query, 'MSRP': msrp,
@@ -696,6 +735,10 @@ def ebay_search(query: str,
                         'Estimated Scalper Profit'               : '',
                         'Estimated Break Even Point for Scalpers': '',
                         'Minimum Break Even Point for Scalpers'  : ''}
+
+    elapsed = time.time() - start
+    print("Runtime: %02d:%02d:%02d" % (elapsed // 3600, elapsed // 60 % 60, elapsed % 60))
+    print('')
     df_sum = df_sum.append(dict_sum_new, ignore_index=True)
 
     df_sum.to_excel('summary.xlsx', engine='openpyxl')

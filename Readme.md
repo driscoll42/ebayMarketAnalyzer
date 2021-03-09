@@ -1,10 +1,18 @@
-# eBay Sold Price Scraper
+# eBay Marker Analyzer
 
-This code is free for use and I encourage others to use it for their projects. If you do I would love to see how you used it, shoot me an email or message if you're willing to share. Further feel free to open up new issues for defects or new features. I can't promise to get to all of them but I can try. 
+#### Formally eBay Sold Price Scraper
 
-Note: This works as of the last commit. It's very likely some change in eBay's website will break this at some point after I stop maintaining.
+This code is free for use and I encourage others to use it for their projects. If you do I would love to see how you
+used it, shoot me an email or message if you're willing to share. Further feel free to open up new issues for defects or
+new features. I can't promise to get to all of them but I can try.
 
-This program is built to scrape all sold item data from eBay for any particular item. It will save the data to an excel file and create a scatter plot of the sold prices by date along with the median plot line and trendline. Further if you enter in the MSRP, it will plot a line for that and the break even prices of scalpers (particularly relevant when this was written during the PS5, Zen 3, and Xbox Series X launch).
+Note: This works as of the last commit. It's very likely some change in eBay's website will break this at some point
+after I stop maintaining.
+
+This program is built to scrape all sold item data from eBay for any particular item. It will save the data to an excel
+file and create a scatter plot of the sold prices by date along with the median plot line and trendline. Further if you
+enter in the MSRP, it will plot a line for that and the break even prices of scalpers (particularly relevant when this
+was written during the PS5, Zen 3, and Xbox Series X launch).
 
 The code was used in a series of articles I wrote in late 2020 to early 2021:
 
