@@ -1,10 +1,14 @@
+"""
+
+"""
+
 # Moving all the calls of the code out of the main.py to reduce confusion/overhead.
 
 import os
 from copy import deepcopy
 from datetime import datetime
 
-from classes import ebay_variables
+from classes import ebayVariables
 from main import ebay_search
 from plotting import brand_plot
 from plotting import ebay_seller_plot
@@ -25,25 +29,25 @@ ps5_digi_excludes = query_exclusions.copy()
 ps5_digi_excludes.remove('digital')
 
 # Set Class variables
-e_vars = ebay_variables(run_cached=True,
-                        sleep_len=4,
-                        show_plots=True,
-                        main_plot=True,
-                        profit_plot=True,
-                        extra_title_text='',
-                        country='USA',
-                        ccode='$',
-                        days_before=14,
-                        feedback=True,
-                        quantity_hist=True,
-                        debug=False,
-                        verbose=True,
-                        tax_rate=0.0625,
-                        store_rate=0.04,  # The computer store rate
-                        non_store_rate=0.1,  # The computer non-store rate
-                        brand_list=[],
-                        model_list=[]
-                        )
+e_vars = ebayVariables(run_cached=True,
+                       sleep_len=4,
+                       show_plots=True,
+                       main_plot=True,
+                       profit_plot=True,
+                       extra_title_text='',
+                       country='USA',
+                       ccode='$',
+                       days_before=14,
+                       feedback=True,
+                       quantity_hist=True,
+                       debug=False,
+                       verbose=True,
+                       tax_rate=0.0625,
+                       store_rate=0.04,  # The computer store rate
+                       non_store_rate=0.1,  # The computer non-store rate
+                       brand_list=[],
+                       model_list=[]
+                       )
 
 # CPU specific class variables
 cpu_vars = deepcopy(e_vars)
