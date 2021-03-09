@@ -11,13 +11,13 @@ from matplotlib import dates as mpdates
 from matplotlib import pyplot as plt
 from scipy import stats
 
-from classes import ebayVariables
+from classes import EbayVariables
 
 
 def ebay_plot(query: str,
               msrp: float,
               df: pd.DataFrame,
-              e_vars: ebayVariables) -> Tuple[int, float, float, int, float]:
+              e_vars: EbayVariables) -> Tuple[int, float, float, int, float]:
     """
 
     Parameters
@@ -25,7 +25,7 @@ def ebay_plot(query: str,
     query : str
     msrp : float
     df : DataFrame
-    e_vars : ebayVariables
+    e_vars : EbayVariables
 
     Returns
     -------
@@ -174,7 +174,7 @@ def ebay_plot(query: str,
 def plot_profits(df: pd.DataFrame,
                  title: str,
                  msrp: float,
-                 e_vars: ebayVariables) -> Tuple[float, float, float]:
+                 e_vars: EbayVariables) -> Tuple[float, float, float]:
     """
 
     Parameters
@@ -293,7 +293,7 @@ def plot_profits(df: pd.DataFrame,
 
 def median_plotting(dfs: List[pd.DataFrame],
                     title: str,
-                    e_vars: ebayVariables,
+                    e_vars: EbayVariables,
                     roll: int = 0,
                     min_msrp: int = 100) -> None:
     """
@@ -388,7 +388,7 @@ def median_plotting(dfs: List[pd.DataFrame],
 def pareto_plot(df: pd.DataFrame,
                 df2: pd.DataFrame,
                 df3: pd.DataFrame,
-                e_vars: ebayVariables,
+                e_vars: EbayVariables,
                 df_name: str = '',
                 df2_name: str = '',
                 x: str = '',
@@ -461,7 +461,7 @@ def pareto_plot(df: pd.DataFrame,
 
 def ebay_seller_plot(dfs: List[pd.DataFrame],
                      title_text: str,
-                     e_vars: ebayVariables) -> None:
+                     e_vars: EbayVariables) -> None:
     """
 
     Parameters
@@ -562,7 +562,7 @@ def ebay_seller_plot(dfs: List[pd.DataFrame],
 
 def brand_plot(dfs: List[pd.DataFrame],
                title: str,
-               e_vars: ebayVariables,
+               e_vars: EbayVariables,
                roll: int = 0) -> None:
     """
 

@@ -16,7 +16,7 @@ from bs4 import BeautifulSoup
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
-from classes import ebayVariables
+from classes import EbayVariables
 from plotting import ebay_plot
 from plotting import plot_profits
 
@@ -26,7 +26,7 @@ from plotting import plot_profits
 def get_quantity_hist(sold_hist_url: str,
                       sold_list: List[Union[float, int, datetime, datetime]],
                       adapter: requests,
-                      e_vars: ebayVariables) -> List[Union[float, int, datetime, datetime]]:
+                      e_vars: EbayVariables) -> List[Union[float, int, datetime, datetime]]:
     """
 
     Parameters
@@ -79,7 +79,7 @@ def get_quantity_hist(sold_hist_url: str,
                 sold_time = sold_time.replace(second=0, microsecond=0)
                 sold_datetime = datetime.combine(sold_date, sold_time)
 
-                if e_vars.verbose: print(price, quantity, sold_datetime)
+                if e_vars.verbose: print('get_quantity_hist-DateTimes', price, quantity, sold_datetime)
 
                 sold_list.append([price, quantity, sold_date, sold_datetime])
 
@@ -120,7 +120,7 @@ def get_quantity_hist(sold_hist_url: str,
 def ebay_scrape(base_url: str,
                 df: pd.DataFrame,
                 adapter: requests,
-                e_vars: ebayVariables,
+                e_vars: EbayVariables,
                 min_date: datetime = datetime(2020, 1, 1)) -> pd.DataFrame:
     """
 
@@ -160,6 +160,7 @@ def ebay_scrape(base_url: str,
         if e_vars.verbose: print(x, len(items), url)
 
         for n, item in enumerate(items):
+            curr_time = datetime.now()
             if n > 0:
                 try:
                     item_link = item.find('a', class_='s-item__link')['href']
@@ -437,13 +438,14 @@ def ebay_scrape(base_url: str,
                                    'Multi Listing'  : multi_list, 'Quantity': quantity_sold - cap_sum,
                                    'Seller Feedback': seller_fb,
                                    'Ignore'         : ignor_val, 'Store': store, 'City': city, 'State': state,
-                                   'Country'        : country_name}
+                                   'Country'        : country_name, 'Sold Scrape Datetime': curr_time}
 
                         if e_vars.verbose: print(df__new)
 
                         if not df[['Link', 'Sold Datetime']].isin(
                                 {'Link': [item_link], 'Sold Datetime': [item_datetime]}).all(
                                 axis='columns').any() and item_tot > 0 and (quantity_sold - cap_sum) > 0:
+                            if e_vars.verbose: print(df__new)
                             df = df.append(df__new, ignore_index=True)
                             # Considered processing as went along, more efficient to just remove duplicates in postprocessing
                     else:
@@ -458,15 +460,16 @@ def ebay_scrape(base_url: str,
                             df__new = {'Title'        : item_title, 'Brand': brand, 'Model': model,
                                        'description'  : item_desc, 'Price': sale_price,
                                        'Shipping'     : item_shipping, 'Total Price': item_tot, 'Sold Date': sale[2],
-                                       'Sold Datetime': sale[2], 'Link': item_link, 'Seller': seller,
+                                       'Sold Datetime': sale[3], 'Link': item_link, 'Seller': seller,
                                        'Multi Listing': multi_list, 'Quantity': sale[1], 'Seller Feedback': seller_fb,
                                        'Ignore'       : ignor_val, 'Store': store, 'City': city, 'State': state,
-                                       'Country'      : country_name}
+                                       'Country'      : country_name, 'Sold Scrape Datetime': curr_time}
 
                             # There's a chance when we get to multiitem listings we'd be reinserting data, this is to prevent it
                             if not df[['Link', 'Sold Datetime']].isin(
                                     {'Link': [item_link], 'Sold Datetime': [item_datetime]}).all(
                                     axis='columns').any() and item_tot > 0:
+                                if e_vars.verbose: print(df__new)
                                 df = df.append(df__new, ignore_index=True)
 
                         tot_sale_quant = np.sum(sold_list[:, 1])
@@ -476,18 +479,22 @@ def ebay_scrape(base_url: str,
                             # In order to not lose the data I just shove everything into one entry, assuming the regular price
                             # Not perfect, but no great alternatives
                             # The main issue here of course is that now I'm assigning a bunch of sales to a semi-arbitrary date
-                            df__new = {'Title'        : item_title, 'Brand': brand, 'Model': model,
-                                       'description'  : item_desc, 'Price': item_price,
-                                       'Shipping'     : item_shipping, 'Total Price': item_tot,
-                                       'Sold Date'    : item_date, 'Sold Datetime': item_datetime, 'Link': item_link,
-                                       'Seller'       : seller, 'Quantity': quantity_sold - tot_sale_quant,
-                                       'Multi Listing': multi_list, 'Seller Feedback': seller_fb, 'Ignore': 2,
-                                       'Store'        : store, 'City': city, 'State': state, 'Country': country_name}
+                            df__new = {'Title'               : item_title, 'Brand': brand, 'Model': model,
+                                       'description'         : item_desc, 'Price': item_price,
+                                       'Shipping'            : item_shipping, 'Total Price': item_tot,
+                                       'Sold Date'           : item_date, 'Sold Datetime': item_datetime,
+                                       'Link'                : item_link,
+                                       'Seller'              : seller, 'Quantity': quantity_sold - tot_sale_quant,
+                                       'Multi Listing'       : multi_list, 'Seller Feedback': seller_fb, 'Ignore': 2,
+                                       'Store'               : store, 'City': city, 'State': state,
+                                       'Country'             : country_name,
+                                       'Sold Scrape Datetime': curr_time}
                             # There's a chance when we get to multiitem listings we'd be reinserting data, this is to prevent it
                             if not df[['Link', 'Sold Datetime', 'Quantity']].isin(
                                     {'Link'    : [item_link], 'Sold Datetime': [item_datetime],
                                      'Quantity': [quantity_sold - tot_sale_quant]}).all(
                                     axis='columns').any() and item_tot > 0:
+                                if e_vars.verbose: print(df__new)
                                 df = df.append(df__new, ignore_index=True)
         if e_vars.country == 'UK' and len(items) < 193:
             break
@@ -500,7 +507,7 @@ def ebay_scrape(base_url: str,
 
 
 def ebay_search(query: str,
-                e_vars: ebayVariables,
+                e_vars: EbayVariables,
                 queryexclusions: List[str] = [],
                 msrp: int = 0,
                 min_price: int = 0,
@@ -551,6 +558,7 @@ def ebay_search(query: str,
         df = pd.read_excel('Spreadsheets/' + filename, index_col=0, engine='openpyxl')
         df = df.astype({'Brand': 'object'})
         df = df.astype({'Model': 'object'})
+        df = df.astype({'Sold Scrape Datetime': 'object'})
 
     except Exception as e:
         # if file does not exist, create it
@@ -558,7 +566,7 @@ def ebay_search(query: str,
                 'Total Price': [],
                 'Sold Date'  : [], 'Sold Datetime': [], 'Quantity': [], 'Multi Listing': [],
                 'Seller'     : [], 'Seller Feedback': [], 'Link': [], 'Store': [], 'Ignore': [],
-                'City'       : [], 'State': [], 'Country': []}
+                'City'       : [], 'State': [], 'Country': [], 'Sold Scrape Datetime': []}
         df = pd.DataFrame(dict)
         df = df.astype({'Brand': 'object'})
         df = df.astype({'Model': 'object'})

@@ -1,6 +1,6 @@
 # eBay Marker Analyzer
 
-#### Formally eBay Sold Price Scraper
+#### Formerly eBay Sold Price Scraper
 
 This code is free for use and I encourage others to use it for their projects. If you do I would love to see how you
 used it, shoot me an email or message if you're willing to share. Further feel free to open up new issues for defects or
@@ -33,7 +33,9 @@ Examples:
 # Install Instructions
 
 * Create an Anaconda 3.8 python environment
-* Run "pip install matplotlib==3.3.4, numpy, pandas==1.1.0, beautifulsoup4==4.9.1, lxml==4.6.2, openpyxl==3.0.5, requests==2.25.0, scipy==1.5.4, xlrd==1.2.0, lxml, requests_cache
+* Install packages in environment.yml or requirements.txt or run:
+  * "pip install matplotlib==3.3.4, numpy, pandas==1.1.0, beautifulsoup4==4.9.1, lxml==4.6.2, openpyxl==3.0.5,
+    requests==2.25.0, scipy==1.5.4, xlrd==1.2.0, lxml, requests_cache"
 
 # How to Run
 * In main.py update update the ebay_search() parameters for whatever product you are searching for as described below 

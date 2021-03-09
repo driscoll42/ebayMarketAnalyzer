@@ -8,11 +8,8 @@ import os
 from copy import deepcopy
 from datetime import datetime
 
-from classes import ebayVariables
+from classes import EbayVariables
 from main import ebay_search
-from plotting import brand_plot
-from plotting import ebay_seller_plot
-from plotting import median_plotting
 
 brand_list = ['FOUNDER', 'ASUS', 'MSI', 'EVGA', 'GIGABYTE', 'ZOTAC', 'XFX', 'PNY', 'SAPPHIRE', 'COLORFUL', 'ASROCK',
               'POWERCOLOR', 'INNO3D', 'PALIT', 'VISIONTEK', 'DELL']
@@ -29,7 +26,7 @@ ps5_digi_excludes = query_exclusions.copy()
 ps5_digi_excludes.remove('digital')
 
 # Set Class variables
-e_vars = ebayVariables(run_cached=True,
+e_vars = EbayVariables(run_cached=False,
                        sleep_len=4,
                        show_plots=True,
                        main_plot=True,
@@ -37,10 +34,10 @@ e_vars = ebayVariables(run_cached=True,
                        extra_title_text='',
                        country='USA',
                        ccode='$',
-                       days_before=14,
+                       days_before=7,
                        feedback=True,
                        quantity_hist=True,
-                       debug=False,
+                       debug=True,
                        verbose=True,
                        tax_rate=0.0625,
                        store_rate=0.04,  # The computer store rate
@@ -85,6 +82,9 @@ for x in os.listdir():
 # RTX 30 Series Analysis
 df_3060 = ebay_search('RTX 3060 -Ti -3060ti', gpu_vars, query_exclusions, 329, 329, 2000,
                       min_date=datetime(2021, 2, 25))
+
+raise SystemExit(0)
+
 df_3060ti = ebay_search('RTX (3060 Ti, 3060Ti)', gpu_vars, query_exclusions, 399, 399, 1300,
                         min_date=datetime(2020, 12, 1))
 df_3070 = ebay_search('RTX 3070', gpu_vars, query_exclusions, 499, 499, 1300, min_date=datetime(2020, 10, 29))
