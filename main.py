@@ -21,6 +21,65 @@ from plotting import ebay_plot
 from plotting import plot_profits
 
 
+def get_purchase_hist(trs, e_vars, sold_list, sold_hist_url):
+    for r in trs:
+        tds = r.find_all('td')
+        if len(tds) > 1:
+            # buyer = tds[1].text
+            try:
+                price = float(re.sub(r'[^\d.]+', '', tds[2].text))
+            except Exception as e:
+                if e_vars.debug or e_vars.verbose: print('get_purchase_hist-price', e, sold_hist_url)
+                price = ''
+            quantity = int(tds[3].text)
+            sold_date = tds[4].text.split()[0]
+            sold_time = tds[4].text.split()[1]
+
+            try:
+                sold_date = datetime.strptime(sold_date, '%b-%d-%y')
+            except Exception as e:
+                sold_date = datetime.strptime(sold_date, '%d-%b-%y')
+
+            sold_time = datetime.strptime(sold_time, '%H:%M:%S').time()
+            sold_time = sold_time.replace(second=0, microsecond=0)
+            sold_datetime = datetime.combine(sold_date, sold_time)
+
+            if e_vars.verbose: print('get_purchase_hist-DateTimes', price, quantity, sold_datetime)
+
+            sold_list.append([price, quantity, sold_date, sold_datetime])
+    return sold_list
+
+
+def get_offer_hist(trs, e_vars, sold_list, sold_hist_url):
+    for r in trs:
+        tds = r.find_all('td', )
+        if e_vars.verbose: print('get_offer_hist-tds', tds)
+        if len(tds) > 1:
+            try:
+                # buyer = tds[1].text
+                accepted = tds[2].text
+                quantity = int(tds[3].text)
+                sold_date = tds[4].text.split()[0]
+                sold_time = tds[4].text.split()[1]
+
+                try:
+                    sold_date = datetime.strptime(sold_date, '%b-%d-%y')
+                except Exception as e:
+                    sold_date = datetime.strptime(sold_date, '%d-%b-%y')
+
+                sold_time = datetime.strptime(sold_time, '%H:%M:%S').time()
+                sold_time = sold_time.replace(second=0, microsecond=0)
+                sold_datetime = datetime.combine(sold_date, sold_time)
+
+                if accepted == 'Accepted':
+                    if e_vars.verbose: print(accepted, quantity, sold_datetime)
+                    sold_list.append(['', quantity, sold_date, sold_datetime])
+            except Exception as e:
+                accepted = 'None'
+                if e_vars.debug or e_vars.verbose: print('get_offer_hist-trs', e, sold_hist_url)
+    return sold_list
+
+
 # XML Formatter: https://jsonformatter.org/xml-formatter
 
 def get_quantity_hist(sold_hist_url: str,
@@ -50,68 +109,20 @@ def get_quantity_hist(sold_hist_url: str,
 
         # items = soup.find_all('tr')
 
-        table = soup.find_all('table', attrs={'border': '0', 'cellpadding': '5', 'cellspacing': '0',
-                                              'width' : '100%'})
+        tables = soup.find_all('table', attrs={'border': '0', 'cellpadding': '5', 'cellspacing': '0',
+                                               'width' : '100%'})
 
-        purchas_hist = table[0]
+        # eBay has a number of possible tables in the purchase history, Offer History, Offer Retraction History,
+        # Purchase History, listings don't have to have all of them so just need to check
+        for table in tables:
+            trs = table.find_all('tr')
+            ths = trs[0].find_all('th')
+            for th in ths:
+                if 'Buy It Now Price' in th.text:
+                    sold_list = get_purchase_hist(trs, e_vars, sold_list, sold_hist_url)
+                elif 'Offer Status' in th.text:
+                    sold_list = get_offer_hist(trs, e_vars, sold_list, sold_hist_url)
 
-        trs = purchas_hist.find_all('tr')
-
-        for r in trs:
-            tds = r.find_all('td')
-            if len(tds) > 1:
-                # buyer = tds[1].text
-                try:
-                    price = float(re.sub(r'[^\d.]+', '', tds[2].text))
-                except Exception as e:
-                    if e_vars.debug or e_vars.verbose: print('get_quantity_hist-price', e, sold_hist_url)
-                    price = ''
-                quantity = int(tds[3].text)
-                sold_date = tds[4].text.split()[0]
-                sold_time = tds[4].text.split()[1]
-
-                try:
-                    sold_date = datetime.strptime(sold_date, '%b-%d-%y')
-                except Exception as e:
-                    sold_date = datetime.strptime(sold_date, '%d-%b-%y')
-
-                sold_time = datetime.strptime(sold_time, '%H:%M:%S').time()
-                sold_time = sold_time.replace(second=0, microsecond=0)
-                sold_datetime = datetime.combine(sold_date, sold_time)
-
-                if e_vars.verbose: print('get_quantity_hist-DateTimes', price, quantity, sold_datetime)
-
-                sold_list.append([price, quantity, sold_date, sold_datetime])
-
-        offer_hist = table[1]
-
-        trs = offer_hist.find_all('tr')
-
-        for r in trs:
-            tds = r.find_all('td', )
-            if len(tds) > 1:
-                try:
-                    # buyer = tds[1].text
-                    accepted = tds[2].text
-                    quantity = int(tds[3].text)
-                    sold_date = tds[4].text.split()[0]
-                    sold_time = tds[4].text.split()[1]
-
-                    try:
-                        sold_date = datetime.strptime(sold_date, '%b-%d-%y')
-                    except Exception as e:
-                        sold_date = datetime.strptime(sold_date, '%d-%b-%y')
-
-                    sold_time = datetime.strptime(sold_time, '%H:%M:%S').time()
-                    sold_time = sold_time.replace(second=0, microsecond=0)
-                    sold_datetime = datetime.combine(sold_date, sold_time)
-
-                    if accepted == 'Accepted':
-                        if e_vars.verbose: print(accepted, quantity, sold_datetime)
-                        sold_list.append(['', quantity, sold_date, sold_datetime])
-                except Exception as e:
-                    accepted = 'None'
-                    if e_vars.debug or e_vars.verbose: print('get_quantity_hist-trs', e, sold_hist_url)
     except Exception as e:
         if e_vars.debug or e_vars.verbose: print('get_quantity_hist', e, sold_hist_url)
     return sold_list
@@ -161,6 +172,7 @@ def ebay_scrape(base_url: str,
 
         for n, item in enumerate(items):
             curr_time = datetime.now()
+            if e_vars.verbose: print(curr_time)
             if n > 0:
                 try:
                     item_link = item.find('a', class_='s-item__link')['href']
@@ -535,7 +547,7 @@ def ebay_search(query: str,
     start_datetime = datetime.today().strftime("%Y%m%d%H%M%S")
     # https://realpython.com/caching-external-api-requests/
     curr_path = pathlib.Path(__file__).parent.absolute()
-    print(curr_path)
+
     cache_name = f"{curr_path}\\cache_{start_datetime}"
 
     requests_cache.install_cache(cache_name, backend='sqlite', expire_after=300)
@@ -558,8 +570,8 @@ def ebay_search(query: str,
         df = pd.read_excel('Spreadsheets/' + filename, index_col=0, engine='openpyxl')
         df = df.astype({'Brand': 'object'})
         df = df.astype({'Model': 'object'})
-        df = df.astype({'Sold Scrape Datetime': 'object'})
 
+\
     except Exception as e:
         # if file does not exist, create it
         dict = {'Title'      : [], 'Brand': [], 'Model': [], 'description': [], 'Price': [], 'Shipping': [],
