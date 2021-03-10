@@ -478,7 +478,7 @@ def ebay_scrape(base_url: str,
 
                             # There's a chance when we get to multiitem listings we'd be reinserting data, this is to prevent it
                             if not df[['Link', 'Sold Datetime']].isin(
-                                    {'Link': [item_link], 'Sold Datetime': [item_datetime]}).all(
+                                    {'Link': [item_link], 'Sold Datetime': [sale[3]]}).all(
                                     axis='columns').any() and item_tot > 0:
                                 if e_vars.verbose: print(df__new)
                                 df = df.append(df__new, ignore_index=True)
