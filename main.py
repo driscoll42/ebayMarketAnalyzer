@@ -571,7 +571,7 @@ def ebay_search(query: str,
         df = df.astype({'Brand': 'object'})
         df = df.astype({'Model': 'object'})
 
-\
+
     except Exception as e:
         # if file does not exist, create it
         dict = {'Title'      : [], 'Brand': [], 'Model': [], 'description': [], 'Price': [], 'Shipping': [],
