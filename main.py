@@ -223,8 +223,7 @@ def ebay_scrape(base_url: str,
                 if e_vars.verbose: print('Date:', item_date)
                 if e_vars.verbose: print('Datetime:', item_datetime)
                 if e_vars.verbose: print(
-                        not df[['Link', 'Sold Datetime']].isin(
-                                {'Link': [item_link], 'Sold Datetime': [item_datetime]}).all(
+                        df[['Link', 'Sold Datetime']].isin({'Link': [item_link], 'Sold Datetime': [item_datetime]}).all(
                                 axis='columns').any())
 
                 # Only need to add new records
@@ -541,6 +540,11 @@ def ebay_search(query: str,
     -------
 
     """
+
+    if e_vars.verbose: pd.set_option('display.max_rows', None)
+    if e_vars.verbose: pd.set_option('display.max_columns', None)
+    if e_vars.verbose: pd.set_option('display.width', None)
+    if e_vars.verbose: pd.set_option('display.max_colwidth', -1)
     start = time.time()
     print(query)
 
@@ -571,6 +575,10 @@ def ebay_search(query: str,
         df = df.astype({'Brand': 'object'})
         df = df.astype({'Model': 'object'})
 
+        # When saving the file, at times 0.000001 seconds might be added or subtracted from the Sold Datetime
+        # This causes a mismatch when comparing datetimes, causing duplicates and wasting time rechecking listings
+        # Testing on the 3060, adding this brought runtimes down from eight minutes to one minute.
+        df['Sold Datetime'] = df['Sold Datetime'].dt.round('min')
 
     except Exception as e:
         # if file does not exist, create it
