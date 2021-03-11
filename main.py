@@ -21,7 +21,10 @@ from plotting import ebay_plot
 from plotting import plot_profits
 
 
-def get_purchase_hist(trs, e_vars, sold_list, sold_hist_url):
+def get_purchase_hist(trs, e_vars: EbayVariables, sold_list: List[Union[float, int, datetime, datetime]],
+                      sold_hist_url: str) -> List[Union[float, int, datetime, datetime]]:
+    bin_date, bin_datetime = '', ''
+
     for r in trs:
         tds = r.find_all('td')
         if len(tds) > 1:
@@ -44,13 +47,20 @@ def get_purchase_hist(trs, e_vars, sold_list, sold_hist_url):
             sold_time = sold_time.replace(second=0, microsecond=0)
             sold_datetime = datetime.combine(sold_date, sold_time)
 
+            if not bin_date:
+                bin_date, bin_datetime = sold_date, sold_datetime
+            bin_date, bin_datetime = max(bin_date, sold_date), max(bin_datetime, sold_datetime)
+
             if e_vars.verbose: print('get_purchase_hist-DateTimes', price, quantity, sold_datetime)
 
             sold_list.append([price, quantity, sold_date, sold_datetime])
-    return sold_list
+    return sold_list, bin_date, bin_datetime
 
 
-def get_offer_hist(trs, e_vars, sold_list, sold_hist_url):
+def get_offer_hist(trs, e_vars: EbayVariables, sold_list: List[Union[float, int, datetime, datetime]],
+                   sold_hist_url: str) -> List[Union[float, int, datetime, datetime]]:
+    off_date, off_datetime = '', ''
+
     for r in trs:
         tds = r.find_all('td', )
         if e_vars.verbose: print('get_offer_hist-tds', tds)
@@ -71,13 +81,16 @@ def get_offer_hist(trs, e_vars, sold_list, sold_hist_url):
                 sold_time = sold_time.replace(second=0, microsecond=0)
                 sold_datetime = datetime.combine(sold_date, sold_time)
 
+                if not off_date:
+                    off_date, off_datetime = sold_date, sold_datetime
+                off_date, off_datetime = max(off_date, sold_date), max(off_datetime, sold_datetime)
+
                 if accepted == 'Accepted':
                     if e_vars.verbose: print(accepted, quantity, sold_datetime)
                     sold_list.append(['', quantity, sold_date, sold_datetime])
             except Exception as e:
-                accepted = 'None'
                 if e_vars.debug or e_vars.verbose: print('get_offer_hist-trs', e, sold_hist_url)
-    return sold_list
+    return sold_list, off_date, off_datetime
 
 
 # XML Formatter: https://jsonformatter.org/xml-formatter
@@ -99,6 +112,7 @@ def get_quantity_hist(sold_hist_url: str,
     -------
 
     """
+    sl_date, sl_datetime = '', ''
     time.sleep(
             e_vars.sleep_len * random.uniform(0,
                                               1))  # eBays servers will kill your connection if you hit them too frequently
@@ -114,19 +128,83 @@ def get_quantity_hist(sold_hist_url: str,
 
         # eBay has a number of possible tables in the purchase history, Offer History, Offer Retraction History,
         # Purchase History, listings don't have to have all of them so just need to check
+        bin_date, off_date = '', ''
+        bin_datetime, off_datetime = '', ''
         for table in tables:
             trs = table.find_all('tr')
             ths = trs[0].find_all('th')
             for th in ths:
-                if 'Buy It Now Price' in th.text:
-                    sold_list = get_purchase_hist(trs, e_vars, sold_list, sold_hist_url)
+                if 'Buy It Now Price' in th.text or 'Date of Purchase' in th.text:
+                    sold_list, bin_date, bin_datetime = get_purchase_hist(trs, e_vars, sold_list, sold_hist_url)
                 elif 'Offer Status' in th.text:
-                    sold_list = get_offer_hist(trs, e_vars, sold_list, sold_hist_url)
+                    sold_list, off_date, off_datetime = get_offer_hist(trs, e_vars, sold_list, sold_hist_url)
+
+        if not bin_date and off_date:
+            sl_date, sl_datetime = off_date, off_datetime
+        elif not off_date and bin_date:
+            sl_date, sl_datetime = bin_date, bin_datetime
+        elif off_date and bin_date:
+            sl_date, sl_datetime = max(bin_date, off_date), max(bin_datetime, off_datetime)
 
     except Exception as e:
         if e_vars.debug or e_vars.verbose: print('get_quantity_hist', e, sold_hist_url)
-    return sold_list
+    return sold_list, sl_date, sl_datetime
 
+
+def sp_get_datetime(item, days_before_date, e_vars, item_link):
+    item_date, item_datetime = '', ''
+    try:
+        currentYear = datetime.now().year
+        currentMonth = datetime.now().month
+
+        orig_item_datetime = f"{currentYear} {item.find('span', class_='s-item__endedDate').text}"
+        if e_vars.country == 'UK':
+            item_datetime = datetime.strptime(orig_item_datetime, '%Y %d-%b %H:%M')
+        else:
+            item_datetime = datetime.strptime(orig_item_datetime, '%Y %b-%d %H:%M')
+
+        # When we run early in the year
+        if currentMonth < 6 and item_datetime.month > 6:
+            last_year = currentYear - 1
+            item_datetime = item_datetime.replace(year=last_year)
+
+        item_date = item_datetime.replace(hour=0, minute=0)
+        days_before_date = min(item_date, days_before_date)
+
+    except Exception as e:
+        if e_vars.debug or e_vars.verbose: print('sp_get_datetime-1', e, item_link)
+        try:
+            orig_item_datetime = item.find('span', class_='s-item__title--tagblock__COMPLETED').text
+            orig_item_datetime = orig_item_datetime.replace('Sold item', '').replace('Sold', '').strip()
+            item_datetime = orig_item_datetime.replace(hour=0, minute=0, second=0, microsecond=0)
+
+            item_date = datetime.strptime(orig_item_datetime, '%d %b %Y')
+            item_date = item_date.replace(hour=0, minute=0, second=0, microsecond=0)
+            days_before_date = min(item_date, days_before_date)
+
+        except Exception as e:
+            if e_vars.debug or e_vars.verbose: print('sp_get_datetime-2', e, item_link)
+            try:
+                date_time = item.find('span', attrs={'class': 'POSITIVE'})
+
+                classes = date_time.find_all('span')
+                off_dict = {}
+                for c in classes:
+                    cls_name = c.attrs['class'][0]
+                    if cls_name not in off_dict:
+                        off_dict[cls_name] = c.text
+                    else:
+                        off_dict[cls_name] = off_dict[cls_name] + c.text
+
+                for od in off_dict.values():
+                    if 'Sold' in od:
+                        date_txt = od.replace('Sold', '').replace(',', '').strip()
+                        item_date = datetime.strptime(date_txt, "%b %d %Y")
+
+            except Exception as e:
+                if e_vars.debug or e_vars.verbose: print('sp_get_datetime-3', e, item_link)
+
+    return item_date, item_datetime, days_before_date
 
 def ebay_scrape(base_url: str,
                 df: pd.DataFrame,
@@ -147,23 +225,172 @@ def ebay_scrape(base_url: str,
     -------
 
     """
+
+    def sp_get_item_link(item):
+        try:
+            item_link = item.find('a', class_='s-item__link')['href']
+        except Exception as e:
+            item_link = 'None'
+            if e_vars.debug or e_vars.verbose: print('sp_get_item_link', e)
+        return item_link
+
+    def sp_get_title(item):
+        try:
+            item_title = item.find('h3', class_='s-item__title').text
+        except Exception as e:
+            item_title = 'None'
+            if e_vars.debug or e_vars.verbose: print('sp_get_title', e, item_link)
+        return item_title
+
+    def sp_get_desc(item):
+        try:
+            item_desc = item.find('div', class_='s-item__subtitle').text
+        except Exception as e:
+            item_desc = 'None'
+            if e_vars.debug or e_vars.verbose: print('sp_get_desc', e, item_link)
+        return item_desc
+
+    def sp_get_price(item):
+        try:
+            item_price = item.find('span', class_='s-item__price').text
+            item_price = float(re.sub(r'[^\d.]+', '', item_price))
+        except Exception as e:
+            item_price = -1
+            if e_vars.debug or e_vars.verbose: print('sp_get_price', e, item_link)
+        return item_price
+
+    def sp_get_shipping(item):
+        try:
+            item_shipping = item.find('span', class_='s-item__shipping s-item__logisticsCost').text
+            if item_shipping.upper().find("FREE") == -1:
+                item_shipping = float(re.sub(r'[^\d.]+', '', item_shipping))
+            else:
+                item_shipping = 0
+        except Exception as e:
+            item_shipping = 0
+            if e_vars.debug or e_vars.verbose: print('sp_get_shipping', e, item_link)
+        return item_shipping
+
+    def ip_get_datetime(item_soup, days_before_date):
+        item_date, item_datetime = '', ''
+        try:
+            date_one = item_soup.find('div', attrs={'class': 'u-flL vi-bboxrev-posabs vi-bboxrev-dsplinline'})
+            date_one = date_one.find('span', attrs={'id': 'bb_tlft'})
+            date_one = date_one.text.replace("\n", " ").replace(",", "").strip().split()
+
+            try:
+                item_datetime = datetime.strptime(f"{date_one[0]} {date_one[1]} {date_one[2]} {date_one[3]}",
+                                                  "%b %d %Y %I:%M:%S")
+            except Exception as e:
+                item_datetime = datetime.strptime(f"{date_one[0]} {date_one[1]} {date_one[2]} {date_one[3]}",
+                                                  "%b %d %Y %H:%M:%S")
+            item_datetime = item_datetime.replace(second=0, microsecond=0)
+            item_date = item_datetime.replace(hour=0, minute=0)
+            days_before_date = min(item_date, days_before_date)
+
+        except Exception as e:
+            if e_vars.debug or e_vars.verbose: print('ip_get_datetime', e, item_link)
+        return item_date, item_datetime, days_before_date
+
+    def ip_get_loc_data(item_soup):
+        city, state, country_name = '', '', ''
+        try:
+            loc = item_soup.find('div', attrs={'class': 'iti-eu-bld-gry'})
+            loc = loc.find('span').text.split(',')
+            city, state, country_name = loc[0], loc[1], loc[2]
+            if len(loc) == 2:
+                city, state, country_name = loc[0], '', loc[1]
+            elif len(loc) == 3:
+                city, state, country_name = loc[0], loc[1], loc[2]
+
+        except Exception as e:
+            if e_vars.debug or e_vars.verbose: print('ip_get_loc_data', e, item_link)
+            loc_2 = item_soup.find('div', attrs={'class': 'vi-wp vi-VR-cvipCntr1'})
+            loc_2 = loc_2.find_all('tr', attrs={'class': 'vi-ht20'})
+            for l in loc_2:
+                if l.text.find('Item location:') > 0:
+                    i_loc = l.find_all('div', attrs={'class': 'u-flL'})
+                    loc_text = i_loc[1].text.split(',')
+                    if len(loc_text) == 2:
+                        city, state, country_name = loc_text[0], '', loc_text[1]
+                    elif len(loc_text) == 3:
+                        city, state, country_name = loc_text[0], loc_text[1], loc_text[2]
+                    break
+        return city, state, country_name
+
+    def ip_get_seller(item_soup):
+        seller, seller_fb, store = '', '', False
+        try:
+            seller = item_soup.find_all('span', attrs={'class': 'mbg-nw'})
+            seller = seller[0].text
+
+            seller_fb = item_soup.find_all('span', attrs={'class': 'mbg-l'})
+            seller_fb = int(seller_fb[0].find('a').text)
+
+            store_id = item_soup.find_all('div', attrs={'id': 'storeSeller'})
+
+            if len(store_id[0].text) > 0:
+                store = True
+        except Exception as e:
+            if e_vars.debug or e_vars.verbose: print('ip_get_seller', e, item_link)
+        return seller, seller_fb, store
+
+    def ip_get_datetime_card(item_soup, days_before_date):
+        item_date, item_datetime = '', ''
+        try:
+            con_card = item_soup.find_all('div',
+                                          attrs={
+                                              'class': 'nodestar-item-card-details__condition-row'})
+            for c in con_card:
+                if 'Ended' in c.text:
+                    end_ele = c.text.replace('Ended:', '').replace(',', '').split()
+
+                    item_datetime = datetime.strptime(
+                            f"{end_ele[0]} {end_ele[1]} {end_ele[2]} {end_ele[3]} {end_ele[4]}",
+                            "%b %d %Y %I:%M:%S %p")
+                    item_datetime = item_datetime.replace(second=0, microsecond=0)
+                    item_date = item_datetime.replace(hour=0, minute=0)
+                    days_before_date = min(item_date, days_before_date)
+
+        except Exception as e:
+            if e_vars.debug or e_vars.verbose: print('ip_get_datetime_card', e,
+                                                     item_link)
+        return item_date, item_datetime, days_before_date
+
+    def ip_get_quant_hist(item_soup, sold_list):
+        sl_date, sl_datetime = '', ''
+        quantity_sold, multi_list = 1, False
+
+        try:
+            iitem = item_soup.find_all('a', attrs={'class': 'vi-txt-underline'})
+            quantity_sold = int(iitem[0].text.split()[0])
+            multi_list = True
+
+            if e_vars.quantity_hist:
+                sold_hist_url = iitem[0]['href']
+                sold_list, sl_date, sl_datetime = get_quantity_hist(sold_hist_url, sold_list, adapter=adapter,
+                                                                    e_vars=e_vars)
+
+        except Exception as e:
+            if e_vars.debug or e_vars.verbose: print('ip_get_quant_hist', e, item_link)
+        return quantity_sold, multi_list, sold_list, sl_date, sl_datetime
+
     days_before_date = datetime.today()
     days_before_date = days_before_date.replace(hour=0, minute=0, second=0, microsecond=0)
     comp_date = days_before_date - timedelta(days=e_vars.days_before)
 
     for x in range(1, 5):
+        # eBays servers will kill your connection if you hit them too frequently
+        time.sleep(e_vars.sleep_len * random.uniform(0, 1))
 
-        time.sleep(
-                e_vars.sleep_len * random.uniform(0,
-                                                  1))  # eBays servers will kill your connection if you hit them too frequently
         url = f"{base_url}{x}"
 
         if x == 4:
-            source = adapter.get(url, timeout=10).text
+            soup_source = adapter.get(url, timeout=10).text
         else:
             with requests_cache.disabled():  # We don't want to cache all the calls into the individual listings, they'll never be repeated
-                source = adapter.get(url, timeout=10).text
-        soup = BeautifulSoup(source, 'lxml')
+                soup_source = adapter.get(url, timeout=10).text
+        soup = BeautifulSoup(soup_source, 'lxml')
         items = soup.find_all('li', attrs={'class': 's-item'})
 
         time_break = False
@@ -174,244 +401,99 @@ def ebay_scrape(base_url: str,
             curr_time = datetime.now()
             if e_vars.verbose: print(curr_time)
             if n > 0:
-                try:
-                    item_link = item.find('a', class_='s-item__link')['href']
-                except Exception as e:
-                    item_link = 'None'
-                    if e_vars.debug or e_vars.verbose: print('ebay_scrape-item_link', e)
 
+                item_link = sp_get_item_link(item)
                 if e_vars.verbose: print('URL:', item_link)
 
-                try:
-                    currentYear = datetime.now().year
-                    currentMonth = datetime.now().month
-
-                    orig_item_datetime = f"{currentYear} {item.find('span', class_='s-item__endedDate').text}"
-                    if e_vars.country == 'UK':
-                        item_datetime = datetime.strptime(orig_item_datetime, '%Y %d-%b %H:%M')
-                    else:
-                        item_datetime = datetime.strptime(orig_item_datetime, '%Y %b-%d %H:%M')
-
-                    # When we run early in the year
-                    if currentMonth < 6 and item_datetime.month > 6:
-                        last_year = currentYear - 1
-                        item_datetime = item_datetime.replace(year=last_year)
-
-                    item_date = item_datetime.replace(hour=0, minute=0)
-                    days_before_date = min(item_date, days_before_date)
-
-                except Exception as e:
-                    if e_vars.debug or e_vars.verbose: print('ebay_scrape-orig_item_datetime', e, item_link)
-                    try:
-                        orig_item_datetime = item.find('span', class_='s-item__title--tagblock__COMPLETED').text
-                        orig_item_datetime = orig_item_datetime.replace('Sold item', '').replace('Sold', '').strip()
-                        item_datetime = orig_item_datetime.replace(hour=0, minute=0, second=0, microsecond=0)
-
-                        item_date = datetime.strptime(orig_item_datetime, '%d %b %Y')
-                        item_date = item_date.replace(hour=0, minute=0, second=0, microsecond=0)
-                        days_before_date = min(item_date, days_before_date)
-
-                    except Exception as e:
-                        item_datetime = 'None'
-                        item_date = 'None'
-                        if e_vars.debug or e_vars.verbose: print('ebay_scrape-item_datetime', e, item_link)
+                item_date, item_datetime, days_before_date = sp_get_datetime(item, days_before_date, e_vars, item_link)
+                if e_vars.verbose: print('Date-1:', item_date)
+                if e_vars.verbose: print('Datetime-1:', item_datetime)
 
                 if days_before_date < comp_date or days_before_date < min_date:
                     time_break = True
                     break
 
-                if e_vars.verbose: print('Date:', item_date)
-                if e_vars.verbose: print('Datetime:', item_datetime)
-                if e_vars.verbose: print(
-                        df[['Link', 'Sold Datetime']].isin({'Link': [item_link], 'Sold Datetime': [item_datetime]}).all(
-                                axis='columns').any())
-
                 # Only need to add new records
                 if not df[['Link', 'Sold Datetime']].isin({'Link': [item_link], 'Sold Datetime': [item_datetime]}).all(
                         axis='columns').any():
 
-                    try:
-                        item_title = item.find('h3', class_='s-item__title').text
-                    except Exception as e:
-                        item_title = 'None'
-                        if e_vars.debug or e_vars.verbose: print('ebay_scrape-item_title', e, item_link)
+                    item_title = sp_get_title(item)
+                    if e_vars.debug or e_vars.verbose: print('Title:', item_title)
 
-                    if e_vars.verbose: print('Title:', item_title)
+                    item_desc = sp_get_desc(item)
+                    if e_vars.debug or e_vars.verbose: print('Desc: ', item_desc)
 
-                    try:
-                        item_desc = item.find('div', class_='s-item__subtitle').text
-                    except Exception as e:
-                        item_desc = 'None'
-                        if e_vars.debug or e_vars.verbose: print('ebay_scrape-item_desc', e, item_link)
-                    if e_vars.verbose: print('Desc: ', item_desc)
+                    item_price = sp_get_price(item)
+                    if e_vars.debug or e_vars.verbose: print('Price:', item_price)
 
-                    try:
-                        item_price = item.find('span', class_='s-item__price').text
-                        item_price = float(re.sub(r'[^\d.]+', '', item_price))
-                    except Exception as e:
-                        item_price = -1
-                        if e_vars.debug or e_vars.verbose: print('ebay_scrape-item_price', e, item_link)
-                    if e_vars.verbose: print('Price:', item_price)
+                    item_shipping = sp_get_shipping(item)
+                    if e_vars.debug or e_vars.verbose: print('Shipping:', item_shipping)
 
-                    try:
-                        item_shipping = item.find('span', class_='s-item__shipping s-item__logisticsCost').text
-                        if item_shipping.upper().find("FREE") == -1:
-                            item_shipping = float(re.sub(r'[^\d.]+', '', item_shipping))
-                        else:
-                            item_shipping = 0
-                    except Exception as e:
-                        item_shipping = 0
-                        if e_vars.debug or e_vars.verbose: print('ebay_scrape-item_shipping', e, item_link)
+                    item_tot = item_price + item_shipping
+                    if e_vars.debug or e_vars.verbose: print('Total:', item_tot)
 
-                    if e_vars.verbose: print('Shipping:', item_shipping)
-
-                    try:
-                        item_tot = item_price + item_shipping
-                    except Exception as e:
-                        item_tot = -1
-                        if e_vars.debug or e_vars.verbose: print('ebay_scrape-item_tot', e, item_link)
-
-                    if e_vars.verbose: print('Total:', item_tot)
-
-                    quantity_sold = 1
-                    sold_list = []
-                    multi_list = False
-                    store = False
+                    quantity_sold, sold_list, multi_list = 1, [], False
+                    seller, seller_fb, store = '', '', False
                     city, state, country_name = '', '', ''
 
                     if e_vars.feedback or e_vars.quantity_hist:
-                        try:
+                        time.sleep(e_vars.sleep_len * random.uniform(0, 1))
+                        # We don't want to cache all the calls into the individual listings, they'll never be repeated
+                        with requests_cache.disabled():
+                            isource = adapter.get(item_link).text
+
+                        item_soup = BeautifulSoup(isource, 'lxml')
+
+                        # Check if this is the original item, or eBay trying to sell another item and having a redirect
+                        oitems = item_soup.find_all('a', attrs={'class': 'nodestar-item-card-details__view-link'})
+
+                        if len(oitems) > 0:
+                            if e_vars.debug or e_vars.verbose: print(
+                                    'Search Link goes to similar item, finding original')
+                            orig_link = oitems[0]['href']
+
+                            if not item_datetime:
+                                item_date, item_datetime, days_before_date = ip_get_datetime_card(item_soup,
+                                                                                                  days_before_date)
+                                if e_vars.debug or e_vars.verbose: print('Date-2:', item_date)
+                                if e_vars.debug or e_vars.verbose: print('Datetime-2:', item_datetime)
+
                             time.sleep(e_vars.sleep_len * random.uniform(0, 1))
-                            with requests_cache.disabled():  # We don't want to cache all the calls into the individual listings, they'll never be repeated
-                                source = adapter.get(item_link).text
-                            soup = BeautifulSoup(source, 'lxml')
+                            # We don't want to cache all the calls into the individual listings, they'll never be repeated
+                            with requests_cache.disabled():
+                                source = adapter.get(orig_link).text
+                            item_soup = BeautifulSoup(source, 'lxml')
 
-                            try:
-                                seller = soup.find_all('span', attrs={'class': 'mbg-nw'})
-                                seller = seller[0].text
+                        if not item_datetime:
+                            item_date, item_datetime, days_before_date = ip_get_datetime(item_soup, days_before_date)
+                            if e_vars.debug or e_vars.verbose: print('Date-3:', item_date)
+                            if e_vars.debug or e_vars.verbose: print('Datetime-3:', item_datetime)
 
-                                seller_fb = soup.find_all('span', attrs={'class': 'mbg-l'})
-                                seller_fb = int(seller_fb[0].find('a').text)
+                        seller, seller_fb, store = ip_get_seller(item_soup)
+                        if e_vars.debug or e_vars.verbose: print('Seller:', seller)
+                        if e_vars.debug or e_vars.verbose: print('Seller Feedback:', seller_fb)
+                        if e_vars.debug or e_vars.verbose: print('Store:', store)
 
-                                store_id = soup.find_all('div', attrs={'id': 'storeSeller'})
+                        city, state, country_name = ip_get_loc_data(item_soup)
+                        if e_vars.debug or e_vars.verbose: print('City:', city)
+                        if e_vars.debug or e_vars.verbose: print('State:', state)
+                        if e_vars.debug or e_vars.verbose: print('Country Name:', country_name)
 
-                                if len(store_id[0].text) > 0:
-                                    store = True
+                        # Sometimes the datetime isn't on the page for multilistings so we get the most recent sale
+                        quantity_sold, multi_list, sold_list, sl_date, sl_datetime = ip_get_quant_hist(item_soup,
+                                                                                                       sold_list)
+                        if e_vars.debug or e_vars.verbose: print('multi_list:', multi_list)
+                        if multi_list:
+                            if e_vars.debug or e_vars.verbose: print('Quantity Sold:', quantity_sold)
+                            if e_vars.debug or e_vars.verbose: print('sold_list:', sold_list)
+                            if e_vars.debug or e_vars.verbose: print('sold_list_max_date:', sl_date)
+                            if e_vars.debug or e_vars.verbose: print('sold_list_max_datetime:', sl_datetime)
 
-                                try:
-                                    loc = soup.find('div', attrs={'class': 'iti-eu-bld-gry'})
-                                    loc = loc.find('span').text.split(',')
-                                    city, state, country_name = loc[0], loc[1], loc[2]
-                                    if len(loc) == 2:
-                                        city, state, country_name = loc[0], '', loc[1]
-                                    elif len(loc) == 3:
-                                        city, state, country_name = loc[0], loc[1], loc[2]
-
-                                except Exception as e:
-                                    if e_vars.debug or e_vars.verbose: print('ebay_scrape-seller-1', e, item_link)
-                                    loc_2 = soup.find('div', attrs={'class': 'vi-wp vi-VR-cvipCntr1'})
-                                    loc_2 = loc_2.find_all('tr', attrs={'class': 'vi-ht20'})
-                                    for l in loc_2:
-                                        if l.text.find('Item location:') > 0:
-                                            i_loc = l.find_all('div', attrs={'class': 'u-flL'})
-                                            loc_text = i_loc[1].text.split(',')
-                                            if len(loc_text) == 2:
-                                                city, state, country_name = loc_text[0], '', loc_text[1]
-                                            elif len(loc_text) == 3:
-                                                city, state, country_name = loc_text[0], loc_text[1], loc_text[2]
-                                            break
-
-                                try:
-                                    iitem = soup.find_all('a', attrs={'class': 'vi-txt-underline'})
-                                    quantity_sold = int(iitem[0].text.split()[0])
-                                    multi_list = True
-
-                                    if e_vars.quantity_hist:
-                                        sold_hist_url = iitem[0]['href']
-                                        sold_list = get_quantity_hist(sold_hist_url, sold_list, adapter=adapter,
-                                                                      e_vars=e_vars)
-
-                                except Exception as e:
-                                    sold_hist_url = ''
-                                    if e_vars.debug or e_vars.verbose: print('ebay_scrape-iitem', e, item_link)
-
-                            except Exception as e:
-                                if e_vars.debug or e_vars.verbose: print('ebay_scrape-seller-1', e, item_link)
-                                try:
-                                    oitems = soup.find_all('a',
-                                                           attrs={'class': 'nodestar-item-card-details__view-link'})
-                                    orig_link = oitems[0]['href']
-
-                                    time.sleep(e_vars.sleep_len * random.uniform(0, 1))
-                                    with requests_cache.disabled():  # We don't want to cache all the calls into the individual listings, they'll never be repeated
-                                        source = adapter.get(orig_link).text
-                                    soup = BeautifulSoup(source, 'lxml')
-
-                                    seller = soup.find_all('span', attrs={'class': 'mbg-nw'})
-                                    seller = seller[0].text
-
-                                    seller_fb = soup.find_all('span', attrs={'class': 'mbg-l'})
-                                    seller_fb = int(seller_fb[0].find('a').text)
-
-                                    store_id = soup.find_all('div', attrs={'id': 'storeSeller'})
-
-                                    if len(store_id[0].text) > 0:
-                                        store = True
-
-                                    try:
-
-                                        loc = soup.find('div', attrs={'class': 'iti-eu-bld-gry'})
-                                        loc = loc.find('span').text.split(',')
-                                        if len(loc) == 2:
-                                            city, state, country_name = loc[0], '', loc[1]
-                                        elif len(loc) == 3:
-                                            city, state, country_name = loc[0], loc[1], loc[2]
-                                    except Exception as e:
-                                        if e_vars.debug or e_vars.verbose: print('ebay_scrape-vi-wp', e, item_link)
-                                        loc = soup.find('div', attrs={'class': 'vi-wp vi-VR-cvipCntr1'})
-                                        loc = loc.find_all('tr', attrs={'class': 'vi-ht20'})
-
-                                        for l in loc:
-                                            if l.text.find('Item location:') > 0:
-                                                i_loc = l.find_all('div', attrs={'class': 'u-flL'})
-                                                loc_text = i_loc[1].text.split(',')
-                                                city, state, country_name = loc_text[0], loc_text[1], loc_text[2]
-                                                if len(loc_text) == 2:
-                                                    city, state, country_name = loc_text[0], '', loc_text[1]
-                                                elif len(loc_text) == 3:
-                                                    city, state, country = loc_text[0], loc_text[1], loc_text[2]
-                                                break
-
-                                    try:
-                                        nnitems = soup.find_all('a', attrs={'class': 'vi-txt-underline'})
-                                        quantity_sold = int(nnitems[0].text.split()[0])
-                                        multi_list = True
-
-                                        if e_vars.quantity_hist and quantity_sold > 1:
-                                            sold_hist_url = nnitems[0]['href']
-                                            sold_list = get_quantity_hist(sold_hist_url, sold_list, adapter=adapter,
-                                                                          e_vars=e_vars)
-
-                                    except Exception as e:
-                                        sold_hist_url = ''
-                                        if e_vars.debug or e_vars.verbose: print('ebay_scrape-nnitems', e, item_link)
-                                except Exception as e:
-                                    # print(url)
-                                    # print(e)
-                                    seller = 'None'
-                                    seller_fb = 'None'
-                                    if e_vars.debug or e_vars.verbose: print('ebay_scrape-oitems-2', e, item_link)
-                        except Exception as e:
-                            seller = 'None'
-                            seller_fb = 'None'
-                            if e_vars.debug or e_vars.verbose: print('ebay_scrape-oitems-1', e, item_link)
-                    else:
-                        seller = 'None'
-                        seller_fb = 'None'
-
-                    if e_vars.verbose: print('Seller: ', seller)
-                    if e_vars.verbose: print('Seller Feedback: ', seller_fb)
-                    if e_vars.verbose: print('Quantity Sold: ', quantity_sold)
+                        if not item_datetime:
+                            item_date, item_datetime, days_before_date = sl_date, sl_datetime, min(sl_date,
+                                                                                                   days_before_date)
+                            if e_vars.debug or e_vars.verbose: print('Date-4:', item_date)
+                            if e_vars.debug or e_vars.verbose: print('Datetime-4:', item_datetime)
 
                     brand = ''
                     title = item_title
@@ -434,6 +516,14 @@ def ebay_scrape(base_url: str,
                     ignor_val = 0
                     if item_desc.upper().find("PARTS ONLY") >= 0 or item_desc.upper().find("BENT PIN") >= 0:
                         ignor_val = 1
+
+                    print(days_before_date)
+                    print(comp_date)
+                    print(item_date)
+                    print(min_date)
+                    if days_before_date < comp_date or min(item_date, days_before_date) < min_date:
+                        time_break = True
+                        break
 
                     if sold_list.size == 0:
                         try:
@@ -590,7 +680,7 @@ def ebay_search(query: str,
         df = pd.DataFrame(dict)
         df = df.astype({'Brand': 'object'})
         df = df.astype({'Model': 'object'})
-        if e_vars.verbose or e_vars.debug: print('ebay_search df_load: ', e)
+        if e_vars.verbose or e_vars.debug: print('ebay_search-df_load:', e)
         if e_vars.run_cached:
             print(
                     f'WARNING: Cannot find "{filename}". In order to use run_cached = True an extract must already exists. Try setting run_cached=False first and rerunning.')
@@ -646,31 +736,46 @@ def ebay_search(query: str,
             items = soup.find_all('li', attrs={'class': 's-item'})
             if e_vars.verbose: print(price_ranges, len(items), i, price_ranges[i], price_ranges[i + 1], url)
 
-            # Get the last item on the page, if it's earlier than min_date or currentDate - days_before this break works
-            # despite there being >800 items as the others are too old
-            last_item = items[-1]
-
             currentYear = datetime.now().year
             currentMonth = datetime.now().month
 
-            item_datetime = f"{currentYear} {last_item.find('span', class_='s-item__endedDate').text}"
-            if e_vars.country == 'UK':
-                item_datetime = datetime.strptime(item_datetime, '%Y %d-%b %H:%M')
-            else:
-                item_datetime = datetime.strptime(item_datetime, '%Y %b-%d %H:%M')
+            # Get the last item on the page, if it's earlier than min_date or currentDate - days_before this break works
+            # despite there being >800 items as the others are too old
+            # For some reason the last item on the eBay search page sometimes has no date, perhaps a timing issue
+            # Iterate through the items from bottom up to find the last date, if nothing found just assume it's far in
+            # the past. This is just a means to improve performance but little harm in checking more listings
+            last_item_date = datetime.now()
+            found_date = False
+            for item_date_search in reversed(items):
+                try:
+                    search_date, item_datetime, days_before_date = sp_get_datetime(item_date_search, datetime.now(),
+                                                                                   e_vars, url)
+                    print(last_item_date)
+                    if search_date:
+                        last_item_date = last_item_date
+                        found_date = True
+                        break
+                except Exception as e:
+                    if e_vars.verbose: print('ebay_search-date_search', e)
+                '''if found_date:
+                    if e_vars.country == 'UK':
+                        item_datetime = datetime.strptime(item_datetime, '%Y %d-%b %H:%M')
+                    else:
+                        item_datetime = datetime.strptime(item_datetime, '%Y %b-%d %H:%M')
+                    break
 
             # When we run early in the year
             if currentMonth < 6 and item_datetime.month > 6:
                 last_year = currentYear - 1
-                item_datetime = item_datetime.replace(year=last_year)
-
-            last_item_date = item_datetime.replace(hour=0, minute=0)
+                item_datetime = item_datetime.replace(year=last_year)'''
+            print(last_item_date)
+            last_item_date = last_item_date.replace(hour=0, minute=0)
             days_before_date = datetime.now() - timedelta(days=e_vars.days_before)
             days_before_date = days_before_date.replace(hour=0, minute=0, second=0, microsecond=0)
 
             if e_vars.verbose: print(last_item_date)
 
-            if days_before_date > last_item_date or last_item_date > min_date:
+            if days_before_date > last_item_date or (found_date and last_item_date > min_date):
                 i += 1
             elif len(items) >= num_check and round(price_ranges[i + 1] - price_ranges[i], 2) > 0.01:
                 # If there's only one cent difference between the two just increment, we need to do some special logic below

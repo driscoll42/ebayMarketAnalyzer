@@ -10,6 +10,7 @@ from datetime import datetime
 
 from classes import EbayVariables
 from main import ebay_search
+from plotting import median_plotting, brand_plot, ebay_seller_plot
 
 brand_list = ['FOUNDER', 'ASUS', 'MSI', 'EVGA', 'GIGABYTE', 'ZOTAC', 'XFX', 'PNY', 'SAPPHIRE', 'COLORFUL', 'ASROCK',
               'POWERCOLOR', 'INNO3D', 'PALIT', 'VISIONTEK', 'DELL']
@@ -37,7 +38,7 @@ e_vars = EbayVariables(run_cached=False,
                        days_before=7,
                        feedback=True,
                        quantity_hist=True,
-                       debug=True,
+                       debug=False,
                        verbose=True,
                        tax_rate=0.0625,
                        store_rate=0.04,  # The computer store rate
@@ -77,34 +78,6 @@ for x in os.listdir():
     if x.endswith(".sqlite"):
         os.remove(x)
 
-# ---------------------------------------------------------------------------------------------
-
-# RTX 30 Series Analysis
-df_3060 = ebay_search('RTX 3060 -Ti -3060ti', gpu_vars, query_exclusions, 329, 329, 2000,
-                      min_date=datetime(2021, 2, 25))
-
-raise SystemExit(0)
-
-df_3060ti = ebay_search('RTX (3060 Ti, 3060Ti)', gpu_vars, query_exclusions, 399, 399, 1300,
-                        min_date=datetime(2020, 12, 1))
-df_3070 = ebay_search('RTX 3070', gpu_vars, query_exclusions, 499, 499, 1300, min_date=datetime(2020, 10, 29))
-df_3080 = ebay_search('RTX 3080', gpu_vars, query_exclusions, 699, 699, 10000, min_date=datetime(2020, 9, 17))
-df_3090 = ebay_search('RTX 3090', gpu_vars, query_exclusions, 1499, 1499, 10000,
-                      min_date=datetime(2020, 9, 17))
-
-# RTX 30 Series/Ampere Plotting
-df_3060ti = df_3060ti.assign(item='3060 Ti')
-ampere_frames = [df_3060, df_3060ti, df_3070, df_3080, df_3090]
-
-median_plotting(ampere_frames, 'RTX 30 Series Median Pricing', e_vars=gpu_vars, roll=0)
-median_plotting(ampere_frames, 'RTX 30 Series Median Pricing', e_vars=gpu_vars, roll=7)
-
-ebay_seller_plot(ampere_frames, 'RTX 30 Series-Ampere', gpu_vars)
-
-brand_plot(ampere_frames, 'RTX 30 Series-Ampere AIB Comparison', e_vars=gpu_vars, roll=0)
-brand_plot(ampere_frames, 'RTX 30 Series-Ampere AIB Comparison', e_vars=gpu_vars, roll=7)
-
-# ---------------------------------------------------------------------------------------------
 
 df_darkhero = ebay_search('ASUS Dark Hero', mobo_vars, query_exclusions, 399, 400, 1000)
 
