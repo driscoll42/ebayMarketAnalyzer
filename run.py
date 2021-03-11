@@ -39,7 +39,7 @@ e_vars = EbayVariables(run_cached=False,
                        feedback=True,
                        quantity_hist=True,
                        debug=False,
-                       verbose=True,
+                       verbose=False,
                        tax_rate=0.0625,
                        store_rate=0.04,  # The computer store rate
                        non_store_rate=0.1,  # The computer non-store rate

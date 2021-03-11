@@ -24,36 +24,54 @@ from plotting import plot_profits
 def get_purchase_hist(trs, e_vars: EbayVariables, sold_list: List[Union[float, int, datetime, datetime]],
                       sold_hist_url: str) -> List[Union[float, int, datetime, datetime]]:
     bin_date, bin_datetime = '', ''
+    # Typically these are true
+    price_col = 2
+    date_col = 4
+    quant_col = 3
 
     for r in trs:
+        ths = r.find_all('th')
+        th_cnt = -1
+        for th in ths:
+            th_cnt += 1
+            if 'PRICE' in th.text.upper():
+                price_col = th_cnt
+            elif 'QUANT' in th.text.upper():
+                quant_col = th_cnt
+            elif 'DATE' in th.text.upper():
+                date_col = th_cnt
+
         tds = r.find_all('td')
         if len(tds) > 1:
             # buyer = tds[1].text
             try:
-                price = float(re.sub(r'[^\d.]+', '', tds[2].text))
+                price = float(re.sub(r'[^\d.]+', '', tds[price_col].text))
             except Exception as e:
-                if e_vars.debug or e_vars.verbose: print('get_purchase_hist-price', e, sold_hist_url)
+                if e_vars.verbose: print('get_purchase_hist-price', e, sold_hist_url)
                 price = ''
-            quantity = int(tds[3].text)
-            sold_date = tds[4].text.split()[0]
-            sold_time = tds[4].text.split()[1]
 
-            try:
-                sold_date = datetime.strptime(sold_date, '%b-%d-%y')
-            except Exception as e:
-                sold_date = datetime.strptime(sold_date, '%d-%b-%y')
+            if price:
+                quantity = int(tds[quant_col].text)
+                sold_date = tds[date_col].text.split()[0]
+                sold_time = tds[date_col].text.split()[1]
 
-            sold_time = datetime.strptime(sold_time, '%H:%M:%S').time()
-            sold_time = sold_time.replace(second=0, microsecond=0)
-            sold_datetime = datetime.combine(sold_date, sold_time)
+                try:
+                    sold_date = datetime.strptime(sold_date, '%b-%d-%y')
+                except Exception as e:
+                    sold_date = datetime.strptime(sold_date, '%d-%b-%y')
 
-            if not bin_date:
-                bin_date, bin_datetime = sold_date, sold_datetime
-            bin_date, bin_datetime = max(bin_date, sold_date), max(bin_datetime, sold_datetime)
+                sold_time = datetime.strptime(sold_time, '%H:%M:%S').time()
+                sold_time = sold_time.replace(second=0, microsecond=0)
+                sold_datetime = datetime.combine(sold_date, sold_time)
 
-            if e_vars.verbose: print('get_purchase_hist-DateTimes', price, quantity, sold_datetime)
+                if not bin_date:
+                    bin_date, bin_datetime = sold_date, sold_datetime
+                bin_date, bin_datetime = max(bin_date, sold_date), max(bin_datetime, sold_datetime)
 
-            sold_list.append([price, quantity, sold_date, sold_datetime])
+                if e_vars.verbose: print('get_purchase_hist-DateTimes', price, quantity, sold_datetime)
+
+                sold_list.append([price, quantity, sold_date, sold_datetime])
+
     return sold_list, bin_date, bin_datetime
 
 
@@ -63,12 +81,17 @@ def get_offer_hist(trs, e_vars: EbayVariables, sold_list: List[Union[float, int,
 
     for r in trs:
         tds = r.find_all('td', )
-        if e_vars.verbose: print('get_offer_hist-tds', tds)
+        # if e_vars.verbose: print('get_offer_hist-tds', tds)
         if len(tds) > 1:
             try:
+                quantity = int(tds[3].text)
+            except Exception as e:
+                quantity = ''
+                if e_vars.verbose: print('get_offer_hist-trs', e, sold_hist_url)
+
+            if quantity:
                 # buyer = tds[1].text
                 accepted = tds[2].text
-                quantity = int(tds[3].text)
                 sold_date = tds[4].text.split()[0]
                 sold_time = tds[4].text.split()[1]
 
@@ -88,8 +111,7 @@ def get_offer_hist(trs, e_vars: EbayVariables, sold_list: List[Union[float, int,
                 if accepted == 'Accepted':
                     if e_vars.verbose: print(accepted, quantity, sold_datetime)
                     sold_list.append(['', quantity, sold_date, sold_datetime])
-            except Exception as e:
-                if e_vars.debug or e_vars.verbose: print('get_offer_hist-trs', e, sold_hist_url)
+
     return sold_list, off_date, off_datetime
 
 
@@ -147,7 +169,7 @@ def get_quantity_hist(sold_hist_url: str,
             sl_date, sl_datetime = max(bin_date, off_date), max(bin_datetime, off_datetime)
 
     except Exception as e:
-        if e_vars.debug or e_vars.verbose: print('get_quantity_hist', e, sold_hist_url)
+        if e_vars.verbose: print('get_quantity_hist', e, sold_hist_url)
     return sold_list, sl_date, sl_datetime
 
 
@@ -172,7 +194,7 @@ def sp_get_datetime(item, days_before_date, e_vars, item_link):
         days_before_date = min(item_date, days_before_date)
 
     except Exception as e:
-        if e_vars.debug or e_vars.verbose: print('sp_get_datetime-1', e, item_link)
+        if e_vars.verbose: print('sp_get_datetime-1', e, item_link)
         try:
             orig_item_datetime = item.find('span', class_='s-item__title--tagblock__COMPLETED').text
             orig_item_datetime = orig_item_datetime.replace('Sold item', '').replace('Sold', '').strip()
@@ -183,7 +205,7 @@ def sp_get_datetime(item, days_before_date, e_vars, item_link):
             days_before_date = min(item_date, days_before_date)
 
         except Exception as e:
-            if e_vars.debug or e_vars.verbose: print('sp_get_datetime-2', e, item_link)
+            if e_vars.verbose: print('sp_get_datetime-2', e, item_link)
             try:
                 date_time = item.find('span', attrs={'class': 'POSITIVE'})
 
@@ -202,9 +224,10 @@ def sp_get_datetime(item, days_before_date, e_vars, item_link):
                         item_date = datetime.strptime(date_txt, "%b %d %Y")
 
             except Exception as e:
-                if e_vars.debug or e_vars.verbose: print('sp_get_datetime-3', e, item_link)
+                if e_vars.verbose: print('sp_get_datetime-3', e, item_link)
 
     return item_date, item_datetime, days_before_date
+
 
 def ebay_scrape(base_url: str,
                 df: pd.DataFrame,
@@ -297,12 +320,12 @@ def ebay_scrape(base_url: str,
         try:
             loc = item_soup.find('div', attrs={'class': 'iti-eu-bld-gry'})
             loc = loc.find('span').text.split(',')
-            city, state, country_name = loc[0], loc[1], loc[2]
             if len(loc) == 2:
-                city, state, country_name = loc[0], '', loc[1]
+                city, state, country_name = loc[0].strip(), '', loc[1].strip()
             elif len(loc) == 3:
-                city, state, country_name = loc[0], loc[1], loc[2]
-
+                city, state, country_name = loc[0].strip(), loc[1].strip(), loc[2].strip()
+            else:
+                raise Exception
         except Exception as e:
             if e_vars.debug or e_vars.verbose: print('ip_get_loc_data', e, item_link)
             loc_2 = item_soup.find('div', attrs={'class': 'vi-wp vi-VR-cvipCntr1'})
@@ -312,9 +335,9 @@ def ebay_scrape(base_url: str,
                     i_loc = l.find_all('div', attrs={'class': 'u-flL'})
                     loc_text = i_loc[1].text.split(',')
                     if len(loc_text) == 2:
-                        city, state, country_name = loc_text[0], '', loc_text[1]
+                        city, state, country_name = loc_text[0].strip(), '', loc_text[1].strip()
                     elif len(loc_text) == 3:
-                        city, state, country_name = loc_text[0], loc_text[1], loc_text[2]
+                        city, state, country_name = loc_text[0].strip(), loc_text[1].strip(), loc_text[2].strip()
                     break
         return city, state, country_name
 
@@ -372,7 +395,7 @@ def ebay_scrape(base_url: str,
                                                                     e_vars=e_vars)
 
         except Exception as e:
-            if e_vars.debug or e_vars.verbose: print('ip_get_quant_hist', e, item_link)
+            if e_vars.verbose: print('ip_get_quant_hist', e, item_link)
         return quantity_sold, multi_list, sold_list, sl_date, sl_datetime
 
     days_before_date = datetime.today()
@@ -398,16 +421,17 @@ def ebay_scrape(base_url: str,
         if e_vars.verbose: print(x, len(items), url)
 
         for n, item in enumerate(items):
+            if e_vars.debug or e_vars.verbose: print('----------------------------')
             curr_time = datetime.now()
             if e_vars.verbose: print(curr_time)
             if n > 0:
 
                 item_link = sp_get_item_link(item)
-                if e_vars.verbose: print('URL:', item_link)
+                if e_vars.debug or e_vars.verbose: print('URL:', item_link)
 
                 item_date, item_datetime, days_before_date = sp_get_datetime(item, days_before_date, e_vars, item_link)
-                if e_vars.verbose: print('Date-1:', item_date)
-                if e_vars.verbose: print('Datetime-1:', item_datetime)
+                if e_vars.debug or e_vars.verbose: print('Date-1:', item_date)
+                if e_vars.debug or e_vars.verbose: print('Datetime-1:', item_datetime)
 
                 if days_before_date < comp_date or days_before_date < min_date:
                     time_break = True
@@ -415,13 +439,15 @@ def ebay_scrape(base_url: str,
 
                 # Only need to add new records
                 if not df[['Link', 'Sold Datetime']].isin({'Link': [item_link], 'Sold Datetime': [item_datetime]}).all(
-                        axis='columns').any():
+                        axis='columns').any() and not (df[['Link', 'Sold Date', 'Multi Listing']].isin(
+                        {'Link': [item_link], 'Sold Date': [item_date], 'Multi Listing': [0]}).all(
+                        axis='columns').any()):
 
                     item_title = sp_get_title(item)
                     if e_vars.debug or e_vars.verbose: print('Title:', item_title)
 
                     item_desc = sp_get_desc(item)
-                    if e_vars.debug or e_vars.verbose: print('Desc: ', item_desc)
+                    if e_vars.debug or e_vars.verbose: print('Desc:', item_desc)
 
                     item_price = sp_get_price(item)
                     if e_vars.debug or e_vars.verbose: print('Price:', item_price)
@@ -440,7 +466,11 @@ def ebay_scrape(base_url: str,
                         time.sleep(e_vars.sleep_len * random.uniform(0, 1))
                         # We don't want to cache all the calls into the individual listings, they'll never be repeated
                         with requests_cache.disabled():
-                            isource = adapter.get(item_link).text
+                            try:
+                                isource = adapter.get(item_link).text
+                            except Exception as e:
+                                if e_vars.verbose: print('ebay_scrape-isource', e, item_link)
+                                continue
 
                         item_soup = BeautifulSoup(isource, 'lxml')
 
@@ -453,8 +483,10 @@ def ebay_scrape(base_url: str,
                             orig_link = oitems[0]['href']
 
                             if not item_datetime:
-                                item_date, item_datetime, days_before_date = ip_get_datetime_card(item_soup,
-                                                                                                  days_before_date)
+                                item_date_temp, item_datetime, days_before_date = ip_get_datetime_card(item_soup,
+                                                                                                       days_before_date)
+                                if item_date_temp:
+                                    item_date = item_date_temp
                                 if e_vars.debug or e_vars.verbose: print('Date-2:', item_date)
                                 if e_vars.debug or e_vars.verbose: print('Datetime-2:', item_datetime)
 
@@ -465,7 +497,10 @@ def ebay_scrape(base_url: str,
                             item_soup = BeautifulSoup(source, 'lxml')
 
                         if not item_datetime:
-                            item_date, item_datetime, days_before_date = ip_get_datetime(item_soup, days_before_date)
+                            item_date_temp, item_datetime, days_before_date = ip_get_datetime(item_soup,
+                                                                                              days_before_date)
+                            if item_date_temp:
+                                item_date = item_date_temp
                             if e_vars.debug or e_vars.verbose: print('Date-3:', item_date)
                             if e_vars.debug or e_vars.verbose: print('Datetime-3:', item_datetime)
 
@@ -488,12 +523,13 @@ def ebay_scrape(base_url: str,
                             if e_vars.debug or e_vars.verbose: print('sold_list:', sold_list)
                             if e_vars.debug or e_vars.verbose: print('sold_list_max_date:', sl_date)
                             if e_vars.debug or e_vars.verbose: print('sold_list_max_datetime:', sl_datetime)
-
-                        if not item_datetime:
-                            item_date, item_datetime, days_before_date = sl_date, sl_datetime, min(sl_date,
-                                                                                                   days_before_date)
-                            if e_vars.debug or e_vars.verbose: print('Date-4:', item_date)
-                            if e_vars.debug or e_vars.verbose: print('Datetime-4:', item_datetime)
+                            if not item_datetime:
+                                item_date_temp, item_datetime = sl_date, sl_datetime
+                                days_before_date = min(sl_date, days_before_date)
+                                if item_date_temp:
+                                    item_date = item_date_temp
+                                if e_vars.debug or e_vars.verbose: print('Date-4:', item_date)
+                                if e_vars.debug or e_vars.verbose: print('Datetime-4:', item_datetime)
 
                     brand = ''
                     title = item_title
@@ -517,6 +553,8 @@ def ebay_scrape(base_url: str,
                     if item_desc.upper().find("PARTS ONLY") >= 0 or item_desc.upper().find("BENT PIN") >= 0:
                         ignor_val = 1
 
+                    if not item_datetime and item_date:
+                        item_datetime = item_date
                     print(days_before_date)
                     print(comp_date)
                     print(item_date)
@@ -541,12 +579,10 @@ def ebay_scrape(base_url: str,
                                    'Ignore'         : ignor_val, 'Store': store, 'City': city, 'State': state,
                                    'Country'        : country_name, 'Sold Scrape Datetime': curr_time}
 
-                        if e_vars.verbose: print(df__new)
-
                         if not df[['Link', 'Sold Datetime']].isin(
                                 {'Link': [item_link], 'Sold Datetime': [item_datetime]}).all(
                                 axis='columns').any() and item_tot > 0 and (quantity_sold - cap_sum) > 0:
-                            if e_vars.verbose: print(df__new)
+                            if e_vars.verbose: print('non-multi', df__new)
                             df = df.append(df__new, ignore_index=True)
                             # Considered processing as went along, more efficient to just remove duplicates in postprocessing
                     else:
@@ -570,7 +606,7 @@ def ebay_scrape(base_url: str,
                             if not df[['Link', 'Sold Datetime']].isin(
                                     {'Link': [item_link], 'Sold Datetime': [sale[3]]}).all(
                                     axis='columns').any() and item_tot > 0:
-                                if e_vars.verbose: print(df__new)
+                                if e_vars.verbose: print('multi', df__new)
                                 df = df.append(df__new, ignore_index=True)
 
                         tot_sale_quant = np.sum(sold_list[:, 1])
@@ -580,22 +616,21 @@ def ebay_scrape(base_url: str,
                             # In order to not lose the data I just shove everything into one entry, assuming the regular price
                             # Not perfect, but no great alternatives
                             # The main issue here of course is that now I'm assigning a bunch of sales to a semi-arbitrary date
-                            df__new = {'Title'               : item_title, 'Brand': brand, 'Model': model,
-                                       'description'         : item_desc, 'Price': item_price,
-                                       'Shipping'            : item_shipping, 'Total Price': item_tot,
-                                       'Sold Date'           : item_date, 'Sold Datetime': item_datetime,
-                                       'Link'                : item_link,
-                                       'Seller'              : seller, 'Quantity': quantity_sold - tot_sale_quant,
-                                       'Multi Listing'       : multi_list, 'Seller Feedback': seller_fb, 'Ignore': 2,
-                                       'Store'               : store, 'City': city, 'State': state,
-                                       'Country'             : country_name,
-                                       'Sold Scrape Datetime': curr_time}
+                            df__new = {'Title'        : item_title, 'Brand': brand, 'Model': model,
+                                       'description'  : item_desc, 'Price': item_price,
+                                       'Shipping'     : item_shipping,
+                                       'Total Price'  : item_tot, 'Sold Date': item_date,
+                                       'Sold Datetime': item_datetime, 'Link': item_link, 'Seller': seller,
+                                       'Quantity'     : quantity_sold - tot_sale_quant,
+                                       'Multi Listing': multi_list, 'Seller Feedback': seller_fb, 'Ignore': 2,
+                                       'Store'        : store, 'City': city, 'State': state,
+                                       'Country'      : country_name, 'Sold Scrape Datetime': curr_time}
                             # There's a chance when we get to multiitem listings we'd be reinserting data, this is to prevent it
                             if not df[['Link', 'Sold Datetime', 'Quantity']].isin(
                                     {'Link'    : [item_link], 'Sold Datetime': [item_datetime],
                                      'Quantity': [quantity_sold - tot_sale_quant]}).all(
                                     axis='columns').any() and item_tot > 0:
-                                if e_vars.verbose: print(df__new)
+                                if e_vars.verbose: print('multi-extra', df__new)
                                 df = df.append(df__new, ignore_index=True)
         if e_vars.country == 'UK' and len(items) < 193:
             break
@@ -669,14 +704,14 @@ def ebay_search(query: str,
         # This causes a mismatch when comparing datetimes, causing duplicates and wasting time rechecking listings
         # Testing on the 3060, adding this brought runtimes down from eight minutes to one minute.
         df['Sold Datetime'] = df['Sold Datetime'].dt.round('min')
+        df['Sold Datetime'] = df['Sold Date'].dt.round('min')
 
     except Exception as e:
         # if file does not exist, create it
         dict = {'Title'      : [], 'Brand': [], 'Model': [], 'description': [], 'Price': [], 'Shipping': [],
-                'Total Price': [],
-                'Sold Date'  : [], 'Sold Datetime': [], 'Quantity': [], 'Multi Listing': [],
-                'Seller'     : [], 'Seller Feedback': [], 'Link': [], 'Store': [], 'Ignore': [],
-                'City'       : [], 'State': [], 'Country': [], 'Sold Scrape Datetime': []}
+                'Total Price': [], 'Sold Date': [], 'Sold Datetime': [], 'Quantity': [], 'Multi Listing': [],
+                'Seller'     : [], 'Seller Feedback': [], 'Link': [], 'Store': [], 'Ignore': [], 'City': [],
+                'State'      : [], 'Country': [], 'Sold Scrape Datetime': []}
         df = pd.DataFrame(dict)
         df = df.astype({'Brand': 'object'})
         df = df.astype({'Model': 'object'})
