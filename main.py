@@ -555,10 +555,7 @@ def ebay_scrape(base_url: str,
 
                     if not item_datetime and item_date:
                         item_datetime = item_date
-                    print(days_before_date)
-                    print(comp_date)
-                    print(item_date)
-                    print(min_date)
+
                     if days_before_date < comp_date or min(item_date, days_before_date) < min_date:
                         time_break = True
                         break
@@ -785,7 +782,7 @@ def ebay_search(query: str,
                 try:
                     search_date, item_datetime, days_before_date = sp_get_datetime(item_date_search, datetime.now(),
                                                                                    e_vars, url)
-                    print(last_item_date)
+
                     if search_date:
                         last_item_date = last_item_date
                         found_date = True
@@ -803,7 +800,7 @@ def ebay_search(query: str,
             if currentMonth < 6 and item_datetime.month > 6:
                 last_year = currentYear - 1
                 item_datetime = item_datetime.replace(year=last_year)'''
-            print(last_item_date)
+
             last_item_date = last_item_date.replace(hour=0, minute=0)
             days_before_date = datetime.now() - timedelta(days=e_vars.days_before)
             days_before_date = days_before_date.replace(hour=0, minute=0, second=0, microsecond=0)

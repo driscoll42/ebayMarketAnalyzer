@@ -38,18 +38,26 @@ Examples:
     requests==2.25.0, scipy==1.5.4, xlrd==1.2.0, lxml, requests_cache"
 
 # How to Run
-* In main.py update update the ebay_search() parameters for whatever product you are searching for as described below 
-* Run main.py
+
+* In run.py update the ebay_search() parameters for whatever product you are searching for as described below
+* Run run.py
+
+# NOTE: The below is no longer applicable, I need to update the documentation
 
 # ebaysearch Parameters
+
 - Search Parameters
-  * query - Search you wish to perform on eBay, can include the following symbols ",", "(", ")", "-", and " " (Example: (AMD, Ryzen) 3100 -combo)
+  * query - Search you wish to perform on eBay, can include the following symbols ",", "(", ")", "-", and " " (
+    Example: (AMD, Ryzen) 3100 -combo)
   * msrp - The MSRP of the product to estimate scalper profits, if not entered it will not display those lines
   * min_price - Default: 0 - The minimum price to search for
   * max_price - Default: 10000 - The maximum price to search for
-  * sacat - Default: 0 - Can filter down to a specific category on eBay (For example, video game consoles = 139971) 
+  * sacat - Default: 0 - Can filter down to a specific category on eBay (For example, video game consoles = 139971)
   * country - Default: USA - Allows for searching of different countries, currently only supports 'USA' and 'UK'
-  * feedback - Default: False - Gets the seller feedback for each sold item. WARNING: This explodes run times as the code needs to call the url of every single item. In testing the 5950X extract with this false takes 8 seconds, with True it takes 40 minutes the first time. This is forced True if full_quantity is True as there is no extra work to get the feedback
+  * feedback - Default: False - Gets the seller feedback for each sold item. WARNING: This explodes run times as the
+    code needs to call the url of every single item. In testing the 5950X extract with this false takes 8 seconds, with
+    True it takes 40 minutes the first time. This is forced True if full_quantity is True as there is no extra work to
+    get the feedback
   * quantity_hist - Default: False - Gets the full sold history of a multi-item listing. WARNING: This explodes run times
   * run_cached - Default: False - If True does not get new data from eBay, just runs the plots/analysis on the saved xlsx files. Most useful if want to get the data then run the plots using a different min date (e.g. for all time and then after post-launch only)
   * sleep_len - Default: 0.4 - How long to wait between url calls. This is to prevent DoSing eBay's servers and having your connection killed
