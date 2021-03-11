@@ -701,7 +701,7 @@ def ebay_search(query: str,
         # This causes a mismatch when comparing datetimes, causing duplicates and wasting time rechecking listings
         # Testing on the 3060, adding this brought runtimes down from eight minutes to one minute.
         df['Sold Datetime'] = df['Sold Datetime'].dt.round('min')
-        df['Sold Datetime'] = df['Sold Date'].dt.round('min')
+        df['Sold Date'] = df['Sold Date'].dt.round('min')
 
     except Exception as e:
         # if file does not exist, create it
