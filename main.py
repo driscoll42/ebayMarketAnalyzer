@@ -553,8 +553,11 @@ def ebay_scrape(base_url: str,
                     sold_list = np.array(sold_list)
 
                     ignor_val = 0
-                    if item_desc.upper().find("PARTS ONLY") >= 0 or item_desc.upper().find("BENT PIN") >= 0:
-                        ignor_val = 1
+
+                    for di in e_vars.desc_ignore_list:
+                        if item_desc.upper().find(di.upper()) >= 0:
+                            ignor_val = 1
+                            break
 
                     if not item_datetime and item_date:
                         item_datetime = item_date

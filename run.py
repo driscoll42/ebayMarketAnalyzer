@@ -23,6 +23,8 @@ model_list = [['XC3', 'EVGA'], ['TRINITY', 'ZOTAC'], ['FTW3', 'EVGA'], ['FOUNDER
 query_exclusions = ['image', 'jpeg', 'img', 'picture', 'pic', 'jpg', 'charity', 'photo', 'humans', 'prints', 'framed',
                     'print', 'people', 'inkjet', 'pix', 'paper', 'digital', 'pics', 'alternative']
 
+ignore_list = ['BENT PINS', 'BROKEN', 'PARTS ONLY']
+
 ps5_digi_excludes = query_exclusions.copy()
 ps5_digi_excludes.remove('digital')
 
@@ -43,6 +45,7 @@ e_vars = EbayVariables(run_cached=False,
                        tax_rate=0.0625,
                        store_rate=0.04,  # The computer store rate
                        non_store_rate=0.1,  # The computer non-store rate
+                       desc_ignore_list=ignore_list,
                        brand_list=[],
                        model_list=[]
                        )

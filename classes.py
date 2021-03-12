@@ -33,6 +33,7 @@ class EbayVariables:
     days_before: int = field(default=30)
     feedback: bool = field(default=False)
     quantity_hist: bool = field(default=False)
+    desc_ignore_list: List[str] = field(default_factory=List)
 
     # Misc.
     extra_title_text: str = field(default='')
