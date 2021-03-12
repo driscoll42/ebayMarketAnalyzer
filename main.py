@@ -257,7 +257,7 @@ def ebay_scrape(base_url: str,
             item_link = item.find('a', class_='s-item__link')['href']
         except Exception as e:
             item_link = 'None'
-            if e_vars.debug or e_vars.verbose: print('sp_get_item_link', e)
+            if e_vars.verbose: print('sp_get_item_link', e)
         return item_link
 
     def sp_get_title(item):
@@ -265,7 +265,7 @@ def ebay_scrape(base_url: str,
             item_title = item.find('h3', class_='s-item__title').text
         except Exception as e:
             item_title = 'None'
-            if e_vars.debug or e_vars.verbose: print('sp_get_title', e, item_link)
+            if e_vars.verbose: print('sp_get_title', e, item_link)
         return item_title
 
     def sp_get_desc(item):
@@ -273,7 +273,7 @@ def ebay_scrape(base_url: str,
             item_desc = item.find('div', class_='s-item__subtitle').text
         except Exception as e:
             item_desc = 'None'
-            if e_vars.debug or e_vars.verbose: print('sp_get_desc', e, item_link)
+            if e_vars.verbose: print('sp_get_desc', e, item_link)
         return item_desc
 
     def sp_get_price(item):
@@ -282,7 +282,7 @@ def ebay_scrape(base_url: str,
             item_price = float(re.sub(r'[^\d.]+', '', item_price))
         except Exception as e:
             item_price = -1
-            if e_vars.debug or e_vars.verbose: print('sp_get_price', e, item_link)
+            if e_vars.verbose: print('sp_get_price', e, item_link)
         return item_price
 
     def sp_get_shipping(item):
@@ -294,7 +294,7 @@ def ebay_scrape(base_url: str,
                 item_shipping = 0
         except Exception as e:
             item_shipping = 0
-            if e_vars.debug or e_vars.verbose: print('sp_get_shipping', e, item_link)
+            if e_vars.verbose: print('sp_get_shipping', e, item_link)
         return item_shipping
 
     def ip_get_datetime(item_soup, days_before_date):
@@ -315,7 +315,7 @@ def ebay_scrape(base_url: str,
             days_before_date = min(item_date, days_before_date)
 
         except Exception as e:
-            if e_vars.debug or e_vars.verbose: print('ip_get_datetime', e, item_link)
+            if e_vars.verbose: print('ip_get_datetime', e, item_link)
         return item_date, item_datetime, days_before_date
 
     def ip_get_loc_data(item_soup):
@@ -330,7 +330,7 @@ def ebay_scrape(base_url: str,
             else:
                 raise Exception
         except Exception as e:
-            if e_vars.debug or e_vars.verbose: print('ip_get_loc_data', e, item_link)
+            if e_vars.verbose: print('ip_get_loc_data', e, item_link)
             loc_2 = item_soup.find('div', attrs={'class': 'vi-wp vi-VR-cvipCntr1'})
             loc_2 = loc_2.find_all('tr', attrs={'class': 'vi-ht20'})
             for l in loc_2:
@@ -358,7 +358,7 @@ def ebay_scrape(base_url: str,
             if len(store_id[0].text) > 0:
                 store = True
         except Exception as e:
-            if e_vars.debug or e_vars.verbose: print('ip_get_seller', e, item_link)
+            if e_vars.verbose: print('ip_get_seller', e, item_link)
         return seller, seller_fb, store
 
     def ip_get_datetime_card(item_soup, days_before_date):
@@ -379,8 +379,8 @@ def ebay_scrape(base_url: str,
                     days_before_date = min(item_date, days_before_date)
 
         except Exception as e:
-            if e_vars.debug or e_vars.verbose: print('ip_get_datetime_card', e,
-                                                     item_link)
+            if e_vars.verbose: print('ip_get_datetime_card', e,
+                                     item_link)
         return item_date, item_datetime, days_before_date
 
     def ip_get_quant_hist(item_soup, sold_list):
@@ -683,6 +683,12 @@ def ebay_search(query: str,
     # https://realpython.com/caching-external-api-requests/
     curr_path = pathlib.Path(__file__).parent.absolute()
 
+    if not os.path.exists('Spreadsheets'):
+        os.makedirs('Spreadsheets')
+
+    if not os.path.exists('Images'):
+        os.makedirs('Images')
+
     cache_name = f"{curr_path}\\cache_{start_datetime}"
 
     requests_cache.install_cache(cache_name, backend='sqlite', expire_after=300)
@@ -836,7 +842,7 @@ def ebay_search(query: str,
                                                                                                                 '%29')
             url = f"https://www.ebay.{extension}/sch/i.html?_from=R40&_nkw={fomatted_query}&_sacat={e_vars.sacat}&LH_PrefLoc=1&LH_Sold=1&LH_Complete=1&_udlo={price_ranges[i]}&_udhi={price_ranges[i + 1]}&rt=nc&_ipg=200&_pgn="
 
-            if e_vars.verbose: print(price_ranges[i], price_ranges[i + 1], url)
+            if e_vars.debug or e_vars.verbose: print(price_ranges[i], price_ranges[i + 1], url)
 
             df = ebay_scrape(url, df, adapter, e_vars=e_vars, min_date=min_date)
 
