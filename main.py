@@ -222,6 +222,7 @@ def sp_get_datetime(item, days_before_date, e_vars, item_link):
                     if 'Sold' in od:
                         date_txt = od.replace('Sold', '').replace(',', '').strip()
                         item_date = datetime.strptime(date_txt, "%b %d %Y")
+                days_before_date = min(item_date, days_before_date)
 
             except Exception as e:
                 if e_vars.verbose: print('sp_get_datetime-3', e, item_link)
