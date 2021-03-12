@@ -70,7 +70,8 @@ def get_purchase_hist(trs, e_vars: EbayVariables, sold_list: List[Union[float, i
 
                 if e_vars.verbose: print('get_purchase_hist-DateTimes', price, quantity, sold_datetime)
 
-                sold_list.append([price, quantity, sold_date, sold_datetime])
+                if sold_date > datetime.now() - timedelta(e_vars.days_before):
+                    sold_list.append([price, quantity, sold_date, sold_datetime])
 
     return sold_list, bin_date, bin_datetime
 
@@ -110,7 +111,8 @@ def get_offer_hist(trs, e_vars: EbayVariables, sold_list: List[Union[float, int,
 
                 if accepted == 'Accepted':
                     if e_vars.verbose: print(accepted, quantity, sold_datetime)
-                    sold_list.append(['', quantity, sold_date, sold_datetime])
+                    if sold_date > datetime.now() - timedelta(e_vars.days_before):
+                        sold_list.append(['', quantity, sold_date, sold_datetime])
 
     return sold_list, off_date, off_datetime
 
