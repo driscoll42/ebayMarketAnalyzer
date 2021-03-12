@@ -35,7 +35,7 @@ e_vars = EbayVariables(run_cached=False,
                        extra_title_text='',
                        country='USA',
                        ccode='$',
-                       days_before=7,
+                       days_before=30,
                        feedback=True,
                        quantity_hist=True,
                        debug=False,
@@ -77,7 +77,6 @@ cpu_cooler_sacat = 131486
 for x in os.listdir():
     if x.endswith(".sqlite"):
         os.remove(x)
-
 
 df_darkhero = ebay_search('ASUS Dark Hero', mobo_vars, query_exclusions, 399, 400, 1000)
 
@@ -125,7 +124,7 @@ df_3090 = ebay_search('RTX 3090', gpu_vars, query_exclusions, 1499, 1499, 10000,
                       min_date=datetime(2020, 9, 17))
 
 # RTX 30 Series/Ampere Plotting
-df_3060ti = df_3060ti.assign(item='3060 Ti')
+df_3060ti = df_3060ti.assign(item='RTX 3060 Ti')
 ampere_frames = [df_3060, df_3060ti, df_3070, df_3080, df_3090]
 
 median_plotting(ampere_frames, 'RTX 30 Series Median Pricing', e_vars=gpu_vars, roll=0)

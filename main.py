@@ -523,7 +523,7 @@ def ebay_scrape(base_url: str,
                             if e_vars.debug or e_vars.verbose: print('sold_list:', sold_list)
                             if e_vars.debug or e_vars.verbose: print('sold_list_max_date:', sl_date)
                             if e_vars.debug or e_vars.verbose: print('sold_list_max_datetime:', sl_datetime)
-                            if not item_datetime:
+                            if not item_date:
                                 item_date_temp, item_datetime = sl_date, sl_datetime
                                 days_before_date = min(sl_date, days_before_date)
                                 if item_date_temp:
@@ -630,10 +630,13 @@ def ebay_scrape(base_url: str,
                                 if e_vars.verbose: print('multi-extra', df__new)
                                 df = df.append(df__new, ignore_index=True)
         if e_vars.country == 'UK' and len(items) < 193:
+            if e_vars.verbose: print('UK item break', len(items))
             break
         elif len(items) < 201:
+            if e_vars.verbose: print('item break', len(items))
             break
         elif time_break:
+            if e_vars.verbose: print('time_break', time_break, days_before_date, comp_date, min_date)
             break
 
     return df
