@@ -820,9 +820,11 @@ def ebay_search(query: str,
             days_before_date = datetime.now() - timedelta(days=e_vars.days_before)
             days_before_date = days_before_date.replace(hour=0, minute=0, second=0, microsecond=0)
 
-            if e_vars.verbose: print(last_item_date)
+            if e_vars.verbose: print('last_item_date', last_item_date)
+            if e_vars.verbose: print('days_before_date', days_before_date)
+            if e_vars.verbose: print('min_date', min_date)
 
-            if days_before_date > last_item_date or (found_date and last_item_date > min_date):
+            if days_before_date > last_item_date or (found_date and last_item_date < min_date):
                 i += 1
             elif len(items) >= num_check and round(price_ranges[i + 1] - price_ranges[i], 2) > 0.01:
                 # If there's only one cent difference between the two just increment, we need to do some special logic below
