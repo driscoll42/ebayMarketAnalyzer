@@ -1,0 +1,109 @@
+aiodns==2.0.0
+aiohttp==3.7.4.post0
+alabaster @ file:///home/ktietz/src/ci/alabaster_1611921544520/work
+appdirs==1.4.4
+astroid @ file:///C:/ci/astroid_1613501047216/work
+async-timeout==3.0.1
+atomicwrites==1.4.0
+attrs @ file:///tmp/build/80754af9/attrs_1604765588209/work
+Babel @ file:///tmp/build/80754af9/babel_1607110387436/work
+backtrader==1.9.76.123
+beautifulsoup4 @ file:///home/linux1/recipes/ci/beautifulsoup4_1610988766420/work
+black==20.8b1
+brotlipy==0.7.0
+bs4==0.0.1
+ccxt==1.42.78
+certifi==2020.12.5
+cffi @ file:///C:/ci/cffi_1613247279197/work
+cfgv==3.2.0
+chardet @ file:///C:/ci/chardet_1607690654534/work
+click==7.1.2
+colorama @ file:///tmp/build/80754af9/colorama_1607707115595/work
+croniter==1.0.8
+cryptography @ file:///C:/ci/cryptography_1613401566183/work
+cycler==0.10.0
+decorator==4.4.2
+distlib==0.3.1
+docutils==0.16
+et-xmlfile==1.0.1
+fastquant==0.1.4.0
+filelock==3.0.12
+future==0.18.2
+html5lib @ file:///tmp/build/80754af9/html5lib_1593446221756/work
+identify==2.1.1
+idna @ file:///home/linux1/recipes/ci/idna_1610986105248/work
+imagesize @ file:///home/ktietz/src/ci/imagesize_1611921604382/work
+iniconfig @ file:///home/linux1/recipes/ci/iniconfig_1610983019677/work
+isort @ file:///tmp/build/80754af9/isort_1612243941122/work
+jdcal==1.4.1
+Jinja2 @ file:///tmp/build/80754af9/jinja2_1612213139570/work
+joblib==1.0.1
+kiwisolver @ file:///C:/ci/kiwisolver_1612282606037/work
+lazy-object-proxy @ file:///C:/ci/lazy-object-proxy_1606832051475/work
+lxml @ file:///C:/ci/lxml_1606498900999/work
+MarkupSafe==1.1.1
+matplotlib @ file:///C:/ci/matplotlib-suite_1613408055530/work
+mccabe==0.6.1
+mkl-fft==1.3.0
+mkl-random==1.1.1
+mkl-service==2.3.0
+more-itertools @ file:///tmp/build/80754af9/more-itertools_1613676688952/work
+multidict==5.1.0
+multitasking==0.0.9
+mypy-extensions==0.4.3
+natsort==7.1.1
+networkx==2.5
+nltk==3.5
+nodeenv==1.5.0
+numpy @ file:///C:/ci/numpy_and_numpy_base_1603466732592/work
+oauthlib==3.1.0
+olefile==0.46
+openpyxl @ file:///tmp/build/80754af9/openpyxl_1610651698508/work
+packaging @ file:///tmp/build/80754af9/packaging_1611952188834/work
+pandas @ file:///C:/ci/pandas_1614711443373/work
+pathspec==0.8.1
+Pillow @ file:///C:/ci/pillow_1615224342392/work
+pluggy==0.13.1
+pre-commit==2.11.1
+py @ file:///tmp/build/80754af9/py_1607971587848/work
+pycares==3.1.1
+pycparser @ file:///tmp/build/80754af9/pycparser_1594388511720/work
+Pygments @ file:///tmp/build/80754af9/pygments_1613849567472/work
+pylint @ file:///C:/ci/pylint_1614971486505/work
+pyOpenSSL @ file:///tmp/build/80754af9/pyopenssl_1608057966937/work
+pyparsing @ file:///home/linux1/recipes/ci/pyparsing_1610983426697/work
+PySocks @ file:///C:/ci/pysocks_1605287845585/work
+pytest==6.2.2
+python-dateutil @ file:///home/ktietz/src/ci/python-dateutil_1611928101742/work
+pytz @ file:///tmp/build/80754af9/pytz_1612215392582/work
+PyYAML==5.4.1
+regex==2020.11.13
+requests @ file:///tmp/build/80754af9/requests_1608241421344/work
+requests-cache==0.5.2
+requests-oauthlib==1.3.0
+scipy @ file:///C:/ci/scipy_1614023125644/work
+sip==4.19.13
+six @ file:///C:/ci/six_1605187374963/work
+snowballstemmer @ file:///tmp/build/80754af9/snowballstemmer_1611258885636/work
+soupsieve @ file:///tmp/build/80754af9/soupsieve_1614023247537/work
+Sphinx @ file:///tmp/build/80754af9/sphinx_1614023429948/work
+sphinxcontrib-applehelp @ file:///home/ktietz/src/ci/sphinxcontrib-applehelp_1611920841464/work
+sphinxcontrib-devhelp @ file:///home/ktietz/src/ci/sphinxcontrib-devhelp_1611920923094/work
+sphinxcontrib-htmlhelp @ file:///home/ktietz/src/ci/sphinxcontrib-htmlhelp_1611920974801/work
+sphinxcontrib-jsmath @ file:///home/ktietz/src/ci/sphinxcontrib-jsmath_1611920942228/work
+sphinxcontrib-qthelp @ file:///home/ktietz/src/ci/sphinxcontrib-qthelp_1611921055322/work
+sphinxcontrib-serializinghtml @ file:///home/ktietz/src/ci/sphinxcontrib-serializinghtml_1611920755253/work
+toml @ file:///tmp/build/80754af9/toml_1592853716807/work
+tornado @ file:///C:/ci/tornado_1606942392901/work
+tqdm==4.59.0
+tweepy==3.10.0
+typed-ast==1.4.2
+typing-extensions==3.7.4.3
+urllib3 @ file:///tmp/build/80754af9/urllib3_1611694770489/work
+virtualenv==20.4.2
+webencodings==0.5.1
+win-inet-pton @ file:///C:/ci/win_inet_pton_1605306167264/work
+wincertstore==0.2
+wrapt==1.12.1
+yarl==1.1.0
+yfinance==0.1.55
