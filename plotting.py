@@ -157,6 +157,9 @@ def ebay_plot(query: str,
 
         ax2.plot(date_list, ffit)
         lines2, labels2 = ax2.get_legend_handles_labels()
+        ax2.tick_params(right=False)  # remove the ticks
+        ax2.set(ylabel=None)  # remove the y-axis label
+        ax2.set(yticklabels=[])
 
         ax1.legend(lines + lines2, labels + labels2, bbox_to_anchor=(0, -0.325, 1, 0), loc="lower left",
                    mode="expand", ncol=2)
@@ -173,7 +176,11 @@ def ebay_plot(query: str,
 
         median_prices = df_calc.groupby(['Sold Date'])['Total Price'].median()
         med_roll = median_prices.rolling(roll_days, min_periods=1).mean()
+        
         ax2.grid(False)
+        ax2.tick_params(right=False)  # remove the ticks
+        ax2.set(ylabel=None)  # remove the y-axis label
+        ax2.set(yticklabels=[])
 
         ax2.plot(med_roll)
         lines2, labels2 = ax2.get_legend_handles_labels()
