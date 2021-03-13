@@ -35,7 +35,7 @@ e_vars = EbayVariables(run_cached=False,
                        profit_plot=False,
                        trend_type='linear',
                        trend_param=[14],  # [Poly_Degree, Days_Out]
-                       extra_title_text='',
+                       extra_title_text=' UK',
                        country='UK',
                        ccode='£',
                        days_before=30,

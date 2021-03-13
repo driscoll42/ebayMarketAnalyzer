@@ -3,16 +3,23 @@
 #### Formerly eBay Sold Price Scraper
 
 This code is free for use and I encourage others to use it for their projects. If you do I would love to see how you
-used it, shoot me an email or message if you're willing to share. Further feel free to open up new issues for defects or
-new features. I can't promise to get to all of them but I can try.
+used it, shoot me an email or message if you're willing to share. Further, feel free to open up new issues for defects
+or new features. I can't promise to get to all of them, but I can try.
 
-Note: This works as of the last commit. It's very likely some change in eBay's website will break this at some point
+Warning: This works as of the last commit. It's very likely some change in eBay's website will break this at some point
 after I stop maintaining.
 
 This program is built to scrape all sold item data from eBay for any particular item. It will save the data to an excel
 file and create a scatter plot of the sold prices by date along with the median plot line and trendline. Further if you
 enter in the MSRP, it will plot a line for that and the break even prices of scalpers (particularly relevant when this
 was written during the PS5, Zen 3, and Xbox Series X launch).
+
+Note: If you need to do commercial research, make actual business decisions, etc... off of eBay data, I *highly*
+encourage you to
+use [eBay's TeraPeaks](https://pages.ebay.com/seller-center/listing-and-marketing/terapeak.html?mkevt=1&mkcid=1&mkrid=711-53200-19255-0&campid=5336728181&customid=&toolid=10001)
+instead. It goes back further in time, has more detail, is faster, and is officially supported, plus only $12-$19/month
+or free if you have a Basic, Premium, Anchor, or Enterprise eBay Store. This tool is not meant to compete with it, but
+is an interesting side project for me that I make open source.
 
 The code was used in a series of articles I wrote in late 2020 to early 2021:
 
@@ -121,15 +128,15 @@ Examples:
 
 ## median_plotting Parameters
 
-TBD
+TO DO
 
 ## ebay_seller_plot Parameters
 
-TBD
+TO DO
 
 ## brand_plot Parameters
 
-TBD
+TO DO
 
 ## Release History
 
