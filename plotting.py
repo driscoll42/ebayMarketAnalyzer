@@ -121,7 +121,7 @@ def ebay_plot(query: str,
 
     # Poly Trendline
     if e_vars.trend_type == 'poly' or e_vars.trend_type == 'linear':
-        if e_vars.trend_type == 'Linear':
+        if e_vars.trend_type == 'linear':
             degree = 1
             project_date = e_vars.trend_param[0]
         else:

@@ -395,7 +395,8 @@ def ebay_scrape(base_url: str,
                 df: pd.DataFrame,
                 adapter: requests,
                 e_vars: EbayVariables,
-                min_date: datetime = datetime(2020, 1, 1)) -> pd.DataFrame:
+                min_date: datetime = datetime(2020, 1, 1),
+                max_date: datetime = datetime(2020, 1, 1)) -> pd.DataFrame:
     """
 
     Parameters
@@ -603,10 +604,23 @@ def ebay_scrape(base_url: str,
                     break
 
                 # Only need to add new records
-                if not df[['Link', 'Sold Datetime']].isin({'Link': [item_link], 'Sold Datetime': [item_datetime]}).all(
-                        axis='columns').any() and not (df[['Link', 'Sold Date', 'Multi Listing']].isin(
+                line_datetime_found = df[['Link', 'Sold Datetime']].isin(
+                        {'Link': [item_link], 'Sold Datetime': [item_datetime]}).all(
+                        axis='columns').any()
+                nonmulti_date_line_found = (df[['Link', 'Sold Date', 'Multi Listing']].isin(
                         {'Link': [item_link], 'Sold Date': [item_date], 'Multi Listing': [0]}).all(
-                        axis='columns').any()):
+                        axis='columns').any())
+
+                # Issue #58 on GitHub
+                multi_date_found = (df[['Link', 'Sold Date', 'Multi Listing']].isin(
+                        {'Link': [item_link], 'Sold Date': [item_date], 'Multi Listing': [1]}).all(
+                        axis='columns').any() and item_date < (max_date - timedelta(2)))
+
+                if e_vars.verbose: print('line_datetime_found', line_datetime_found)
+                if e_vars.verbose: print('nonmulti_date_line_found', nonmulti_date_line_found)
+                if e_vars.verbose: print('multi_date_found', multi_date_found)
+
+                if not line_datetime_found and not nonmulti_date_line_found and not multi_date_found:
 
                     item_title = sp_get_title(item)
                     if e_vars.debug or e_vars.verbose: print('Title:', item_title)
@@ -994,6 +1008,14 @@ def ebay_search(query: str,
                 i += 1
 
         if e_vars.debug or e_vars.verbose: print(price_ranges)
+        if len(df) > 0:
+            temp_df = df[df['Ignore'] == 0]
+            temp_df = temp_df[temp_df['Total Price'] > 0]
+            temp_df = temp_df[temp_df['Multi Listing'] == 0]
+            max_date = temp_df['Sold Date'].max()
+            if e_vars.verbose: print('max_date:', max_date)
+        else:
+            max_date = datetime(2020, 1, 1)
 
         for i in range(len(price_ranges) - 1):
             fomatted_query = query_w_excludes.replace(' ', '+').replace(',', '%2C').replace('(', '%28').replace(')',
@@ -1002,9 +1024,9 @@ def ebay_search(query: str,
 
             if e_vars.debug or e_vars.verbose: print(price_ranges[i], price_ranges[i + 1], url)
 
-            df = ebay_scrape(url, df, adapter, e_vars=e_vars, min_date=min_date)
+            df = ebay_scrape(url, df, adapter, e_vars=e_vars, min_date=min_date, max_date=max_date)
 
-            # Best to save semiregularly in case eBay kills the connection
+            # Best to save semi-regularly in case eBay kills the connection
             df = pd.DataFrame.drop_duplicates(df)
             df.to_excel(f"Spreadsheets/{query}{e_vars.extra_title_text}.xlsx", engine='openpyxl')
             requests_cache.remove_expired_responses()
