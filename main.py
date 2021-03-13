@@ -392,7 +392,10 @@ def sp_get_datetime(item, days_before_date, e_vars, item_link):
                 for od in off_dict.values():
                     if 'Sold' in od:
                         date_txt = od.replace('Sold', '').replace(',', '').strip()
-                        item_date = datetime.strptime(date_txt, "%b %d %Y")
+                        if e_vars.country == 'UK':
+                            item_date = datetime.strptime(date_txt, "%d %b %Y")
+                        else:
+                            item_date = datetime.strptime(date_txt, "%b %d %Y")
                 days_before_date = min(item_date, days_before_date)
 
             except Exception as e:
@@ -475,6 +478,7 @@ def ebay_scrape(base_url: str,
             date_one = date_one.text.replace("\n", " ").replace(",", "").strip().split()
 
             try:
+                # Normally eBay stores the date as a 12 hour time, but at times it's 24 hour
                 if e_vars.country == 'UK':
                     item_datetime = datetime.strptime(f"{date_one[0]} {date_one[1]} {date_one[2]} {date_one[3]}",
                                                       "%d %b %Y %I:%M:%S")
