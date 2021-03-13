@@ -475,11 +475,19 @@ def ebay_scrape(base_url: str,
             date_one = date_one.text.replace("\n", " ").replace(",", "").strip().split()
 
             try:
-                item_datetime = datetime.strptime(f"{date_one[0]} {date_one[1]} {date_one[2]} {date_one[3]}",
-                                                  "%b %d %Y %I:%M:%S")
+                if e_vars.country == 'UK':
+                    item_datetime = datetime.strptime(f"{date_one[0]} {date_one[1]} {date_one[2]} {date_one[3]}",
+                                                      "%d %b %Y %I:%M:%S")
+                else:
+                    item_datetime = datetime.strptime(f"{date_one[0]} {date_one[1]} {date_one[2]} {date_one[3]}",
+                                                      "%b %d %Y %I:%M:%S")
             except Exception as e:
-                item_datetime = datetime.strptime(f"{date_one[0]} {date_one[1]} {date_one[2]} {date_one[3]}",
-                                                  "%d %b %Y %H:%M:%S")
+                if e_vars.country == 'UK':
+                    item_datetime = datetime.strptime(f"{date_one[0]} {date_one[1]} {date_one[2]} {date_one[3]}",
+                                                      "%d %b %Y %H:%M:%S")
+                else:
+                    item_datetime = datetime.strptime(f"{date_one[0]} {date_one[1]} {date_one[2]} {date_one[3]}",
+                                                      "%b %d %Y %H:%M:%S")
             item_datetime = item_datetime.replace(second=0, microsecond=0)
             item_date = item_datetime.replace(hour=0, minute=0)
             days_before_date = min(item_date, days_before_date)
