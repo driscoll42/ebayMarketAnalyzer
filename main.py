@@ -313,14 +313,21 @@ def get_quantity_hist(sold_hist_url: str,
         # Purchase History, listings don't have to have all of them so just need to check
         bin_date, off_date = '', ''
         bin_datetime, off_datetime = '', ''
+
         for table in tables:
             trs = table.find_all('tr')
             ths = trs[0].find_all('th')
+            bin_scrape = False
+            off_scrape = False
             for th in ths:
                 if 'Buy It Now Price' in th.text or 'Date of Purchase' in th.text:
-                    sold_list, bin_date, bin_datetime = get_purchase_hist(trs, e_vars, sold_list, sold_hist_url)
+                    bin_scrape = True
                 elif 'Offer Status' in th.text:
-                    sold_list, off_date, off_datetime = get_offer_hist(trs, e_vars, sold_list, sold_hist_url)
+                    off_scrape = True
+            if bin_scrape:
+                sold_list, bin_date, bin_datetime = get_purchase_hist(trs, e_vars, sold_list, sold_hist_url)
+            elif off_scrape:
+                sold_list, off_date, off_datetime = get_offer_hist(trs, e_vars, sold_list, sold_hist_url)
 
         if not bin_date and off_date:
             sl_date, sl_datetime = off_date, off_datetime
@@ -856,7 +863,7 @@ def ebay_search(query: str,
     if e_vars.verbose: pd.set_option('display.max_rows', None)
     if e_vars.verbose: pd.set_option('display.max_columns', None)
     if e_vars.verbose: pd.set_option('display.width', None)
-    if e_vars.verbose: pd.set_option('display.max_colwidth', -1)
+    if e_vars.verbose: pd.set_option('display.max_colwidth', None)
     start = time.time()
     print(query)
 
