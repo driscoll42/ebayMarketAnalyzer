@@ -1,15 +1,17 @@
 # Initial Code: https://oaref.blogspot.com/2019/01/web-scraping-using-python-part-2.html
 
 import math
+# from fastquant import get_crypto_data
+import warnings
 from copy import deepcopy
-from datetime import datetime
+from datetime import timedelta
 from typing import List, Tuple
 
 import matplotlib.ticker as ticker
+import numpy.polynomial.polynomial as poly
 import pandas as pd
-from matplotlib import dates as mpdates
 from matplotlib import pyplot as plt
-from scipy import stats
+from sklearn.metrics import r2_score
 
 from classes import EbayVariables
 
@@ -36,6 +38,9 @@ def ebay_plot(query: str,
     # https://stackoverflow.com/questions/59723501/plotting-a-linear-regression-with-dates-in-matplotlib-pyplot
     df_calc = df[df['Total Price'] > 0]
     df_calc = df_calc[df_calc['Quantity'] > 0]
+    df_calc = df_calc.sort_values(by='Sold Date')
+    df_calc = df_calc.loc[df_calc.index.repeat(df_calc['Quantity'])]
+    df_calc['Quantity'] = 1
 
     df_temp = df_calc.loc[df_calc.index.repeat(df_calc['Quantity'])]
 
@@ -103,6 +108,9 @@ def ebay_plot(query: str,
     ax1.yaxis.set_major_formatter(formatter)
     ax1.set_xlabel("Sold Date")
     ax1.set_ylim(top=min(1.5 * max_med, max_max), bottom=min(min_min * 0.95, msrp * 0.95))
+    lines, labels = ax1.get_legend_handles_labels()
+    ax1.legend(lines, labels, bbox_to_anchor=(0, -0.325, 1, 0), loc="lower left",
+               mode="expand", ncol=2)
 
     color = 'tab:red'
     # ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
@@ -111,58 +119,69 @@ def ebay_plot(query: str,
     tot_sold = int(df['Quantity'].sum())
     # ax2.plot(count_sold[:-1], color=color, label=f'Total Sold - {tot_sold}')
 
-    # Plotting Trendline
-    y = df['Total Price']
-    x = [i.toordinal() for i in df['Sold Date']]
-
-    slope, intercept, r, p, std_err = stats.linregress(x, y)
-
-    def myfunc(x):
-        return slope * x + intercept
-
-    mymodel = list(map(myfunc, x))
-
-    ax3 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
-    if msrp > 0:
-        try:
-            est_msrp = datetime.fromordinal(int((msrp - intercept) / slope)).strftime("%y-%m-%d")
-        except Exception as e:
-            msrp = 0
-            est_msrp = 0
-
-        if slope >= 0:
-            ax3.plot(df['Sold Date'], mymodel, label='Linear Trend Line', color='blue')
+    # Poly Trendline
+    if e_vars.trend_type == 'Poly' or e_vars.trend_type == 'Linear':
+        if e_vars.trend_type == 'Linear':
+            degree = 1
+            project_date = e_vars.trend_param[0]
         else:
-            ax3.plot(df['Sold Date'], mymodel, color='red', label=f'Linear Trend Line - Est MSRP Date - {est_msrp}')
+            degree = e_vars.trend_param[0]
+            project_date = e_vars.trend_param[1]
 
-        # med_price = med_price.rolling(7, min_periods=1).mean()
+        ax2 = ax1.twinx()
 
-        # ax3.plot(med_price, color='red')
+        ax2.set_ylim(top=min(1.5 * max_med, max_max), bottom=min(min_min * 0.95, msrp * 0.95))
 
-    ax3.set_ylim(top=min(1.5 * max_med, max_max), bottom=min(min_min * 0.95, msrp * 0.95))
-    ax3.set(yticklabels=[])
-    ax3.set(ylabel=None)
-    ax3.tick_params(left=False, right=False)
+        # Plotting Trendline
+        y = df_calc.groupby(['Sold Date'])['Total Price'].median()
 
-    # instruct matplotlib on how to convert the numbers back into dates for the x-axis
-    l = mpdates.AutoDateLocator()
-    f = mpdates.AutoDateFormatter(l)
+        x_orig = y.index.tolist()
+        x_orig = [i.toordinal() for i in x_orig]
+        x_orig = [i - df_calc['Sold Date'].min().toordinal() for i in x_orig]
 
-    ax3.xaxis.set_major_locator(l)
-    ax3.xaxis.set_major_formatter(f)
+        max_date = df_calc['Sold Date'].max() + timedelta(project_date)
+        date_diff = (df_calc['Sold Date'].max() - df_calc['Sold Date'].min()).days + project_date
+        date_list = [max_date - timedelta(days=x) for x in range(date_diff)]
+        date_list.reverse()
 
-    lines, labels = ax1.get_legend_handles_labels()
-    # lines2, labels2 = ax2.get_legend_handles_labels()
-    lines3, labels3 = ax3.get_legend_handles_labels()
+        with warnings.catch_warnings(record=True) as caught_warnings:
+            coefs = poly.polyfit(x_orig, y, degree)
+            if e_vars.verbose: print('Polynomial Coefficients: ', coefs)
+            for warn in caught_warnings:
+                print('WARNING: Polynomial may be overfit, try a lower order polynomial')
+
+        max_x_poly = max(x_orig) - min(x_orig) + 1
+        x_poly = [*range(1, max_x_poly + project_date, 1)]
+        ffit = poly.polyval(x_poly, coefs)
+        ax2.grid(False)
+
+        ax2.plot(date_list, ffit)
+        lines2, labels2 = ax2.get_legend_handles_labels()
+
+        ax1.legend(lines + lines2, labels + labels2, bbox_to_anchor=(0, -0.325, 1, 0), loc="lower left",
+                   mode="expand", ncol=2)
+
+        ffit = poly.polyval(x_orig, coefs)
+
+        print('R Squared:', r2_score(ffit, y))
+
+    elif e_vars.trend_type == 'Roll':
+        roll_days = e_vars.trend_param[0]
+
+        ax2 = ax1.twinx()
+        ax2.set_ylim(top=min(1.5 * max_med, max_max), bottom=min(min_min * 0.95, msrp * 0.95))
+
+        median_prices = df_calc.groupby(['Sold Date'])['Total Price'].median()
+        med_roll = median_prices.rolling(roll_days, min_periods=1).mean()
+        ax2.grid(False)
+
+        ax2.plot(med_roll)
+        lines2, labels2 = ax2.get_legend_handles_labels()
+
+        ax1.legend(lines + lines2, labels + labels2, bbox_to_anchor=(0, -0.325, 1, 0), loc="lower left",
+                   mode="expand", ncol=2)
+
     plt.subplots_adjust(bottom=0.225)
-
-    ax1.legend(lines + lines3, labels + labels3, bbox_to_anchor=(0, -0.325, 1, 0), loc="lower left",
-               mode="expand", ncol=2)
-
-    # ax2.grid(False)
-    ax3.grid(False)
-    # ax1.set_ylim(top=min(1.5 * max_med, max_max), bottom=0)
-    # ax3.set_ylim(top=min(1.5 * max_med, max_max), bottom=0)
 
     plt.savefig('Images/' + query + e_vars.extra_title_text)
 
@@ -382,6 +401,130 @@ def median_plotting(dfs: List[pd.DataFrame],
         plt.savefig(f"Images/{title} - {e_vars.ccode}")
     if e_vars.show_plots: plt.show()
     return
+
+
+'''def crpyto_comp_plotting(dfs: List[pd.DataFrame],
+                    title: str,
+                    e_vars: EbayVariables,
+                    roll: int = 0,
+                    min_msrp: int = 100) -> None:
+    """
+
+    Parameters
+    ----------
+    dfs :
+    title :
+    e_vars :
+    roll :
+    min_msrp :
+
+    Returns
+    -------
+
+    """
+    dfs = deepcopy(dfs)
+
+    min_date = datetime.now()
+    max_date = datetime.now() - timedelta(365)
+    for df in dfs:
+        df_min = df['Sold Date'].min()
+        df_max = df['Sold Date'].max()
+        if df_min < min_date:
+            min_date = df_min
+        if df_max > max_date:
+            max_date = df_max
+
+    min_date = str(min_date).split(' ')[0]
+    max_date = str(max_date).split(' ')[0]
+
+    # Etherium Pricing
+    eth_crypto = get_crypto_data("ETH/USDT", min_date, max_date)
+    eth_prices = eth_crypto.close
+    eth_prices = eth_prices.div(eth_prices.min())
+    eth_prices = eth_prices.mul(100)
+
+    #Bitcoin Pricing
+    btc_crypto = get_crypto_data("BTC/USDT", min_date, max_date)
+    btc_prices = btc_crypto.close
+    btc_prices = btc_prices.div(btc_prices.min())
+    btc_prices = btc_prices.mul(100)
+
+    colors = ['#000000', '#7f0000', '#808000', '#008080', '#000080', '#ff8c00', '#2f4f4f', '#00ff00', '#0000ff',
+              '#ff00ff', '#6495ed', '#ff1493', '#98fb98', '#ffdab9']
+    plt.figure()  # In this example, all the plots will be in one figure.
+    plt.ylabel("% of MSRP")
+    plt.xlabel("Sale Date")
+    plt.tick_params(axis='y')
+    plt.tick_params(axis='x', rotation=30)
+    if roll > 0:
+        plt.title(f"{title} {roll} Day Rolling Average - % MSRP")
+    else:
+        plt.title(f"{title} - % MSRP")
+    for i in range(len(dfs)):
+        ci = i % (len(colors) - 1)
+
+        dfs[i] = dfs[i][dfs[i]['Total Price'] > 0]
+        dfs[i] = dfs[i][dfs[i]['Quantity'] > 0]
+        dfs[i] = dfs[i].loc[dfs[i].index.repeat(dfs[i]['Quantity'])]
+        dfs[i]['Quantity'] = 1
+
+        med_price_scaled = dfs[i].groupby(['Sold Date'])['Total Price'].median() / dfs[i]['msrp'].iloc[0] * 100
+
+        # med_mad = robust.mad(dfs[i].groupby(['Sold Date'])['Total Price']/ msrps[i] * 100)
+        # print(med_mad)
+
+        if roll > 0:
+            med_price_scaled = med_price_scaled.rolling(roll, min_periods=1).mean()
+
+        min_msrp = min(min_msrp, min(med_price_scaled))
+        plt.plot(med_price_scaled, colors[ci], label=dfs[i]['item'].iloc[0])
+        # plt.fill_between(med_price_scaled, med_price_scaled - med_mad, med_price_scaled + med_mad, color=colors[ci])
+
+    plt.plot(eth_prices, label='Etherium')
+    plt.plot(btc_prices, label='Bitcoin')
+    plt.ylim(bottom=min_msrp)
+    plt.legend()
+    plt.tight_layout()
+    if roll > 0:
+        plt.savefig(f"Images/{title} {roll} Day Rolling Average - % MSRP")
+    else:
+        plt.savefig(f"Images/{title} - % MSRP")
+    if e_vars.show_plots: plt.show()
+
+    # Plotting the non-scaled graph
+    plt.figure()  # In this example, all the plots will be in one figure.
+    fig, ax = plt.subplots()
+    plt.ylabel(f"Median Sale Price ({e_vars.ccode})")
+    plt.xlabel("Sale Date")
+    plt.tick_params(axis='y')
+    plt.tick_params(axis='x', rotation=30)
+    if roll > 0:
+        plt.title(f"{title} {roll} Day Rolling Average - {e_vars.ccode}")
+    else:
+        plt.title(f"{title} - {e_vars.ccode}")
+    for i in range(len(dfs)):
+        ci = i % (len(colors) - 1)
+
+        med_price = dfs[i].groupby(['Sold Date'])['Total Price'].median()
+
+        if roll > 0:
+            med_price = med_price.rolling(roll, min_periods=1).mean()
+
+        min_msrp = min(min_msrp, min(med_price))
+        plt.plot(med_price, colors[ci], label=dfs[i]['item'].iloc[0])
+    plt.ylim(bottom=min_msrp)
+    formatter = ticker.FormatStrFormatter(f'{e_vars.ccode}%1.0f')
+    ax.yaxis.set_major_formatter(formatter)
+    plt.legend()
+    plt.tight_layout()
+    if roll > 0:
+        plt.savefig(f"Images/{title} {roll} Day Rolling Average - {e_vars.ccode}")
+    else:
+        plt.savefig(f"Images/{title} - {e_vars.ccode}")
+    if e_vars.show_plots: plt.show()
+    return
+
+'''
 
 
 # https://tylermarrs.com/posts/pareto-plot-with-matplotlib/

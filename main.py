@@ -42,15 +42,20 @@ def get_purchase_hist(trs, e_vars: EbayVariables, sold_list: List[Union[float, i
                 date_col = th_cnt
 
         tds = r.find_all('td')
+        spec_offer = False
         if len(tds) > 1:
             # buyer = tds[1].text
             try:
-                price = float(re.sub(r'[^\d.]+', '', tds[price_col].text))
+                if 'SPECIAL OFFER' in tds[price_col].text.upper():
+                    price = ''
+                    spec_offer = True
+                else:
+                    price = float(re.sub(r'[^\d.]+', '', tds[price_col].text))
             except Exception as e:
-                if e_vars.verbose: print('get_purchase_hist-price', e, sold_hist_url)
+                if e_vars.verbose: print('get_purchase_hist-price', tds[price_col].text, e, sold_hist_url)
                 price = ''
 
-            if price:
+            if price or spec_offer:
                 quantity = int(tds[quant_col].text)
                 sold_date = tds[date_col].text.split()[0]
                 sold_time = tds[date_col].text.split()[1]
@@ -256,7 +261,7 @@ def ebay_scrape(base_url: str,
         try:
             item_link = item.find('a', class_='s-item__link')['href']
         except Exception as e:
-            item_link = 'None'
+            item_link = ''
             if e_vars.verbose: print('sp_get_item_link', e)
         return item_link
 
@@ -264,7 +269,7 @@ def ebay_scrape(base_url: str,
         try:
             item_title = item.find('h3', class_='s-item__title').text
         except Exception as e:
-            item_title = 'None'
+            item_title = ''
             if e_vars.verbose: print('sp_get_title', e, item_link)
         return item_title
 
@@ -272,7 +277,7 @@ def ebay_scrape(base_url: str,
         try:
             item_desc = item.find('div', class_='s-item__subtitle').text
         except Exception as e:
-            item_desc = 'None'
+            item_desc = ''
             if e_vars.verbose: print('sp_get_desc', e, item_link)
         return item_desc
 
@@ -330,28 +335,31 @@ def ebay_scrape(base_url: str,
             else:
                 raise Exception
         except Exception as e:
-            if e_vars.verbose: print('ip_get_loc_data', e, item_link)
-            loc_2 = item_soup.find('div', attrs={'class': 'vi-wp vi-VR-cvipCntr1'})
-            loc_2 = loc_2.find_all('tr', attrs={'class': 'vi-ht20'})
-            for l in loc_2:
-                if l.text.find('Item location:') > 0:
-                    i_loc = l.find_all('div', attrs={'class': 'u-flL'})
-                    loc_text = i_loc[1].text.split(',')
-                    if len(loc_text) == 2:
-                        city, state, country_name = loc_text[0].strip(), '', loc_text[1].strip()
-                    elif len(loc_text) == 3:
-                        city, state, country_name = loc_text[0].strip(), loc_text[1].strip(), loc_text[2].strip()
-                    break
+            if e_vars.verbose: print('ip_get_loc_data-1', e, item_link)
+            try:
+                loc_2 = item_soup.find('div', attrs={'class': 'vi-wp vi-VR-cvipCntr1'})
+                loc_2 = loc_2.find_all('tr', attrs={'class': 'vi-ht20'})
+                for l in loc_2:
+                    if l.text.find('Item location:') > 0:
+                        i_loc = l.find_all('div', attrs={'class': 'u-flL'})
+                        loc_text = i_loc[1].text.split(',')
+                        if len(loc_text) == 2:
+                            city, state, country_name = loc_text[0].strip(), '', loc_text[1].strip()
+                        elif len(loc_text) == 3:
+                            city, state, country_name = loc_text[0].strip(), loc_text[1].strip(), loc_text[2].strip()
+                        break
+            except Exception as e:
+                if e_vars.verbose: print('ip_get_loc_data-2', e, item_link)
         return city, state, country_name
 
     def ip_get_seller(item_soup):
         seller, seller_fb, store = '', '', False
         try:
-            seller = item_soup.find_all('span', attrs={'class': 'mbg-nw'})
-            seller = seller[0].text
+            seller_text = item_soup.find_all('span', attrs={'class': 'mbg-nw'})
+            seller = seller_text[0].text
 
-            seller_fb = item_soup.find_all('span', attrs={'class': 'mbg-l'})
-            seller_fb = int(seller_fb[0].find('a').text)
+            seller_fb_text = item_soup.find_all('span', attrs={'class': 'mbg-l'})
+            seller_fb = int(seller_fb_text[0].find('a').text)
 
             store_id = item_soup.find_all('div', attrs={'id': 'storeSeller'})
 
@@ -635,6 +643,7 @@ def ebay_scrape(base_url: str,
                                     axis='columns').any() and item_tot > 0:
                                 if e_vars.verbose: print('multi-extra', df__new)
                                 df = df.append(df__new, ignore_index=True)
+
         if e_vars.country == 'UK' and len(items) < 193:
             if e_vars.verbose: print('UK item break', len(items))
             break
@@ -804,17 +813,6 @@ def ebay_search(query: str,
                         break
                 except Exception as e:
                     if e_vars.verbose: print('ebay_search-date_search', e)
-                '''if found_date:
-                    if e_vars.country == 'UK':
-                        item_datetime = datetime.strptime(item_datetime, '%Y %d-%b %H:%M')
-                    else:
-                        item_datetime = datetime.strptime(item_datetime, '%Y %b-%d %H:%M')
-                    break
-
-            # When we run early in the year
-            if currentMonth < 6 and item_datetime.month > 6:
-                last_year = currentYear - 1
-                item_datetime = item_datetime.replace(year=last_year)'''
 
             last_item_date = last_item_date.replace(hour=0, minute=0)
             days_before_date = datetime.now() - timedelta(days=e_vars.days_before)
