@@ -67,19 +67,19 @@ Examples:
   regardless. If show_plots is False this is False
 * profit_plot: bool - default=False: Whether to show the Cumulative Profit plot as the code runs, always saves to a
   directory regardless. If show_plots is False this is False
-* trend_type: str - default='Linear': What kind of Trendline to plot on the Sales Plot. Allowed values are "Linear", "
-  Poly", "Roll", or "None"
-    * Linear - Creates a Linear Regression trendline
-    * Poly - Creates a polynomial best fit line
-    * Roll - Creates a rolling average of the best fit line
-    * None - Does not plot any trendline
+* trend_type: str - default='linear': What kind of Trendline to plot on the Sales Plot. Allowed values are "linear", "
+  poly", "roll", or "none"
+  * linear - Creates a Linear Regression trendline
+  * poly - Creates a polynomial best fit line
+  * roll - Creates a rolling average of the best fit line
+  * none - Does not plot any trendline
 * trend_param: List[int] - default_factory=[14]
-    * Linear - This should be a list with a single value, e.g. [14], how many days in the future it should project the
-      trendline. If 0 it will not project at all.
-    * Poly - This should be a list with two values, e.g. [2, 14]. The first parameter is the degree of the polynomial,
-      the second how many days in the future to project. The degree should be >=1 and the days should be >=01
-    * Roll - This should be a list with a single value, e.g. [7]. This is how many days to use for the rolling average
-    * None - Does not matter what is in this field.
+  * linear - This should be a list with a single value, e.g. [14], how many days in the future it should project the
+    trendline. If 0 it will not project at all.
+  * poly - This should be a list with two values, e.g. [2, 14]. The first parameter is the degree of the polynomial, the
+    second how many days in the future to project. The degree should be >=1 and the days should be >=01
+  * roll - This should be a list with a single value, e.g. [7]. This is how many days to use for the rolling average
+  * none - Does not matter what is in this field.
 
 #### Search Parameters
 

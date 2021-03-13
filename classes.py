@@ -18,7 +18,7 @@ class EbayVariables:
     show_plots: bool = field(default=False)
     profit_plot: bool = field(default=False)
     main_plot: bool = field(default=False)
-    trend_type: str = field(default='Linear')
+    trend_type: str = field(default='linear')
     trend_param: List[int] = field(default_factory=List)
 
     # search_params

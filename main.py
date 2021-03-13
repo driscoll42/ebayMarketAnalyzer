@@ -21,6 +21,160 @@ from plotting import ebay_plot
 from plotting import plot_profits
 
 
+def validate_inputs(query: str,
+                    e_vars: EbayVariables,
+                    queryexclusions: List[str] = [],
+                    msrp: float = 0,
+                    min_price: float = 0,
+                    max_price: float = 10000,
+                    min_date: datetime = datetime.now() - timedelta(days=90)):
+    validation_success = True
+    if type(query) is not str:
+        print('query is not a string!')
+        validation_success = False
+
+    if type(queryexclusions) is not list:
+        print('queryexclusions is not a List!')
+        validation_success = False
+
+    if type(msrp) is not float and type(msrp) is not int:
+        print('msrp is not a float or int!')
+        validation_success = False
+
+    if type(min_price) is not float and type(min_price) is not int:
+        print('min_price is not a float or int!')
+        validation_success = False
+
+    if type(max_price) is not float and type(max_price) is not int:
+        print('max_price is not a float or int!')
+        validation_success = False
+
+    if type(min_date) is not datetime:
+        print('min_date is not a Dateime!')
+        validation_success = False
+
+    if type(e_vars.run_cached) is not bool:
+        print('EbayVariables class variable run_cached is not a bool!')
+        validation_success = False
+
+    if type(e_vars.sleep_len) is not float and type(e_vars.sleep_len) is not int:
+        print('EbayVariables class variable sleep_len is not a bool!')
+        validation_success = False
+
+    if type(e_vars.show_plots) is not bool:
+        print('EbayVariables class variable show_plots is not a bool!')
+        validation_success = False
+
+    if type(e_vars.profit_plot) is not bool:
+        print('EbayVariables class variable profit_plot is not a bool!')
+        validation_success = False
+
+    if type(e_vars.main_plot) is not bool:
+        print('EbayVariables class variable main_plot is not a bool!')
+        validation_success = False
+
+    if type(e_vars.trend_type) is not str:
+        print('EbayVariables class variable trend_type is not a string!')
+        validation_success = False
+
+    if e_vars.trend_type != 'none' and e_vars.trend_type != 'linear' and e_vars.trend_type != 'poly' and e_vars.trend_type != 'roll':
+        print(
+                'EbayVariables class variable trend_type is not a valid! Must be one of "poly", "linear", "roll" or "none"')
+        validation_success = False
+
+    if type(e_vars.trend_param) is not list:
+        print('EbayVariables class variable trend_param is not an int!')
+        validation_success = False
+    elif e_vars.trend_type == 'linear' and (len(e_vars.trend_param) != 1 or type(e_vars.trend_param[0]) is not int):
+        print('EbayVariables class variable trend_type must be a list with a single integer when trend_type = linear!')
+        validation_success = False
+    elif e_vars.trend_type == 'roll' and (len(e_vars.trend_param) != 1 or type(e_vars.trend_param[0]) is not int):
+        print('EbayVariables class variable trend_type must be a list with a single integer when trend_type = roll!')
+        validation_success = False
+    elif e_vars.trend_type == 'poly' and (
+            len(e_vars.trend_param) != 2 or type(e_vars.trend_param[0]) is not int or type(
+            e_vars.trend_param[1]) is not int):
+        print('EbayVariables class variable trend_type must be a list with of two integers when trend_type = poly!')
+        validation_success = False
+
+    if type(e_vars.sacat) is not int:
+        print('EbayVariables class variable sacat is not an int!')
+        validation_success = False
+
+    if type(e_vars.tax_rate) is not float and type(e_vars.tax_rate) is not int:
+        print('EbayVariables class variable country is not a float or int!')
+        validation_success = False
+    elif e_vars.tax_rate >= 1 or e_vars.tax_rate < 0:
+        print('EbayVariables class variable tax_rate must be between 0 and 1!')
+        validation_success = False
+
+    if type(e_vars.store_rate) is not float and type(e_vars.store_rate) is not int:
+        print('EbayVariables class variable country is not a float or int!')
+        validation_success = False
+    elif e_vars.store_rate >= 1 or e_vars.store_rate < 0:
+        print('EbayVariables class variable store_rate must be between 0 and 1!')
+        validation_success = False
+
+    if type(e_vars.non_store_rate) is not float and type(e_vars.non_store_rate) is not int:
+        print('EbayVariables class variable country is not a float or int!')
+        validation_success = False
+    elif e_vars.non_store_rate >= 1 or e_vars.non_store_rate < 0:
+        print('EbayVariables class variable non_store_rate must be between 0 and 1!')
+        validation_success = False
+
+    if type(e_vars.country) is not str:
+        print('EbayVariables class variable country is not a string!')
+        validation_success = False
+    elif e_vars.country != 'USA' and e_vars.country != 'UK':
+        print('EbayVariables class variable country must be "USA" or "UK"!')
+        validation_success = False
+
+    if type(e_vars.ccode) is not str:
+        print('EbayVariables class variable ccode is not a string!')
+        validation_success = False
+
+    if type(e_vars.days_before) is not int:
+        print('EbayVariables class variable days_before is not a int!')
+        validation_success = False
+
+    elif e_vars.days_before < 1:
+        print('EbayVariables class variable days_before must be >= 1!')
+        validation_success = False
+
+    if type(e_vars.feedback) is not bool:
+        print('EbayVariables class variable feedback is not a bool!')
+        validation_success = False
+
+    if type(e_vars.quantity_hist) is not bool:
+        print('EbayVariables class variable quantity_hist is not a bool!')
+        validation_success = False
+
+    if type(e_vars.desc_ignore_list) is not list:
+        print('desc_ignore_list is not a list!')
+        validation_success = False
+
+    if type(e_vars.extra_title_text) is not str:
+        print('brand_list is not a string!')
+        validation_success = False
+
+    if type(e_vars.brand_list) is not list:
+        print('brand_list is not a list!')
+        validation_success = False
+
+    if type(e_vars.model_list) is not list:
+        print('model_list is not a list!')
+        validation_success = False
+
+    if type(e_vars.debug) is not bool:
+        print('EbayVariables class variable debug is not a bool!')
+        validation_success = False
+
+    if type(e_vars.verbose) is not bool:
+        print('EbayVariables class variable verbose is not a bool!')
+        validation_success = False
+    return validation_success
+
+
 def get_purchase_hist(trs, e_vars: EbayVariables, sold_list: List[Union[float, int, datetime, datetime]],
                       sold_hist_url: str) -> List[Union[float, int, datetime, datetime]]:
     bin_date, bin_datetime = '', ''
@@ -660,9 +814,9 @@ def ebay_scrape(base_url: str,
 def ebay_search(query: str,
                 e_vars: EbayVariables,
                 queryexclusions: List[str] = [],
-                msrp: int = 0,
-                min_price: int = 0,
-                max_price: int = 10000,
+                msrp: float = 0,
+                min_price: float = 0,
+                max_price: float = 10000,
                 min_date: datetime = datetime.now() - timedelta(days=90)) -> pd.DataFrame:
     """
 
@@ -680,6 +834,10 @@ def ebay_search(query: str,
     -------
 
     """
+
+    if not validate_inputs(query, e_vars, queryexclusions, msrp, min_price, max_price, min_date):
+        print('Input Validation Failed!')
+        return
 
     if e_vars.verbose: pd.set_option('display.max_rows', None)
     if e_vars.verbose: pd.set_option('display.max_columns', None)

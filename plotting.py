@@ -120,7 +120,7 @@ def ebay_plot(query: str,
     # ax2.plot(count_sold[:-1], color=color, label=f'Total Sold - {tot_sold}')
 
     # Poly Trendline
-    if e_vars.trend_type == 'Poly' or e_vars.trend_type == 'Linear':
+    if e_vars.trend_type == 'poly' or e_vars.trend_type == 'linear':
         if e_vars.trend_type == 'Linear':
             degree = 1
             project_date = e_vars.trend_param[0]
@@ -165,7 +165,7 @@ def ebay_plot(query: str,
 
         print('R Squared:', r2_score(ffit, y))
 
-    elif e_vars.trend_type == 'Roll':
+    elif e_vars.trend_type == 'roll':
         roll_days = e_vars.trend_param[0]
 
         ax2 = ax1.twinx()

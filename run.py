@@ -34,7 +34,7 @@ e_vars = EbayVariables(run_cached=False,
                        show_plots=True,
                        main_plot=True,
                        profit_plot=False,
-                       trend_type='Linear',
+                       trend_type='linear',
                        trend_param=[14],  # [Poly_Degree, Days_Out]
                        extra_title_text='',
                        country='USA',
@@ -83,6 +83,9 @@ cpu_cooler_sacat = 131486
 for x in os.listdir():
     if x.endswith(".sqlite"):
         os.remove(x)
+
+df_3090 = ebay_search('RTX 3090', gpu_vars, query_exclusions, 1499, 1499, 10000,
+                      min_date=datetime(2020, 9, 17))
 
 df_darkhero = ebay_search('ASUS Dark Hero', mobo_vars, query_exclusions, 399, 400, 1000)
 
