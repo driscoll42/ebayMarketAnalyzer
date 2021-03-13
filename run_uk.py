@@ -88,7 +88,7 @@ df_5600x = ebay_search('5600X', cpu_vars, query_exclusions, 280, 299, 1000)
 
 # Zen 3 Family Plotting
 zen3_frames = [df_5600x, df_5800x, df_5900x, df_5950x]
-median_plotting(zen3_frames, 'Zen 3 UK edian Pricing', e_vars=cpu_vars, roll=0)
+median_plotting(zen3_frames, 'Zen 3 UK Median Pricing', e_vars=cpu_vars, roll=0)
 median_plotting(zen3_frames, 'Zen 3 UK Median Pricing', e_vars=cpu_vars, roll=7)
 ebay_seller_plot(zen3_frames, 'Zen 3', e_vars=cpu_vars)
 
