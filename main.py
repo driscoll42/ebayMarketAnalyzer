@@ -320,9 +320,9 @@ def get_quantity_hist(sold_hist_url: str,
             bin_scrape = False
             off_scrape = False
             for th in ths:
-                if 'Buy It Now Price' in th.text or 'Date of Purchase' in th.text:
+                if 'buy it now price' in th.text.lower() or 'date of purchase' in th.text.lower():
                     bin_scrape = True
-                elif 'Offer Status' in th.text:
+                elif 'offer status' in th.text.lower():
                     off_scrape = True
             if bin_scrape:
                 sold_list, bin_date, bin_datetime = get_purchase_hist(trs, e_vars, sold_list, sold_hist_url)
@@ -368,7 +368,10 @@ def sp_get_datetime(item, days_before_date, e_vars, item_link):
             orig_item_datetime = orig_item_datetime.replace('Sold item', '').replace('Sold', '').strip()
             item_datetime = orig_item_datetime.replace(hour=0, minute=0, second=0, microsecond=0)
 
-            item_date = datetime.strptime(orig_item_datetime, '%d %b %Y')
+            if e_vars.country == 'UK':
+                item_date = datetime.strptime(orig_item_datetime, '%b %d %Y')
+            else:
+                item_date = datetime.strptime(orig_item_datetime, '%d %b %Y')
             item_date = item_date.replace(hour=0, minute=0, second=0, microsecond=0)
             days_before_date = min(item_date, days_before_date)
 
@@ -476,7 +479,7 @@ def ebay_scrape(base_url: str,
                                                   "%b %d %Y %I:%M:%S")
             except Exception as e:
                 item_datetime = datetime.strptime(f"{date_one[0]} {date_one[1]} {date_one[2]} {date_one[3]}",
-                                                  "%b %d %Y %H:%M:%S")
+                                                  "%d %b %Y %H:%M:%S")
             item_datetime = item_datetime.replace(second=0, microsecond=0)
             item_date = item_datetime.replace(hour=0, minute=0)
             days_before_date = min(item_date, days_before_date)
