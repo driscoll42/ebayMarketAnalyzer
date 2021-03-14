@@ -433,6 +433,15 @@ def ebay_scrape(base_url: str,
             if e_vars.verbose: print('sp_get_item_link', e)
         return item_link
 
+    def sp_get_domestic(item):
+        try:
+            item_domestic = str(item.find('span', class_='s-item__location').text).startswith("From ") == False
+        except Exception as e:
+            #failed to find item location, meaning the item is domestic
+            item_domestic = True
+            if e_vars.verbose: print('sp_get_domestic', e)
+        return item_domestic
+
     def sp_get_title(item):
         try:
             item_title = item.find('h3', class_='s-item__title').text
@@ -644,6 +653,9 @@ def ebay_scrape(base_url: str,
 
                 if not line_datetime_found and not nonmulti_date_line_found and not multi_date_found:
 
+                    item_domestic = sp_get_domestic(item)
+                    if e_vars.debug or e_vars.verbose: print('Domestic:', item_domestic)
+
                     item_title = sp_get_title(item)
                     if e_vars.debug or e_vars.verbose: print('Title:', item_title)
 
@@ -751,6 +763,9 @@ def ebay_scrape(base_url: str,
                     sold_list = np.array(sold_list)
 
                     ignor_val = 0
+
+                    if e_vars.domestic_only and item_domestic == False:
+                        ignor_val = 1
 
                     for di in e_vars.desc_ignore_list:
                         if item_desc.upper().find(di.upper()) >= 0:
