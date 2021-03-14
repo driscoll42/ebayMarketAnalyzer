@@ -341,7 +341,7 @@ def get_quantity_hist(sold_hist_url: str,
     return sold_list, sl_date, sl_datetime
 
 
-def sp_get_datetime(item, days_before_date, e_vars, item_link):
+def sp_get_datetime(item, days_before_date, e_vars, sp_link):
     item_date, item_datetime = '', ''
     try:
         currentYear = datetime.now().year
@@ -362,7 +362,7 @@ def sp_get_datetime(item, days_before_date, e_vars, item_link):
         days_before_date = min(item_date, days_before_date)
 
     except Exception as e:
-        if e_vars.verbose: print('sp_get_datetime-1', e, item_link)
+        if e_vars.verbose: print('sp_get_datetime-1', e, sp_link)
         try:
             orig_item_datetime = item.find('span', class_='s-item__title--tagblock__COMPLETED').text
             orig_item_datetime = orig_item_datetime.replace('Sold item', '').replace('Sold', '').strip()
@@ -376,7 +376,7 @@ def sp_get_datetime(item, days_before_date, e_vars, item_link):
             days_before_date = min(item_date, days_before_date)
 
         except Exception as e:
-            if e_vars.verbose: print('sp_get_datetime-2', e, item_link)
+            if e_vars.verbose: print('sp_get_datetime-2', e, sp_link)
             try:
                 date_time = item.find('span', attrs={'class': 'POSITIVE'})
 
@@ -399,7 +399,7 @@ def sp_get_datetime(item, days_before_date, e_vars, item_link):
                 days_before_date = min(item_date, days_before_date)
 
             except Exception as e:
-                if e_vars.verbose: print('sp_get_datetime-3', e, item_link)
+                if e_vars.verbose: print('sp_get_datetime-3', e, sp_link)
 
     return item_date, item_datetime, days_before_date
 
@@ -626,7 +626,7 @@ def ebay_scrape(base_url: str,
                 item_link = sp_get_item_link(item)
                 if e_vars.debug or e_vars.verbose: print('URL:', item_link)
 
-                item_date, item_datetime, days_before_date = sp_get_datetime(item, days_before_date, e_vars, item_link)
+                item_date, item_datetime, days_before_date = sp_get_datetime(item, days_before_date, e_vars, url)
                 if e_vars.debug or e_vars.verbose: print('Date-1:', item_date)
                 if e_vars.debug or e_vars.verbose: print('Datetime-1:', item_datetime)
 
@@ -868,7 +868,7 @@ def ebay_search(query: str,
                 msrp: float = 0,
                 min_price: float = 0,
                 max_price: float = 10000,
-                min_date: datetime = datetime.now() - timedelta(days=90)) -> pd.DataFrame:
+                min_date: datetime = datetime.now() - timedelta(days=365)) -> pd.DataFrame:
     """
 
     Parameters
