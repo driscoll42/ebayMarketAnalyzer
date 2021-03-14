@@ -80,7 +80,7 @@ Examples:
   * poly - Creates a polynomial best fit line
   * roll - Creates a rolling average of the best fit line
   * none - Does not plot any trendline
-* trend_param: List[int] - default_factory=[14]
+* trend_param: List[int] - default=[14]
   * linear - This should be a list with a single value, e.g. [14], how many days in the future it should project the
     trendline. If 0 it will not project at all.
   * poly - This should be a list with two values, e.g. [2, 14]. The first parameter is the degree of the polynomial, the
@@ -110,15 +110,16 @@ Examples:
   the feedback
 * quantity_hist: bool - default=False: Gets the full sold history of a multi-item listing. WARNING: This explodes run
   times
-* desc_ignore_list: List[str] - default_factory=List
+* desc_ignore_list: List[str] - default=[]: If populated, will check the sub_description field on eBay for keywords and
+  if they exist, set ignore=1.
 
 #### Misc. Parameters
 
 * extra_title_text: str - default='': Extra text to add to the file name and plot titles
-* brand_list: List[str] - default_factory=List: If populated, will search for brands in the list in the title and
-  populate a column with the brand found. This is case insensitive.
-* model_list: List[str] - default_factory=List: If populated, will search for models in the list in the title and
-  populate a column with the model found. This is case insensitive.
+* brand_list: List[str] - default=[]: If populated, will search for brands in the list in the title and populate a
+  column with the brand found. This is case insensitive.
+* model_list: List[str] - default=[]: If populated, will search for models in the list in the title and populate a
+  column with the model found. This is case insensitive.
 
 #### debugging parameters
 
