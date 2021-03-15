@@ -139,9 +139,38 @@ TO DO
 
 TO DO
 
+## FAQ
+
+* This is awesome! But it takes forever to run, what can I do to make it faster?
+  * There are a number of variables you can set to speed up the program
+
+  1. query - Obviously make this as *specific* as possible
+  2. query_exceptions - Any minus conditions (e.g. if you're searching for 3070s but don't want EVGA, add EVGA to
+     query_exclusions to filter those out)
+  3. min_msrp/max_msrp - Set the minimum and maximum prices you want the program to search between
+  4. sacat - If you want to search an item, choose the most specific category on eBay. For example, if you want to
+     search for 3080s they fall under:
+    * All -> Computers/Tablets & Networking -> Computer Components & Parts -> Graphics/Video Cards
+    * If you query on eBay and look at the url it looks like "https://www.ebay.com/sch/27386/i.html?_from=R40&_nkw=3080"
+    * The sacat is the vbalue between /sch/#####/i.html, 27386 above
+  5. quantity_hist - If you don't need to capture every single sale on eBay, and just need it mostly accurate, set
+     quantity_hist=False. This value is when you want to go into a listing which has multiple sales and get all those
+     sales. This requires more query calls to eBay and takes longer. *Most* sales are not multilistings so this normally
+     will not result in a large difference, but it depends on each item
+  6. feedback - If you don't care about getting the seller feedback, knowing if the seller is a store, the city, state,
+     and country of the seller, this can be False. Note that if quantity_hist is True, this is value doesn't matter as
+     getting to the sale history requires going to the item page which gets this info
+  7. sleep_len - This is a sleep timer added to the code to reduce load on eBay's servers. If this is too low eBay will
+     terminaate your connection. Also if too low eBay will start giving CAPTHCAs, but only on the multi listing sales
+     history page. If you have quantity_hist = False this can definitely be set lower. However, it's also just polite to
+     not have this too low.
+
+The quantity_hist and feedback settings are the two which will most dramatically improve your run times, but they also
+reduce the amount of data you get. All depends on what data you need or don't need.
+
 ## Release History
 
 * 0.1.0
-    * The first proper release
+  * The first proper release
 * 0.5.0
-    * Added a number of performance enhancements and ensuring correct data being scraped
+  * Added a number of performance enhancements and ensuring correct data being scraped

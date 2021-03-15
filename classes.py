@@ -4,7 +4,7 @@ classes.py
 Stores all classes used by the program.
 
 Current Classes:
- - EbayVariables: Stores variables that are frequently reused between different searches
+    EbayVariables - Stores variables that are frequently reused between different searches
 """
 from dataclasses import dataclass, field
 from typing import List

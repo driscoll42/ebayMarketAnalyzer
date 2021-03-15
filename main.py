@@ -1,3 +1,6 @@
+"""
+
+"""
 # Initial Code: https://oaref.blogspot.com/2019/01/web-scraping-using-python-part-2.html
 
 import os
@@ -6,7 +9,7 @@ import random
 import re
 import time
 from datetime import datetime, timedelta
-from typing import List, Union
+from typing import List, Union, Any, Tuple
 
 import numpy as np
 import pandas as pd
@@ -17,123 +20,127 @@ from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
 from classes import EbayVariables
-from plotting import ebay_plot
-from plotting import plot_profits
+from plotting import ebay_plot, plot_profits
+
+
+# pylint: disable=line-too-long
+# pylint: disable=multiple-statements
 
 
 def validate_inputs(query: str,
                     e_vars: EbayVariables,
-                    queryexclusions: List[str] = [],
+                    query_exclusions: List[str] = [],
                     msrp: float = 0,
                     min_price: float = 0,
                     max_price: float = 10000,
-                    min_date: datetime = datetime.now() - timedelta(days=90)):
+                    min_date: datetime = datetime.now() - timedelta(days=90)) -> bool:
     validation_success = True
-    if type(query) is not str:
+    if not isinstance(query, str):
         print('query is not a string!')
         validation_success = False
 
-    if type(queryexclusions) is not list:
+    if not isinstance(query_exclusions, list):
         print('queryexclusions is not a List!')
         validation_success = False
 
-    if type(msrp) is not float and type(msrp) is not int:
+    if not isinstance(msrp, float) and not isinstance(msrp, int):
         print('msrp is not a float or int!')
         validation_success = False
 
-    if type(min_price) is not float and type(min_price) is not int:
+    if not isinstance(min_price, float) and not isinstance(min_price, int):
         print('min_price is not a float or int!')
         validation_success = False
 
-    if type(max_price) is not float and type(max_price) is not int:
+    if not isinstance(max_price, float) and not isinstance(max_price, int):
         print('max_price is not a float or int!')
         validation_success = False
 
-    if type(min_date) is not datetime:
-        print('min_date is not a Dateime!')
+    if not isinstance(min_date, datetime):
+        print('min_date is not a Datetime!')
         validation_success = False
 
-    if type(e_vars.run_cached) is not bool:
+    if not isinstance(e_vars.run_cached, bool):
         print('EbayVariables class variable run_cached is not a bool!')
         validation_success = False
 
-    if type(e_vars.sleep_len) is not float and type(e_vars.sleep_len) is not int:
+    if not isinstance(e_vars.sleep_len, float) and not isinstance(e_vars.sleep_len, int):
         print('EbayVariables class variable sleep_len is not a bool!')
         validation_success = False
 
-    if type(e_vars.show_plots) is not bool:
+    if not isinstance(e_vars.show_plots, bool):
         print('EbayVariables class variable show_plots is not a bool!')
         validation_success = False
 
-    if type(e_vars.profit_plot) is not bool:
+    if not isinstance(e_vars.profit_plot, bool):
         print('EbayVariables class variable profit_plot is not a bool!')
         validation_success = False
 
-    if type(e_vars.main_plot) is not bool:
+    if not isinstance(e_vars.main_plot, bool):
         print('EbayVariables class variable main_plot is not a bool!')
         validation_success = False
 
-    if type(e_vars.trend_type) is not str:
+    if not isinstance(e_vars.trend_type, str):
         print('EbayVariables class variable trend_type is not a string!')
         validation_success = False
 
-    if e_vars.trend_type != 'none' and e_vars.trend_type != 'linear' and e_vars.trend_type != 'poly' and e_vars.trend_type != 'roll':
+    if e_vars.trend_type != 'none' and e_vars.trend_type != 'linear' and e_vars.trend_type != 'poly' and \
+            e_vars.trend_type != 'roll':
         print(
                 'EbayVariables class variable trend_type is not a valid! Must be one of "poly", "linear", "roll" or "none"')
         validation_success = False
 
-    if type(e_vars.trend_param) is not list:
+    if not isinstance(e_vars.trend_param, list):
         print('EbayVariables class variable trend_param is not an int!')
         validation_success = False
-    elif e_vars.trend_type == 'linear' and (len(e_vars.trend_param) != 1 or type(e_vars.trend_param[0]) is not int):
+    elif e_vars.trend_type == 'linear' and (len(e_vars.trend_param) != 1 or not isinstance(e_vars.trend_param[0], int)):
         print('EbayVariables class variable trend_type must be a list with a single integer when trend_type = linear!')
         validation_success = False
-    elif e_vars.trend_type == 'roll' and (len(e_vars.trend_param) != 1 or type(e_vars.trend_param[0]) is not int):
+    elif e_vars.trend_type == 'roll' and (len(e_vars.trend_param) != 1 or not isinstance(e_vars.trend_param[0], int)):
         print('EbayVariables class variable trend_type must be a list with a single integer when trend_type = roll!')
         validation_success = False
     elif e_vars.trend_type == 'poly' and (
-            len(e_vars.trend_param) != 2 or type(e_vars.trend_param[0]) is not int or type(
-            e_vars.trend_param[1]) is not int):
+            len(e_vars.trend_param) != 2 or not isinstance(e_vars.trend_param[0], int) or not isinstance(
+            e_vars.trend_param[1], int)):
         print('EbayVariables class variable trend_type must be a list with of two integers when trend_type = poly!')
         validation_success = False
 
-    if type(e_vars.sacat) is not int:
+    if not isinstance(e_vars.sacat, int):
         print('EbayVariables class variable sacat is not an int!')
         validation_success = False
 
-    if type(e_vars.tax_rate) is not float and type(e_vars.tax_rate) is not int:
-        print('EbayVariables class variable country is not a float or int!')
+    if not isinstance(e_vars.tax_rate, float) and isinstance(e_vars.tax_rate, int):
+        print('EbayVariables class variable tax_rate is not a float or int!')
         validation_success = False
     elif e_vars.tax_rate >= 1 or e_vars.tax_rate < 0:
         print('EbayVariables class variable tax_rate must be between 0 and 1!')
         validation_success = False
 
-    if type(e_vars.store_rate) is not float and type(e_vars.store_rate) is not int:
-        print('EbayVariables class variable country is not a float or int!')
+    if not isinstance(e_vars.store_rate, float) and not isinstance(e_vars.store_rate, int):
+        print('EbayVariables class variable store_rate is not a float or int!')
         validation_success = False
     elif e_vars.store_rate >= 1 or e_vars.store_rate < 0:
         print('EbayVariables class variable store_rate must be between 0 and 1!')
         validation_success = False
 
-    if type(e_vars.non_store_rate) is not float and type(e_vars.non_store_rate) is not int:
-        print('EbayVariables class variable country is not a float or int!')
+    if not isinstance(e_vars.non_store_rate, float) and not isinstance(e_vars.non_store_rate, int):
+        print('EbayVariables class variable non_store_rate is not a float or int!')
         validation_success = False
     elif e_vars.non_store_rate >= 1 or e_vars.non_store_rate < 0:
         print('EbayVariables class variable non_store_rate must be between 0 and 1!')
         validation_success = False
 
-    if type(e_vars.country) is not str:
+    if not isinstance(e_vars.country, str):
         print('EbayVariables class variable country is not a string!')
         validation_success = False
     elif e_vars.country != 'USA' and e_vars.country != 'UK':
         print('EbayVariables class variable country must be "USA" or "UK"!')
         validation_success = False
 
-    if type(e_vars.ccode) is not str:
+    if not isinstance(e_vars.ccode, str):
         print('EbayVariables class variable ccode is not a string!')
         validation_success = False
 
-    if type(e_vars.days_before) is not int:
+    if not isinstance(e_vars.days_before, int):
         print('EbayVariables class variable days_before is not a int!')
         validation_success = False
 
@@ -141,61 +148,61 @@ def validate_inputs(query: str,
         print('EbayVariables class variable days_before must be >= 1!')
         validation_success = False
 
-    if type(e_vars.feedback) is not bool:
+    if not isinstance(e_vars.feedback, bool):
         print('EbayVariables class variable feedback is not a bool!')
         validation_success = False
 
-    if type(e_vars.quantity_hist) is not bool:
+    if not isinstance(e_vars.quantity_hist, bool):
         print('EbayVariables class variable quantity_hist is not a bool!')
         validation_success = False
 
-    if type(e_vars.desc_ignore_list) is not list:
-        print('desc_ignore_list is not a list!')
+    if not isinstance(e_vars.desc_ignore_list, list):
+        print('EbayVariables class variable desc_ignore_list is not a list!')
         validation_success = False
 
-    if type(e_vars.extra_title_text) is not str:
-        print('brand_list is not a string!')
+    if not isinstance(e_vars.extra_title_text, str):
+        print('EbayVariables class variable extra_title_text is not a string!')
         validation_success = False
 
-    if type(e_vars.brand_list) is not list:
-        print('brand_list is not a list!')
+    if not isinstance(e_vars.brand_list, list):
+        print('EbayVariables class variable brand_list is not a list!')
         validation_success = False
 
-    if type(e_vars.model_list) is not list:
-        print('model_list is not a list!')
+    if not isinstance(e_vars.model_list, list):
+        print('EbayVariables class variable model_list is not a list!')
         validation_success = False
 
-    if type(e_vars.debug) is not bool:
+    if not isinstance(e_vars.debug, bool):
         print('EbayVariables class variable debug is not a bool!')
         validation_success = False
 
-    if type(e_vars.verbose) is not bool:
+    if not isinstance(e_vars.verbose, bool):
         print('EbayVariables class variable verbose is not a bool!')
         validation_success = False
     return validation_success
 
 
 def get_purchase_hist(trs, e_vars: EbayVariables, sold_list: List[Union[float, int, datetime, datetime]],
-                      sold_hist_url: str) -> List[Union[float, int, datetime, datetime]]:
+                      sold_hist_url: str) -> Tuple[
+    List[Union[float, int, datetime]], Union[Union[str, datetime], Any], Union[str, Any]]:
     bin_date, bin_datetime = '', ''
     # Typically these are true
     price_col = 2
     date_col = 4
     quant_col = 3
 
-    for r in trs:
-        ths = r.find_all('th')
-        th_cnt = -1
-        for th in ths:
-            th_cnt += 1
-            if 'PRICE' in th.text.upper():
-                price_col = th_cnt
-            elif 'QUANT' in th.text.upper():
-                quant_col = th_cnt
-            elif 'DATE' in th.text.upper():
-                date_col = th_cnt
+    for tr in trs:
+        ths = tr.find_all('th')
 
-        tds = r.find_all('td')
+        for i, th in enumerate(ths):
+            if 'PRICE' in th.text.upper():
+                price_col = i
+            elif 'QUANT' in th.text.upper():
+                quant_col = i
+            elif 'DATE' in th.text.upper():
+                date_col = i
+
+        tds = tr.find_all('td')
         spec_offer = False
         if len(tds) > 1:
             # buyer = tds[1].text
@@ -236,11 +243,12 @@ def get_purchase_hist(trs, e_vars: EbayVariables, sold_list: List[Union[float, i
 
 
 def get_offer_hist(trs, e_vars: EbayVariables, sold_list: List[Union[float, int, datetime, datetime]],
-                   sold_hist_url: str) -> List[Union[float, int, datetime, datetime]]:
+                   sold_hist_url: str) -> Tuple[
+    List[Union[float, int, datetime]], Union[Union[str, datetime], Any], Union[str, Any]]:
     off_date, off_datetime = '', ''
 
-    for r in trs:
-        tds = r.find_all('td', )
+    for tr in trs:
+        tds = tr.find_all('td', )
         # if e_vars.verbose: print('get_offer_hist-tds', tds)
         if len(tds) > 1:
             try:
@@ -296,11 +304,13 @@ def get_quantity_hist(sold_hist_url: str,
 
     """
     sl_date, sl_datetime = '', ''
-    time.sleep(
-            e_vars.sleep_len * random.uniform(0,
-                                              1))  # eBays servers will kill your connection if you hit them too frequently
+
+    # eBays servers will kill your connection if you hit them too frequently
+    time.sleep(e_vars.sleep_len * random.uniform(0, 1))
+
     try:
-        with requests_cache.disabled():  # We don't want to cache all the calls into the individual listings, they'll never be repeated
+        # We don't want to cache all the calls into the individual listings, they'll never be repeated
+        with requests_cache.disabled():
             source = adapter.get(sold_hist_url, timeout=10).text
         soup = BeautifulSoup(source, 'lxml')
 
@@ -344,18 +354,18 @@ def get_quantity_hist(sold_hist_url: str,
 def sp_get_datetime(item, days_before_date, e_vars, sp_link):
     item_date, item_datetime = '', ''
     try:
-        currentYear = datetime.now().year
-        currentMonth = datetime.now().month
+        current_year = datetime.now().year
+        current_month = datetime.now().month
 
-        orig_item_datetime = f"{currentYear} {item.find('span', class_='s-item__endedDate').text}"
+        orig_item_datetime = f"{current_year} {item.find('span', class_='s-item__endedDate').text}"
         if e_vars.country == 'UK':
             item_datetime = datetime.strptime(orig_item_datetime, '%Y %d-%b %H:%M')
         else:
             item_datetime = datetime.strptime(orig_item_datetime, '%Y %b-%d %H:%M')
 
         # When we run early in the year
-        if currentMonth < 6 and item_datetime.month > 6:
-            last_year = currentYear - 1
+        if current_month < 6 < item_datetime.month:
+            last_year = current_year - 1
             item_datetime = item_datetime.replace(year=last_year)
 
         item_date = item_datetime.replace(hour=0, minute=0)
@@ -437,7 +447,7 @@ def ebay_scrape(base_url: str,
         try:
             item_domestic = str(item.find('span', class_='s-item__location').text).startswith("From ") == False
         except Exception as e:
-            #failed to find item location, meaning the item is domestic
+            # failed to find item location, meaning the item is domestic
             item_domestic = True
             if e_vars.verbose: print('sp_get_domestic', e)
         return item_domestic
@@ -599,23 +609,24 @@ def ebay_scrape(base_url: str,
     days_before_date = days_before_date.replace(hour=0, minute=0, second=0, microsecond=0)
     comp_date = days_before_date - timedelta(days=e_vars.days_before)
 
-    for x in range(1, 5):
+    for search_page_num in range(1, 5):
         # eBays servers will kill your connection if you hit them too frequently
         time.sleep(e_vars.sleep_len * random.uniform(0, 1))
 
-        url = f"{base_url}{x}"
+        url = f"{base_url}{search_page_num}"
 
-        if x == 4:
+        if search_page_num == 4:
             soup_source = adapter.get(url, timeout=10).text
         else:
-            with requests_cache.disabled():  # We don't want to cache all the calls into the individual listings, they'll never be repeated
+            # We don't want to cache all the calls into the individual listings, they'll never be repeated
+            with requests_cache.disabled():
                 soup_source = adapter.get(url, timeout=10).text
         soup = BeautifulSoup(soup_source, 'lxml')
         items = soup.find_all('li', attrs={'class': 's-item'})
 
         time_break = False
 
-        if e_vars.verbose: print(x, len(items), url)
+        if e_vars.verbose: print(search_page_num, len(items), url)
 
         for n, item in enumerate(items):
             if e_vars.debug or e_vars.verbose: print('----------------------------')
@@ -747,16 +758,16 @@ def ebay_scrape(base_url: str,
                     brand = ''
                     title = item_title
 
-                    for b in e_vars.brand_list:
-                        if b.upper() in title.upper():
-                            b = b.replace(' ', '')
-                            brand = b
+                    for brand_val in e_vars.brand_list:
+                        if brand_val.upper() in title.upper():
+                            brand_val = brand_val.replace(' ', '')
+                            brand = brand_val
 
                     model = ''
-                    for m in e_vars.model_list:
-                        if m[0].upper() in title.upper():
-                            model = m[0].replace(' ', '')
-                            brand = m[1].replace(' ', '')
+                    for model_val in e_vars.model_list:
+                        if model_val[0].upper() in title.upper():
+                            model = model_val[0].replace(' ', '')
+                            brand = model_val[1].replace(' ', '')
                     if e_vars.verbose: print('Brand', brand)
                     if e_vars.verbose: print('Model', model)
 
@@ -864,7 +875,7 @@ def ebay_scrape(base_url: str,
 
 def ebay_search(query: str,
                 e_vars: EbayVariables,
-                queryexclusions: List[str] = [],
+                query_exclusions: List[str] = [],
                 msrp: float = 0,
                 min_price: float = 0,
                 max_price: float = 10000,
@@ -875,7 +886,7 @@ def ebay_search(query: str,
     ----------
     query :
     e_vars :
-    queryexclusions :
+    query_exclusions :
     msrp :
     min_price :
     max_price :
@@ -886,7 +897,7 @@ def ebay_search(query: str,
 
     """
 
-    if not validate_inputs(query, e_vars, queryexclusions, msrp, min_price, max_price, min_date):
+    if not validate_inputs(query, e_vars, query_exclusions, msrp, min_price, max_price, min_date):
         print('Input Validation Failed!')
         return
 
@@ -938,13 +949,12 @@ def ebay_search(query: str,
 
     except Exception as e:
         # if file does not exist, create it
-        dict = {'Title'      : [], 'Brand': [], 'Model': [], 'description': [], 'Price': [], 'Shipping': [],
-                'Total Price': [], 'Sold Date': [], 'Sold Datetime': [], 'Quantity': [], 'Multi Listing': [],
-                'Seller'     : [], 'Seller Feedback': [], 'Link': [], 'Store': [], 'Ignore': [], 'City': [],
-                'State'      : [], 'Country': [], 'Sold Scrape Datetime': []}
-        df = pd.DataFrame(dict)
-        df = df.astype({'Brand': 'object'})
-        df = df.astype({'Model': 'object'})
+        df_dict = {'Title'      : [], 'Brand': [], 'Model': [], 'description': [], 'Price': [], 'Shipping': [],
+                   'Total Price': [], 'Sold Date': [], 'Sold Datetime': [], 'Quantity': [], 'Multi Listing': [],
+                   'Seller'     : [], 'Seller Feedback': [], 'Link': [], 'Store': [], 'Ignore': [], 'City': [],
+                   'State'      : [], 'Country': [], 'Sold Scrape Datetime': []}
+        df = pd.DataFrame(df_dict)
+
         if e_vars.verbose or e_vars.debug: print('ebay_search-df_load:', e)
         if e_vars.run_cached:
             print(
@@ -954,7 +964,8 @@ def ebay_search(query: str,
     try:
         df_sum = pd.read_excel('summary.xlsx', index_col=0, engine='openpyxl')
 
-    except:
+    except Exception as e:
+        if e_vars.verbose: print('Creating summary.xlsx file')
         # if file does not exist, create it
         dict_sum = {'Run Datetime'                         : [], 'query': [], 'Country': [], 'MSRP': [],
                     'Past Week Median Price'               : [],
@@ -973,8 +984,8 @@ def ebay_search(query: str,
 
         query_w_excludes = query
 
-        if len(queryexclusions) > 0:
-            for exclusion in queryexclusions:
+        if len(query_exclusions) > 0:
+            for exclusion in query_exclusions:
                 query_w_excludes += ' -' + exclusion
 
         if e_vars.verbose: print(query_w_excludes)
@@ -989,9 +1000,9 @@ def ebay_search(query: str,
             num_check = 201
 
         while i != len(price_ranges) - 1:
-            time.sleep(
-                    e_vars.sleep_len * random.uniform(0,
-                                                      1))  # eBays servers will kill your connection if you hit them too frequently
+            # eBays servers will kill your connection if you hit them too frequently
+            time.sleep(e_vars.sleep_len * random.uniform(0, 1))
+
             fomatted_query = query_w_excludes.replace(' ', '+').replace(',', '%2C').replace('(', '%28').replace(')',
                                                                                                                 '%29')
             url = f"https://www.ebay.{extension}/sch/i.html?_from=R40&_nkw={fomatted_query}&_sacat={e_vars.sacat}&LH_PrefLoc=1&LH_Sold=1&LH_Complete=1&_udlo={price_ranges[i]}&_udhi={price_ranges[i + 1]}&rt=nc&_ipg=200&_pgn=4"
@@ -1000,9 +1011,6 @@ def ebay_search(query: str,
             soup = BeautifulSoup(source, 'lxml')
             items = soup.find_all('li', attrs={'class': 's-item'})
             if e_vars.verbose: print(price_ranges, len(items), i, price_ranges[i], price_ranges[i + 1], url)
-
-            currentYear = datetime.now().year
-            currentMonth = datetime.now().month
 
             # Get the last item on the page, if it's earlier than min_date or currentDate - days_before this break works
             # despite there being >800 items as the others are too old
@@ -1017,7 +1025,7 @@ def ebay_search(query: str,
                                                                                    e_vars, url)
 
                     if search_date:
-                        last_item_date = last_item_date
+                        last_item_date = search_date
                         found_date = True
                         break
                 except Exception as e:
@@ -1034,11 +1042,13 @@ def ebay_search(query: str,
             if days_before_date > last_item_date or (found_date and last_item_date < min_date):
                 i += 1
             elif len(items) >= num_check and round(price_ranges[i + 1] - price_ranges[i], 2) > 0.01:
-                # If there's only one cent difference between the two just increment, we need to do some special logic below
+                # If there's only one cent difference between the two just increment, we need to do some special logic
+                # below
                 midpoint = round((price_ranges[i] + price_ranges[i + 1]) / 2, 2)
                 price_ranges = price_ranges[:i + 1] + [midpoint] + price_ranges[i + 1:]
             elif len(items) >= num_check and round(price_ranges[i + 1] - price_ranges[i], 2) == 0.01:
-                # If there is a one cent difference between the two, we can have eBay just return that specific price to get a little bit finer detail
+                # If there is a one cent difference between the two, we can have eBay just return that specific price
+                # to get a little bit finer detail
                 price_ranges = price_ranges[:i + 1] + [price_ranges[i]] + [price_ranges[i + 1]] + price_ranges[i + 1:]
                 i += 2
             else:
@@ -1081,7 +1091,6 @@ def ebay_search(query: str,
     last_week = df.loc[
         df['Sold Date'] >= (datetime.now() - timedelta(days=7)).replace(hour=0, minute=0, second=0, microsecond=0)]
     tot_sales = (df['Total Price'] * df['Quantity']).sum()
-    tot_ini_sales = (df['Price'] * df['Quantity']).sum()
 
     print(f"Past Week Median Price: {e_vars.ccode}{last_week['Total Price'].median()}")
     print(f"Median Price: {e_vars.ccode}{median_price}")
