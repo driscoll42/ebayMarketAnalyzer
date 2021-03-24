@@ -1,5 +1,21 @@
 """
+plotting.py
 
+Contains all the functions for creating various plots/graphs
+
+Current functions:
+validate_inputs
+get_purchase_hist
+get_offer_hist
+
+get_quantity_hist
+
+sp_get_datetime
+
+
+ebay_scrape
+
+ebay_search
 """
 # Initial Code: https://oaref.blogspot.com/2019/01/web-scraping-using-python-part-2.html
 
@@ -34,6 +50,23 @@ def validate_inputs(query: str,
                     min_price: float = 0,
                     max_price: float = 10000,
                     min_date: datetime = datetime.now() - timedelta(days=90)) -> bool:
+    """
+    Validates the inputs of the ebay_search function and if any are
+
+    Parameters
+    ----------
+    query : The main query to search on eBay
+    e_vars : An instance of EbayVariables
+    query_exclusions : A list of search terms to exclude from the eBay search
+    msrp : The msrp of the item being searched
+    min_price : The minimum price to search for
+    max_price : The maximum price to search for
+    min_date : The earliest eBay sale to scrape, anything before this is discarded
+
+    Returns
+    -------
+        A boolean value if inputs are valid or not.
+    """
     validation_success = True
     if not isinstance(query, str):
         print('query is not a string!')
@@ -185,6 +218,19 @@ def validate_inputs(query: str,
 def get_purchase_hist(trs, e_vars: EbayVariables, sold_list: List[Union[float, int, datetime, datetime]],
                       sold_hist_url: str) -> Tuple[
     List[Union[float, int, datetime]], Union[Union[str, datetime], Any], Union[str, Any]]:
+    """
+
+    Parameters
+    ----------
+    trs :
+    e_vars :
+    sold_list :
+    sold_hist_url :
+
+    Returns
+    -------
+
+    """
     bin_date, bin_datetime = '', ''
     # Typically these are true
     price_col = 2
@@ -245,6 +291,19 @@ def get_purchase_hist(trs, e_vars: EbayVariables, sold_list: List[Union[float, i
 def get_offer_hist(trs, e_vars: EbayVariables, sold_list: List[Union[float, int, datetime, datetime]],
                    sold_hist_url: str) -> Tuple[
     List[Union[float, int, datetime]], Union[Union[str, datetime], Any], Union[str, Any]]:
+    """
+
+    Parameters
+    ----------
+    trs :
+    e_vars :
+    sold_list :
+    sold_hist_url :
+
+    Returns
+    -------
+
+    """
     off_date, off_datetime = '', ''
 
     for tr in trs:
@@ -352,6 +411,19 @@ def get_quantity_hist(sold_hist_url: str,
 
 
 def sp_get_datetime(item, days_before_date, e_vars, sp_link):
+    """
+
+    Parameters
+    ----------
+    item :
+    days_before_date :
+    e_vars :
+    sp_link :
+
+    Returns
+    -------
+
+    """
     item_date, item_datetime = '', ''
     try:
         current_year = datetime.now().year
@@ -881,20 +953,22 @@ def ebay_search(query: str,
                 max_price: float = 10000,
                 min_date: datetime = datetime.now() - timedelta(days=365)) -> pd.DataFrame:
     """
+    The main function of the project which searches eBay for a query, gathering all sold listings and outputting a
+    dataframe of the search query and generates basic plots on the data.
 
     Parameters
     ----------
-    query :
-    e_vars :
-    query_exclusions :
-    msrp :
-    min_price :
-    max_price :
-    min_date :
+    query : The main query to search on eBay
+    e_vars : An instance of EbayVariables
+    query_exclusions : A list of search terms to exclude from the eBay search
+    msrp : The msrp of the item being searched
+    min_price : The minimum price to search for
+    max_price : The maximum price to search for
+    min_date : The earliest eBay sale to scrape, anything before this is discarded
 
     Returns
     -------
-
+        A dataframe containing the sales history of the search query
     """
 
     if not validate_inputs(query, e_vars, query_exclusions, msrp, min_price, max_price, min_date):

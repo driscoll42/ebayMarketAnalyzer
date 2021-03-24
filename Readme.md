@@ -17,9 +17,9 @@ was written during the PS5, Zen 3, and Xbox Series X launch).
 Note: If you need to do commercial research, make actual business decisions, etc... off of eBay data, I *highly*
 encourage you to
 use [eBay's TeraPeaks](https://pages.ebay.com/seller-center/listing-and-marketing/terapeak.html?mkevt=1&mkcid=1&mkrid=711-53200-19255-0&campid=5336728181&customid=&toolid=10001)
-instead. It goes back further in time, has more detail, is faster, and is officially supported, plus only $12-$19/month
-or free if you have a Basic, Premium, Anchor, or Enterprise eBay Store. This tool is not meant to compete with it, but
-is an interesting side project for me that I make open source.
+instead. It goes back further in time, has more detail, is faster, and is officially supported, plus free if you have a
+Basic, Premium, Anchor, or Enterprise eBay Store or just $12-$19/month otherwise. This tool is not meant to compete with
+it, but is an interesting side project for me that I make open source.
 
 The code was used in a series of articles I wrote in late 2020 to early 2021:
 

@@ -21,7 +21,8 @@ model_list = [['XC3', 'EVGA'], ['TRINITY', 'ZOTAC'], ['FTW3', 'EVGA'], ['FOUNDER
               [' FE ', 'FOUNDER'], ['TWIN EDGE', 'ZOTAC'], ['POWER COLOR', 'POWERCOLOR'], ['ALIENWARE', 'DELL']]
 
 query_exclusions = ['image', 'jpeg', 'img', 'picture', 'pic', 'jpg', 'charity', 'photo', 'humans', 'prints', 'framed',
-                    'print', 'people', 'inkjet', 'pix', 'paper', 'digital', 'pics', 'alternative']
+                    'print', 'people', 'inkjet', 'pix', 'paper', 'digital', 'pics', 'alternative', 'delid', 'jpgImage',
+                    'pngImage', 'images', 'canvas']
 
 ignore_list = ['BENT PINS', 'BROKEN', 'PARTS ONLY']
 
@@ -34,8 +35,8 @@ e_vars = EbayVariables(run_cached=False,
                        show_plots=True,
                        main_plot=True,
                        profit_plot=False,
-                       trend_type='linear',
-                       trend_param=[14],  # [Poly_Degree, Days_Out]
+                       trend_type='poly',
+                       trend_param=[1, 14],  # [Poly_Degree, Days_Out]
                        extra_title_text='',
                        country='USA',
                        ccode='$',
@@ -103,12 +104,14 @@ ebay_seller_plot(zen3_frames, 'Zen 3', e_vars=cpu_vars)
 # ---------------------------------------------------------------------------------------------
 
 # Big Navi Analysis
+df_6700 = ebay_search('RX 6700', gpu_vars, query_exclusions, 479, 479, 2500)
 df_6800 = ebay_search('RX 6800 -XT', gpu_vars, query_exclusions, 579, 579, 2500)
 df_6800xt = ebay_search('RX 6800 XT', gpu_vars, query_exclusions, 649, 850, 2000)
 df_6900 = ebay_search('RX 6900', gpu_vars, query_exclusions, 999, 999, 999999, min_date=datetime(2020, 12, 8))
 
 # Big Navi Plotting
-bignavi_frames = [df_6800, df_6800xt, df_6900]
+
+bignavi_frames = [df_6700, df_6800, df_6800xt, df_6900]
 median_plotting(bignavi_frames, 'Big Navi Median Pricing', e_vars=gpu_vars, roll=0)
 median_plotting(bignavi_frames, 'Big Navi Median Pricing', e_vars=gpu_vars, roll=7)
 

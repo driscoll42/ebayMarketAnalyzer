@@ -6,12 +6,12 @@ Contains all the functions for creating various plots/graphs
 Current functions:
     ebay_plot - Creates a scatterplot of sales with a line connecting the median sale each date, the MSRP, scalper
                     profit cutoffs, and trend lines
-    plot_profits -
-    median_plotting -
-    crpyto_comp_plotting -
-    pareto_plot -
-    ebay_seller_plot -
-    brand_plot -
+    plot_profits - Plots the cumuliative profits for ebay, scalpers, and paypal alongside total sales over time
+    median_plotting - Plots the median daily price for multiple scraped items
+    crpyto_comp_plotting - Plots the price of ETH and BTC vs daily median pricing of scraped items
+    pareto_plot - Creates a Pareto Plot, called by ebay_seller_plot
+    ebay_seller_plot - Creates a pareto bar chart comparing ebay stores vs non-stores grouped by feedback and number sold
+    brand_plot - Based on the Brand column in the df, plots out the median price per each brand over time
 """
 
 import math
@@ -392,8 +392,11 @@ def median_plotting(dfs: List[pd.DataFrame],
 def crpyto_comp_plotting(dfs: List[pd.DataFrame],
                          title: str,
                          e_vars: EbayVariables,
+                         start_date: datetime,
+                         end_date: datetime,
                          roll: int = 0,
-                         min_msrp: int = 100) -> None:
+                         min_msrp: int = 100
+                         ) -> None:
     """
 
     Parameters
@@ -413,6 +416,9 @@ def crpyto_comp_plotting(dfs: List[pd.DataFrame],
     min_date = datetime.now()
     max_date = datetime.now() - timedelta(365)
     for df in dfs:
+        df = df[df['Sold Date'] >= start_date]
+        df = df[df['Sold Date'] <= end_date]
+
         df_min = df['Sold Date'].min()
         df_max = df['Sold Date'].max()
         if df_min < min_date:
@@ -420,25 +426,26 @@ def crpyto_comp_plotting(dfs: List[pd.DataFrame],
         if df_max > max_date:
             max_date = df_max
 
-    min_date = str(min_date).split(' ')[0]
+    min_date = str(min_date - timedelta(1)).split(' ')[0]
     max_date = str(max_date).split(' ')[0]
 
     # Etherium Pricing
+    print(min_date, max_date)
     eth_crypto = get_crypto_data("ETH/USDT", min_date, max_date)
     eth_prices = eth_crypto.close
-    eth_prices = eth_prices.div(eth_prices.min())
-    eth_prices = eth_prices.mul(100)
+    eth_prices = eth_prices.div(eth_prices[0])
+    # eth_prices = eth_prices.mul(100)
 
     # Bitcoin Pricing
     btc_crypto = get_crypto_data("BTC/USDT", min_date, max_date)
     btc_prices = btc_crypto.close
-    btc_prices = btc_prices.div(btc_prices.min())
+    btc_prices = btc_prices.div(btc_prices[0])
     btc_prices = btc_prices.mul(100)
 
     colors = ['#000000', '#7f0000', '#808000', '#008080', '#000080', '#ff8c00', '#2f4f4f', '#00ff00', '#0000ff',
               '#ff00ff', '#6495ed', '#ff1493', '#98fb98', '#ffdab9']
     plt.figure()  # In this example, all the plots will be in one figure.
-    plt.ylabel("% of MSRP")
+    plt.ylabel("GPU: Price/hashrate - ETH: Price")
     plt.xlabel("Sale Date")
     plt.tick_params(axis='y')
     plt.tick_params(axis='x', rotation=30)
@@ -447,21 +454,37 @@ def crpyto_comp_plotting(dfs: List[pd.DataFrame],
         color = i % (len(colors) - 1)
 
         df = prep_df(df)
+        df = df[df['Sold Date'] >= start_date]
+        df = df[df['Sold Date'] <= end_date]
 
-        med_price_scaled = df.groupby(['Sold Date'])['Total Price'].median() / df['msrp'].iloc[0] * 100
+        hash_rate = 1
+        if '3060' in df['item'].iloc[0]:
+            hash_rate = 60
+        elif '3070' in df['item'].iloc[0]:
+            hash_rate = 60
+        elif '3080' in df['item'].iloc[0]:
+            hash_rate = 98
+        elif '3090' in df['item'].iloc[0]:
+            hash_rate = 120
+
+        med_prices = df.groupby(['Sold Date'])['Total Price'].median() / hash_rate
+
+        # med_prices = 100 * med_prices / med_prices[0]
+        # print(df['item'].iloc[0], 'R Squared:', r2_score(eth_prices[-(len(med_price_scaled)):], med_price_scaled))
+        print(df['item'].iloc[0], 'R Squared:', r2_score(med_prices, eth_prices[-(len(med_prices)):]))
 
         # med_mad = robust.mad(df.groupby(['Sold Date'])['Total Price']/ msrps[i] * 100)
         # print(med_mad)
 
         if roll > 0:
-            med_price_scaled = med_price_scaled.rolling(roll, min_periods=1).mean()
+            med_prices = med_prices.rolling(roll, min_periods=1).mean()
 
-        min_msrp = min(min_msrp, min(med_price_scaled))
-        plt.plot(med_price_scaled, colors[color], label=df['item'].iloc[0])
+        min_msrp = min(min_msrp, min(med_prices))
+        plt.plot(med_prices, colors[color], label=df['item'].iloc[0])
         # plt.fill_between(med_price_scaled, med_price_scaled - med_mad, med_price_scaled + med_mad, color=colors[ci])
 
     plt.plot(eth_prices, label='Etherium')
-    plt.plot(btc_prices, label='Bitcoin')
+    #plt.plot(btc_prices, label='Bitcoin')
     plt.ylim(bottom=min_msrp)
     plt.legend()
     plt.tight_layout()
@@ -487,6 +510,7 @@ def crpyto_comp_plotting(dfs: List[pd.DataFrame],
         plt.title(f"{title} - {e_vars.ccode}")
     for i, df in enumerate(dfs):
         color = i % (len(colors) - 1)
+        df = df[df['Sold Date'] >= datetime(2021, 1, 1)]
 
         med_price = df.groupby(['Sold Date'])['Total Price'].median()
 
