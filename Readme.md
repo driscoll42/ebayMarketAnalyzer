@@ -1,3 +1,5 @@
+## eBay has added a CAPTCHA on the item search pages now. Whether it's IP based or detecting that you're using BeautifulSoup, given that they're actively trying to stop scripts like this I'm not going to try to circumvent their security. This code will remain up for those interested, but it is likely broken forever.
+
 # eBay Marker Analyzer
 
 #### Formerly eBay Sold Price Scraper
@@ -30,7 +32,6 @@ The code was used in a series of articles I wrote in late 2020 to early 2021:
 * [An analysis of the $80 million Xbox Series S/X Scalping Market](https://dev.to/driscoll42/xbox-series-s-x-scalping-market-analysis-l3m)
 * [An analysis of the $143 million PS5 Scalping Market](https://dev.to/driscoll42/an-analysis-of-the-143-million-ps5-scalping-market-414d)
 * [An analysis of the UK £54 million PS5/Xbox and computer hardware Scalping Market](https://dev.to/driscoll42/an-analysis-of-the-uk-54-million-ps5-xbox-and-computer-hardware-scalping-market-4i79)
-
 
 Examples:
 
@@ -76,17 +77,17 @@ Examples:
   directory regardless. If show_plots is False this is False
 * trend_type: str - default='linear': What kind of Trendline to plot on the Sales Plot. Allowed values are "linear", "
   poly", "roll", or "none"
-  * linear - Creates a Linear Regression trendline
-  * poly - Creates a polynomial best fit line
-  * roll - Creates a rolling average of the best fit line
-  * none - Does not plot any trendline
+    * linear - Creates a Linear Regression trendline
+    * poly - Creates a polynomial best fit line
+    * roll - Creates a rolling average of the best fit line
+    * none - Does not plot any trendline
 * trend_param: List[int] - default=[14]
-  * linear - This should be a list with a single value, e.g. [14], how many days in the future it should project the
-    trendline. If 0 it will not project at all.
-  * poly - This should be a list with two values, e.g. [2, 14]. The first parameter is the degree of the polynomial, the
-    second how many days in the future to project. The degree should be >=1 and the days should be >=01
-  * roll - This should be a list with a single value, e.g. [7]. This is how many days to use for the rolling average
-  * none - Does not matter what is in this field.
+    * linear - This should be a list with a single value, e.g. [14], how many days in the future it should project the
+      trendline. If 0 it will not project at all.
+    * poly - This should be a list with two values, e.g. [2, 14]. The first parameter is the degree of the polynomial, the
+      second how many days in the future to project. The degree should be >=1 and the days should be >=01
+    * roll - This should be a list with a single value, e.g. [7]. This is how many days to use for the rolling average
+    * none - Does not matter what is in this field.
 
 #### Search Parameters
 
@@ -142,28 +143,30 @@ TO DO
 ## FAQ
 
 * This is awesome! But it takes forever to run, what can I do to make it faster?
-  * There are a number of variables you can set to speed up the program
+    * There are a number of variables you can set to speed up the program
 
-  1. query - Obviously make this as *specific* as possible
-  2. query_exceptions - Any minus conditions (e.g. if you're searching for 3070s but don't want EVGA, add EVGA to
-     query_exclusions to filter those out)
-  3. min_msrp/max_msrp - Set the minimum and maximum prices you want the program to search between
-  4. sacat - If you want to search an item, choose the most specific category on eBay. For example, if you want to
-     search for 3080s they fall under:
+    1. query - Obviously make this as *specific* as possible
+    2. query_exceptions - Any minus conditions (e.g. if you're searching for 3070s but don't want EVGA, add EVGA to
+       query_exclusions to filter those out)
+    3. min_msrp/max_msrp - Set the minimum and maximum prices you want the program to search between
+    4. sacat - If you want to search an item, choose the most specific category on eBay. For example, if you want to
+       search for 3080s they fall under:
+
     * All -> Computers/Tablets & Networking -> Computer Components & Parts -> Graphics/Video Cards
     * If you query on eBay and look at the url it looks like "https://www.ebay.com/sch/27386/i.html?_from=R40&_nkw=3080"
     * The sacat is the vbalue between /sch/#####/i.html, 27386 above
-  5. quantity_hist - If you don't need to capture every single sale on eBay, and just need it mostly accurate, set
-     quantity_hist=False. This value is when you want to go into a listing which has multiple sales and get all those
-     sales. This requires more query calls to eBay and takes longer. *Most* sales are not multilistings so this normally
-     will not result in a large difference, but it depends on each item
-  6. feedback - If you don't care about getting the seller feedback, knowing if the seller is a store, the city, state,
-     and country of the seller, this can be False. Note that if quantity_hist is True, this is value doesn't matter as
-     getting to the sale history requires going to the item page which gets this info
-  7. sleep_len - This is a sleep timer added to the code to reduce load on eBay's servers. If this is too low eBay will
-     terminaate your connection. Also if too low eBay will start giving CAPTHCAs, but only on the multi listing sales
-     history page. If you have quantity_hist = False this can definitely be set lower. However, it's also just polite to
-     not have this too low.
+
+    5. quantity_hist - If you don't need to capture every single sale on eBay, and just need it mostly accurate, set
+       quantity_hist=False. This value is when you want to go into a listing which has multiple sales and get all those
+       sales. This requires more query calls to eBay and takes longer. *Most* sales are not multilistings so this normally
+       will not result in a large difference, but it depends on each item
+    6. feedback - If you don't care about getting the seller feedback, knowing if the seller is a store, the city, state,
+       and country of the seller, this can be False. Note that if quantity_hist is True, this is value doesn't matter as
+       getting to the sale history requires going to the item page which gets this info
+    7. sleep_len - This is a sleep timer added to the code to reduce load on eBay's servers. If this is too low eBay will
+       terminaate your connection. Also if too low eBay will start giving CAPTHCAs, but only on the multi listing sales
+       history page. If you have quantity_hist = False this can definitely be set lower. However, it's also just polite to
+       not have this too low.
 
 The quantity_hist and feedback settings are the two which will most dramatically improve your run times, but they also
 reduce the amount of data you get. All depends on what data you need or don't need.
@@ -171,6 +174,6 @@ reduce the amount of data you get. All depends on what data you need or don't ne
 ## Release History
 
 * 0.1.0
-  * The first proper release
+    * The first proper release
 * 0.5.0
-  * Added a number of performance enhancements and ensuring correct data being scraped
+    * Added a number of performance enhancements and ensuring correct data being scraped
