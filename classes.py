@@ -9,6 +9,8 @@ Current Classes:
 from dataclasses import dataclass, field
 from typing import List
 
+from pandas import DataFrame
+
 
 # pylint: disable=too-many-instance-attributes
 # pylint: disable=line-too-long
@@ -104,6 +106,9 @@ class EbayVariables:
 
     # search_params
     sacat: int = field(default=0)
+    agent_list: DataFrame = field(default=DataFrame())
+    good_agent_list: DataFrame = field(default=DataFrame())
+    free_agent_list: DataFrame = field(default=DataFrame())
 
     # rates
     tax_rate: float = field(default=0.0625)

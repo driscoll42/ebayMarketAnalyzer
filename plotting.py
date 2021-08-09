@@ -20,6 +20,7 @@ from copy import deepcopy
 from datetime import timedelta, datetime
 from typing import List, Tuple
 
+import matplotlib.patches as mpatches
 import matplotlib.ticker as ticker
 import numpy.polynomial.polynomial as poly
 import pandas as pd
@@ -63,6 +64,7 @@ def ebay_plot(query: str,
     median_prices = df_calc.groupby(['Sold Date'])['Total Price'].median()
     max_price = df_calc.groupby(['Sold Date'])['Total Price'].max()
     min_price = df_calc.groupby(['Sold Date'])['Total Price'].min()
+    total_sold = df_calc['Quantity'].sum()
     max_med = max(median_prices)
     max_max = max(max_price)
     min_min = min(min_price)
@@ -123,8 +125,14 @@ def ebay_plot(query: str,
     formatter = ticker.FormatStrFormatter(f'{e_vars.ccode}%1.0f')
     ax1.yaxis.set_major_formatter(formatter)
     ax1.set_xlabel("Sold Date")
-    ax1.set_ylim(top=min(1.5 * max_med, max_max), bottom=min(min_min * 0.95, msrp * 0.95))
+    ax1.set_ylim(top=min(1.25 * max_med, max_max), bottom=min(min_min * 0.95, msrp * 0.95))
     lines, labels = ax1.get_legend_handles_labels()
+
+    # https://stackoverflow.com/questions/39500265/manually-add-legend-items-python-matplotlib
+    tot_sold_patch = mpatches.Patch(color='red', label=f'Total Sold: {total_sold}')
+    lines.append(tot_sold_patch)
+    labels.append(f'Total Sold: {total_sold}')
+
     ax1.legend(lines, labels, bbox_to_anchor=(0, -0.325, 1, 0), loc="lower left",
                mode="expand", ncol=2)
 
@@ -138,7 +146,7 @@ def ebay_plot(query: str,
     # Poly Trendline
     if e_vars.trend_type == 'poly' or e_vars.trend_type == 'linear' or e_vars.trend_type == 'roll':
         ax2 = ax1.twinx()
-        ax2.set_ylim(top=min(1.5 * max_med, max_max), bottom=min(min_min * 0.95, msrp * 0.95))
+        ax2.set_ylim(top=min(1.25 * max_med, max_max), bottom=min(min_min * 0.95, msrp * 0.95))
         ax2.grid(False)
         ax2.tick_params(right=False)  # remove the ticks
         ax2.set(ylabel=None)  # remove the y-axis label
@@ -430,10 +438,10 @@ def crpyto_comp_plotting(dfs: List[pd.DataFrame],
     max_date = str(max_date).split(' ')[0]
 
     # Etherium Pricing
-    print(min_date, max_date)
-    eth_crypto = get_crypto_data("ETH/USDT", min_date, max_date)
-    eth_prices = eth_crypto.close
-    eth_prices = eth_prices.div(eth_prices[0])
+    # print(min_date, max_date)
+    eth_crypto_full = get_crypto_data("ETH/USDT", min_date, max_date)
+    eth_crypto_full = eth_crypto_full.close
+    eth_prices = eth_crypto_full.div(eth_crypto_full[0])
     # eth_prices = eth_prices.mul(100)
 
     # Bitcoin Pricing
@@ -458,20 +466,25 @@ def crpyto_comp_plotting(dfs: List[pd.DataFrame],
         df = df[df['Sold Date'] <= end_date]
 
         hash_rate = 1
-        if '3060' in df['item'].iloc[0]:
-            hash_rate = 60
+        # Source https://cryptoage.com/en/2380-the-current-table-with-the-hash-rate-of-videocards-for-2021.html
+        if '3060 Ti' in df['item'].iloc[0]:
+            hash_rate = 59
+        elif '3060' in df['item'].iloc[0]:
+            hash_rate = 37.5
         elif '3070' in df['item'].iloc[0]:
-            hash_rate = 60
+            hash_rate = 59
+        elif '3080 Ti' in df['item'].iloc[0]:
+            hash_rate = 64
         elif '3080' in df['item'].iloc[0]:
-            hash_rate = 98
+            hash_rate = 100
         elif '3090' in df['item'].iloc[0]:
-            hash_rate = 120
+            hash_rate = 111
 
-        med_prices = df.groupby(['Sold Date'])['Total Price'].median() / hash_rate
+        med_prices = df.groupby(['Sold Date'])['Total Price'].median() / hash_rate / eth_prices
 
         # med_prices = 100 * med_prices / med_prices[0]
         # print(df['item'].iloc[0], 'R Squared:', r2_score(eth_prices[-(len(med_price_scaled)):], med_price_scaled))
-        print(df['item'].iloc[0], 'R Squared:', r2_score(med_prices, eth_prices[-(len(med_prices)):]))
+        # print(df['item'].iloc[0], 'R Squared:', r2_score(med_prices, eth_prices[-(len(med_prices)):]))
 
         # med_mad = robust.mad(df.groupby(['Sold Date'])['Total Price']/ msrps[i] * 100)
         # print(med_mad)
@@ -484,10 +497,12 @@ def crpyto_comp_plotting(dfs: List[pd.DataFrame],
         # plt.fill_between(med_price_scaled, med_price_scaled - med_mad, med_price_scaled + med_mad, color=colors[ci])
 
     plt.plot(eth_prices, label='Etherium')
-    #plt.plot(btc_prices, label='Bitcoin')
-    plt.ylim(bottom=min_msrp)
+    # plt.plot(btc_prices, label='Bitcoin')
+    # plt.ylim(bottom=min_msrp)
     plt.legend()
-    plt.tight_layout()
+    # plt.tight_layout()
+    plt.subplots_adjust(bottom=0.2)
+    # plt.tight_layout()
 
     if roll > 0:
         plt.title(f"{title} {roll} Day Rolling Average - % MSRP")
@@ -519,7 +534,7 @@ def crpyto_comp_plotting(dfs: List[pd.DataFrame],
 
         min_msrp = min(min_msrp, min(med_price))
         plt.plot(med_price, colors[color], label=df['item'].iloc[0])
-    plt.ylim(bottom=min_msrp)
+    # plt.ylim(bottom=min_msrp)
     formatter = ticker.FormatStrFormatter(f'{e_vars.ccode}%1.0f')
     ax1.yaxis.set_major_formatter(formatter)
     plt.legend()

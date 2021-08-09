@@ -8,8 +8,8 @@ fb_dict = {}
 
 for f in os.listdir(directory):
     print(f)
-    if str(f).find('~') < 0:
-        df = pd.read_excel('Spreadsheets/' + f, index_col=0, engine='openpyxl')
+    if str(f).find('~') < 0 and 'xlsx' in str(f):
+        df = pd.read_excel('../Spreadsheets/' + f, index_col=0, engine='openpyxl')
         dup_df = df.copy(deep=True)
 
         for index, row in dup_df.iterrows():
@@ -29,10 +29,10 @@ num_updates = 0
 
 for f in os.listdir(directory):
     print(f)
-    if str(f).find('~') < 0:
+    if str(f).find('~') < 0 and 'xlsx' in str(f):
 
         create = False
-        df = pd.read_excel('Spreadsheets/' + f, index_col=0, engine='openpyxl')
+        df = pd.read_excel('../Spreadsheets/' + f, index_col=0, engine='openpyxl')
         dup_df = df.copy(deep=True)
 
         for index, row in dup_df.iterrows():
@@ -50,4 +50,34 @@ for f in os.listdir(directory):
 
         print(num_updates)
         if create:
-            dup_df.to_excel('temp/' + f, engine='openpyxl')
+            dup_df.to_excel('../temp/' + f, engine='openpyxl')
+
+print('--------------------------')
+
+for f in os.listdir(directory):
+    print(f)
+    if str(f).find('~') < 0 and 'xlsx' in str(f):
+
+        create = False
+        df = pd.read_excel('../Spreadsheets/' + f, index_col=0, engine='openpyxl')
+        dup_df = df.copy(deep=True)
+
+        for index, row in dup_df.iterrows():
+            seller = row['Seller']
+            sell_fb = row['Seller Feedback']
+            if sell_fb == 'None':
+                sell_fb = -1
+
+            max_fb = fb_dict[seller]
+
+            if sell_fb < max_fb:
+                create = True
+                num_updates += 1
+                dup_df.loc[dup_df['Seller'] == seller, 'Seller Feedback'] = max_fb
+
+        dup_df.loc[dup_df['Seller Feedback'] == 'None', 'Seller Feedback'] = -1
+        dup_df.loc[dup_df['Seller Feedback'] <= 5, 'Ignore'] = 1
+        dup_df = dup_df.sort_values(by='Sold Date')
+
+        if create:
+            dup_df.to_excel('../temp/' + f, engine='openpyxl')

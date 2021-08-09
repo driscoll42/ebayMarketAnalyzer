@@ -1,21 +1,9 @@
 """
-plotting.py
+THIS DOES NOT WORK ANYMORE.
 
-Contains all the functions for creating various plots/graphs
+eBay added CAPTCHAs which effectively broke this code and I view it as unethical to try to work around the CAPTCHAs
 
-Current functions:
-validate_inputs
-get_purchase_hist
-get_offer_hist
-
-get_quantity_hist
-
-sp_get_datetime
-
-
-ebay_scrape
-
-ebay_search
+This is left up for the sake of interest and learning.
 """
 # Initial Code: https://oaref.blogspot.com/2019/01/web-scraping-using-python-part-2.html
 
@@ -41,7 +29,6 @@ from plotting import ebay_plot, plot_profits
 
 # pylint: disable=line-too-long
 # pylint: disable=multiple-statements
-
 
 def validate_inputs(query: str,
                     e_vars: EbayVariables,
@@ -371,6 +358,7 @@ def get_quantity_hist(sold_hist_url: str,
         # We don't want to cache all the calls into the individual listings, they'll never be repeated
         with requests_cache.disabled():
             source = adapter.get(sold_hist_url, timeout=10).text
+
         soup = BeautifulSoup(source, 'lxml')
 
         # items = soup.find_all('tr')
@@ -693,6 +681,7 @@ def ebay_scrape(base_url: str,
             # We don't want to cache all the calls into the individual listings, they'll never be repeated
             with requests_cache.disabled():
                 soup_source = adapter.get(url, timeout=10).text
+
         soup = BeautifulSoup(soup_source, 'lxml')
         items = soup.find_all('li', attrs={'class': 's-item'})
 
@@ -767,7 +756,6 @@ def ebay_scrape(base_url: str,
                             except Exception as e:
                                 if e_vars.verbose: print('ebay_scrape-isource', e, item_link)
                                 continue
-
                         item_soup = BeautifulSoup(isource, 'lxml')
 
                         # Check if this is the original item, or eBay trying to sell another item and having a redirect
@@ -1018,6 +1006,7 @@ def ebay_search(query: str,
         # When saving the file, at times 0.000001 seconds might be added or subtracted from the Sold Datetime
         # This causes a mismatch when comparing datetimes, causing duplicates and wasting time rechecking listings
         # Testing on the 3060, adding this brought runtimes down from eight minutes to one minute.
+
         df['Sold Datetime'] = df['Sold Datetime'].dt.round('min')
         df['Sold Date'] = df['Sold Date'].dt.round('min')
 
@@ -1082,6 +1071,7 @@ def ebay_search(query: str,
             url = f"https://www.ebay.{extension}/sch/i.html?_from=R40&_nkw={fomatted_query}&_sacat={e_vars.sacat}&LH_PrefLoc=1&LH_Sold=1&LH_Complete=1&_udlo={price_ranges[i]}&_udhi={price_ranges[i + 1]}&rt=nc&_ipg=200&_pgn=4"
 
             source = adapter.get(url, timeout=10).text
+
             soup = BeautifulSoup(source, 'lxml')
             items = soup.find_all('li', attrs={'class': 's-item'})
             if e_vars.verbose: print(price_ranges, len(items), i, price_ranges[i], price_ranges[i + 1], url)

@@ -8,6 +8,8 @@ import os
 from copy import deepcopy
 from datetime import datetime
 
+import pandas as pd
+
 from classes import EbayVariables
 from main import ebay_search
 from plotting import median_plotting, brand_plot, ebay_seller_plot
@@ -21,7 +23,8 @@ model_list = [['XC3', 'EVGA'], ['TRINITY', 'ZOTAC'], ['FTW3', 'EVGA'], ['FOUNDER
               [' FE ', 'FOUNDER'], ['TWIN EDGE', 'ZOTAC'], ['POWER COLOR', 'POWERCOLOR'], ['ALIENWARE', 'DELL']]
 
 query_exclusions = ['image', 'jpeg', 'img', 'picture', 'pic', 'jpg', 'charity', 'photo', 'humans', 'prints', 'framed',
-                    'print', 'people', 'inkjet', 'pix', 'paper', 'digital', 'pics', 'alternative', 'delid', 'jpgImage',
+                    'print', 'people', 'inkjet', 'pix', 'paper', 'digital', 'pics', 'alternative', 'drawn', 'delid',
+                    'jpgImage',
                     'pngImage', 'images', 'canvas']
 
 ignore_list = ['BENT PINS', 'BROKEN', 'PARTS ONLY']
@@ -51,7 +54,8 @@ e_vars = EbayVariables(run_cached=False,
                        non_store_rate=0.1,  # The computer non-store rate
                        desc_ignore_list=ignore_list,
                        brand_list=[],
-                       model_list=[]
+                       model_list=[],
+                       agent_list=pd.DataFrame()
                        )
 
 # CPU specific class variables
@@ -90,10 +94,10 @@ df_darkhero = ebay_search('ASUS Dark Hero', mobo_vars, query_exclusions, 399, 40
 # ---------------------------------------------------------------------------------------------
 
 # Zen 3 Data Scraping & Analysis
-df_5950x = ebay_search('5950X', cpu_vars, query_exclusions, 799, 799, 2200)
-df_5900x = ebay_search('5900X', cpu_vars, query_exclusions, 549, 549, 2050)
-df_5800x = ebay_search('5800X', cpu_vars, query_exclusions, 449, 449, 1000)
-df_5600x = ebay_search('5600X', cpu_vars, query_exclusions, 299, 299, 1000)
+df_5950x = ebay_search('5950', cpu_vars, query_exclusions, 799, 800, 2250)
+df_5900x = ebay_search('5900', cpu_vars, query_exclusions, 549, 549, 2050)
+df_5800x = ebay_search('5800', cpu_vars, query_exclusions, 449, 449, 1000)
+df_5600x = ebay_search('5600', cpu_vars, query_exclusions, 299, 299, 1000)
 
 # Zen 3 Family Plotting
 zen3_frames = [df_5600x, df_5800x, df_5900x, df_5950x]
@@ -127,7 +131,8 @@ df_3060 = ebay_search('RTX 3060 -Ti -3060ti', gpu_vars, query_exclusions, 329, 3
                       min_date=datetime(2021, 2, 25))
 df_3060ti = ebay_search('RTX (3060 Ti, 3060Ti)', gpu_vars, query_exclusions, 399, 399, 1300,
                         min_date=datetime(2020, 12, 1))
-df_3070 = ebay_search('RTX 3070', gpu_vars, query_exclusions, 499, 499, 1300, min_date=datetime(2020, 10, 29))
+
+df_3070 = ebay_search('RTX 3070', gpu_vars, query_exclusions, 499, 499, 10000, min_date=datetime(2020, 10, 29))
 df_3080 = ebay_search('RTX 3080', gpu_vars, query_exclusions, 699, 699, 10000, min_date=datetime(2020, 9, 17))
 df_3090 = ebay_search('RTX 3090', gpu_vars, query_exclusions, 1499, 1499, 10000,
                       min_date=datetime(2020, 9, 17))
@@ -385,7 +390,7 @@ df_xbox_x = ebay_search('Xbox Series X', console_vars, query_exclusions, 499, 35
                         min_date=datetime(2020, 9, 22))
 
 # Xbox Plotting
-xbox_series_frames = [df_ps5_digital, df_ps5_disc]
+xbox_series_frames = [df_xbox_s, df_xbox_x]
 
 ebay_seller_plot(xbox_series_frames, 'Xbox', console_vars)
 median_plotting(xbox_series_frames, 'Xbox Median Pricing', e_vars=console_vars, roll=0)

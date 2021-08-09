@@ -1,0 +1,1 @@
+Create folders in this directory for the new manual process

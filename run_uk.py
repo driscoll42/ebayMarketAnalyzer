@@ -30,19 +30,19 @@ ps5_digi_excludes.remove('digital')
 # Set Class variables
 e_vars = EbayVariables(run_cached=False,
                        sleep_len=4,
-                       show_plots=True,
-                       main_plot=True,
+                       show_plots=False,
+                       main_plot=False,
                        profit_plot=False,
                        trend_type='linear',
                        trend_param=[14],  # [Poly_Degree, Days_Out]
                        extra_title_text=' UK',
                        country='UK',
                        ccode='£',
-                       days_before=30,
+                       days_before=7,
                        feedback=True,
                        quantity_hist=True,
                        debug=False,
-                       verbose=False,
+                       verbose=True,
                        sacat=0,
                        tax_rate=0.0,
                        store_rate=0.04,  # The computer store rate
