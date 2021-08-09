@@ -276,6 +276,7 @@ def plot_profits(df: pd.DataFrame,
     ax1_2.tick_params('y', colors='b')
     ax1_2.set_ylim(bottom=0)
     ax1_2.set_ylabel("Quantity")
+    ax1_2.grid(False)
 
     lines, labels = ax1.get_legend_handles_labels()
     lines2, labels2 = ax1_2.get_legend_handles_labels()
@@ -293,6 +294,7 @@ def plot_profits(df: pd.DataFrame,
     ax2_2.plot(med_price, color='black', label='Median % of MSRP')
     ax2_2.set_ylabel("Median % of MSRP")
     ax2_2.set_ylim(bottom=100)
+    ax2_2.grid(False)
 
     lines, labels = ax2.get_legend_handles_labels()
     lines2, labels2 = ax2_2.get_legend_handles_labels()
@@ -589,11 +591,11 @@ def pareto_plot(df: pd.DataFrame,
     ax1.set_xlabel(x_label)
     ax1.set_ylabel(y_label)
     ax1.tick_params(axis='x', rotation=30)
-    ax1.legend(loc='center right')
 
     ax1.bar(df[x_label], df[y_label], label=df_name)
     if df2.size > 0:
         ax1.bar(df2[x_label], df2[y_label], bottom=df[y_label], label=df2_name)
+    ax1.legend(loc='center left')
 
     ax2 = ax1.twinx()
     ax2.set_ylabel('', color='r')
@@ -607,10 +609,12 @@ def pareto_plot(df: pd.DataFrame,
     formatted_weights = ['{0:.0%}'.format(x) for x in cumsum]
     for i, txt in enumerate(formatted_weights):
         ax2.annotate(txt, (df[x_label][i], cumsum[i]), fontweight='heavy')
+    ax2.grid(False)
 
     plt.title(title)
-    fig.tight_layout()
     plt.legend()
+
+    fig.tight_layout()
 
     plt.savefig('Images/' + title)
     if e_vars.show_plots: plt.show()
