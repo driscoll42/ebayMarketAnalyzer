@@ -64,6 +64,7 @@ def request_link(url, adapter, cache, e_vars, page_type):
 
     # Grab one, use it, remove from list
     while (len(source) < 1 or 'checkCaptcha' in source) and not bad_link:
+        time.sleep(2)
         ua = UserAgent()
         random_agent = ua.random
         new_agent = True

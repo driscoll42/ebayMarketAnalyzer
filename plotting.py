@@ -195,6 +195,7 @@ def ebay_plot(query: str,
 
     plt.subplots_adjust(bottom=0.225)
 
+    plt.gcf().text(0.8, 0.008, '@driscoll42', fontsize=9)
     plt.savefig('Images/' + query + e_vars.extra_title_text)
     if e_vars.show_plots and e_vars.main_plot: plt.show()
 
@@ -300,6 +301,8 @@ def plot_profits(df: pd.DataFrame,
     fig.tight_layout()
     fig.suptitle(title + ' Cumulative Sales/Profits and Profits over time')
     plt.subplots_adjust(top=0.45)
+    plt.gcf().text(0.9, 0.01, '@driscoll42', fontsize=9)
+
     plt.savefig('Images/' + title + ' Cumulative Plots')
 
     if e_vars.show_plots and e_vars.profit_plot: plt.show()
@@ -352,7 +355,10 @@ def median_plotting(dfs: List[pd.DataFrame],
 
     plt.ylim(bottom=min_msrp)
     plt.legend()
-    plt.tight_layout()
+    plt.subplots_adjust(bottom=0.2)
+    plt.gcf().text(0.85, 0.01, '@driscoll42', fontsize=9)
+
+    # plt.tight_layout()
 
     if roll > 0:
         plt.title(f"{title} {roll} Day Rolling Average - % MSRP")
@@ -386,8 +392,9 @@ def median_plotting(dfs: List[pd.DataFrame],
     formatter = ticker.FormatStrFormatter(f'{e_vars.ccode}%1.0f')
     ax1.yaxis.set_major_formatter(formatter)
     plt.legend()
-    plt.tight_layout()
-
+    # plt.tight_layout()
+    plt.subplots_adjust(bottom=0.2)
+    plt.gcf().text(0.85, 0.01, '@driscoll42', fontsize=9)
     if roll > 0:
         plt.title(f"{title} {roll} Day Rolling Average - {e_vars.ccode}")
         plt.savefig(f"Images/{title} {roll} Day Rolling Average - {e_vars.ccode}")
