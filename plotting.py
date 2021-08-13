@@ -82,12 +82,12 @@ def ebay_plot(query: str,
             query.replace("+", " ").split('-', 1)[0].strip() + e_vars.extra_title_text + ' eBay Sold Prices Over Time',
             size=20)
 
-    ax1.scatter(df['Sold Date'], df['Total Price'], alpha=0.5, s=10, label='Sold Listing', color=color)
+    ax1.scatter(df_calc['Sold Date'], df_calc['Total Price'], alpha=0.5, s=10, label='Sold Listing', color=color)
     estimated_shipping = 0
 
     if msrp > 0:
         # Replace these percentages as need be based on your projections
-        estimated_shipping = df.loc[df['Shipping'] > 0]
+        estimated_shipping = df_calc.loc[df_calc['Shipping'] > 0]
         estimated_shipping = estimated_shipping['Shipping'].median()
         if math.isnan(estimated_shipping):
             estimated_shipping = 0
@@ -140,7 +140,7 @@ def ebay_plot(query: str,
     # ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
     # ax2.set_ylabel("Quantity Sold", color=color)
     # ax2.tick_params(axis='y', labelcolor=color)
-    tot_sold = int(df['Quantity'].sum())
+    tot_sold = int(df_calc['Quantity'].sum())
     # ax2.plot(count_sold[:-1], color=color, label=f'Total Sold - {tot_sold}')
 
     # Poly Trendline
@@ -315,6 +315,7 @@ def plot_profits(df: pd.DataFrame,
 def median_plotting(dfs: List[pd.DataFrame],
                     title: str,
                     e_vars: EbayVariables,
+                    colors,
                     roll: int = 0,
                     min_msrp: int = 100) -> None:
     """
@@ -332,16 +333,18 @@ def median_plotting(dfs: List[pd.DataFrame],
 
     """
     dfs = deepcopy(dfs)
-    colors = ['#000000', '#7f0000', '#808000', '#008080', '#000080', '#ff8c00', '#2f4f4f', '#00ff00', '#0000ff',
-              '#ff00ff', '#6495ed', '#ff1493', '#98fb98', '#ffdab9']
-    plt.figure()  # In this example, all the plots will be in one figure.
+    if len(colors) < 1:
+        colors = ['#000000', '#7f0000', '#808000', '#008080', '#000080', '#ff8c00', '#2f4f4f', '#00ff00', '#0000ff',
+                  '#ff00ff', '#6495ed', '#ff1493', '#98fb98', '#ffdab9']
+
+    plt.figure()  # In this example, all the plots will be in one figure. figsize=(15, 12)
     plt.ylabel("% of MSRP")
     plt.xlabel("Sale Date")
     plt.tick_params(axis='y')
     plt.tick_params(axis='x', rotation=30)
-
+    linewidth = 1.5
     for i, df in enumerate(dfs):
-        color = i % (len(colors) - 1)
+        color = i % len(colors)
 
         df = prep_df(df)
 
@@ -350,9 +353,114 @@ def median_plotting(dfs: List[pd.DataFrame],
 
         if roll > 0:
             med_price_scaled = med_price_scaled.rolling(roll, min_periods=1).mean()
+            linewidth = 2.5
+
+        min_msrp = min(min_msrp, min(med_price_scaled))
+        plt.plot(med_price_scaled, colors[color], label=df['item'].iloc[0], linewidth=linewidth)
+        # plt.fill_between(med_price_scaled, med_price_scaled - med_mad, med_price_scaled + med_mad, color=colors[ci])
+
+    plt.ylim(bottom=min_msrp)
+    plt.legend()
+    plt.subplots_adjust(bottom=0.2)
+    plt.gcf().text(0.85, 0.01, '@driscoll42', fontsize=9)
+
+    # plt.tight_layout()
+
+    if roll > 0:
+        plt.title(f"{title} {roll} Day Rolling Average - % MSRP")
+        plt.savefig(f"Images/{title} {roll} Day Rolling Average - % MSRP")
+    else:
+        plt.title(f"{title} - % MSRP")
+        plt.savefig(f"Images/{title} - % MSRP")
+
+    if e_vars.show_plots: plt.show()
+
+    # Plotting the non-scaled graph
+    plt.figure()  # In this example, all the plots will be in one figure.
+    fig, ax1 = plt.subplots()
+    plt.ylabel(f"Median Sale Price ({e_vars.ccode})")
+    plt.xlabel("Sale Date")
+    plt.tick_params(axis='y')
+    plt.tick_params(axis='x', rotation=30)
+    linewidth = 1.5
+
+    for i, df in enumerate(dfs):
+        color = i % len(colors)
+
+        med_price = df.groupby(['Sold Date'])['Total Price'].median()
+
+        if roll > 0:
+            med_price = med_price.rolling(roll, min_periods=1).mean()
+            linewidth = 2.5
+
+        min_msrp = min(min_msrp, min(med_price))
+        plt.plot(med_price, colors[color], label=df['item'].iloc[0], linewidth=linewidth)
+
+    plt.ylim(bottom=min_msrp)
+    formatter = ticker.FormatStrFormatter(f'{e_vars.ccode}%1.0f')
+    ax1.yaxis.set_major_formatter(formatter)
+    plt.legend()  # fontsize=15
+    # plt.tight_layout()
+    plt.subplots_adjust(bottom=0.2)
+    plt.gcf().text(0.85, 0.01, '@driscoll42', fontsize=9)
+    if roll > 0:
+        plt.title(f"{title} {roll} Day Rolling Average - {e_vars.ccode}")
+        plt.savefig(f"Images/{title} {roll} Day Rolling Average - {e_vars.ccode}")
+    else:
+        plt.title(f"{title} - {e_vars.ccode}")
+        plt.savefig(f"Images/{title} - {e_vars.ccode}")
+    if e_vars.show_plots: plt.show()
+
+
+def mean_plotting(dfs: List[pd.DataFrame],
+                  title: str,
+                  e_vars: EbayVariables,
+                  roll: int = 0,
+                  min_msrp: int = 100,
+                  stdev_plot=False) -> None:
+    """
+
+    Parameters
+    ----------
+    dfs :
+    title :
+    e_vars :
+    roll :
+    min_msrp :
+
+    Returns
+    -------
+
+    """
+    dfs = deepcopy(dfs)
+    colors = ['#000000', '#7f0000', '#808000', '#008080', '#000080', '#ff8c00', '#2f4f4f', '#00ff00', '#0000ff',
+              '#ff00ff', '#6495ed', '#ff1493', '#98fb98', '#ffdab9']
+    colors = ['#ED2939', '#FF2400', '#CD5C5C', '#7C0A02', '#0B6623', '#708238', '#3F704D', '#8F9779', '#00755E',
+              '#004B49', '#6495ed', '#ff1493', '#98fb98', '#ffdab9']
+    # colors = ['blue', 'darkblue', 'green', 'lime', 'lime']
+    plt.figure()  # In this example, all the plots will be in one figure. figsize=(15, 12)
+    plt.ylabel("% of MSRP")
+    plt.xlabel("Sale Date")
+    plt.tick_params(axis='y')
+    plt.tick_params(axis='x', rotation=30)
+    for i, df in enumerate(dfs):
+        color = i % (len(colors) - 1)
+
+        df = prep_df(df)
+        med_price_scaled = df.groupby(['Sold Date'])['Total Price'].mean() / df['msrp'].iloc[0] * 100
+        # med_mad = robust.mad(df.groupby(['Sold Date'])['Total Price']/ msrps[i] * 100)
+        stdev_scaled = df.groupby(['Sold Date'])['Total Price'].std() / df['msrp'].iloc[0] * 100
+
+        if roll > 0:
+            stdev_scaled = med_price_scaled.rolling(roll, min_periods=1).std()
+            med_price_scaled = med_price_scaled.rolling(roll, min_periods=1).mean()
 
         min_msrp = min(min_msrp, min(med_price_scaled))
         plt.plot(med_price_scaled, colors[color], label=df['item'].iloc[0])
+        if stdev_plot:
+            plt.fill_between(med_price_scaled.index, med_price_scaled - stdev_scaled,
+                             med_price_scaled + stdev_scaled, alpha=0.2,
+                             color=colors[color])
         # plt.fill_between(med_price_scaled, med_price_scaled - med_mad, med_price_scaled + med_mad, color=colors[ci])
 
     plt.ylim(bottom=min_msrp)
@@ -382,18 +490,24 @@ def median_plotting(dfs: List[pd.DataFrame],
     for i, df in enumerate(dfs):
         color = i % (len(colors) - 1)
 
-        med_price = df.groupby(['Sold Date'])['Total Price'].median()
+        med_price = df.groupby(['Sold Date'])['Total Price'].mean()
+        std_price = df.groupby(['Sold Date'])['Total Price'].std()
 
         if roll > 0:
+            std_price = med_price.rolling(roll, min_periods=1).std()
             med_price = med_price.rolling(roll, min_periods=1).mean()
 
         min_msrp = min(min_msrp, min(med_price))
         plt.plot(med_price, colors[color], label=df['item'].iloc[0])
+        if stdev_plot:
+            plt.fill_between(med_price.index, med_price - std_price,
+                             med_price + std_price, alpha=0.2,
+                             color=colors[color])
 
     plt.ylim(bottom=min_msrp)
     formatter = ticker.FormatStrFormatter(f'{e_vars.ccode}%1.0f')
     ax1.yaxis.set_major_formatter(formatter)
-    plt.legend()
+    plt.legend()  # fontsize=15
     # plt.tight_layout()
     plt.subplots_adjust(bottom=0.2)
     plt.gcf().text(0.85, 0.01, '@driscoll42', fontsize=9)
@@ -737,13 +851,18 @@ def brand_plot(dfs: List[pd.DataFrame],
 
     for i, df in enumerate(dfs):
         df = prep_df(df)
-        df['Total Price'] /= df['msrp'].iloc[0]
+        for brand in e_vars.brand_list:
+            temp_brand = df[(df['Brand'] == brand)]
+            if len(temp_brand) > 0:
+                print(df.item.iloc[0], brand, len(temp_brand), round(temp_brand['Total Price'].mean()),
+                      round(temp_brand['Total Price'].sum()))
+        df['Total Price'] /= df['msrp']
+        dfs[i] = df
 
     df = pd.concat(dfs)
-
     brand_dict = {}
     for brand in e_vars.brand_list:
-        brand_dict[brand] = df[(df['Brand'] == brand) & (df['Ignore'] == 0) & (df['Total Price'] <= 3000)]
+        brand_dict[brand] = df[(df['Brand'] == brand)]
 
     # Picked using this https://mokole.com/palette.html
     colors = ['#000000', '#7f0000', '#808000', '#008080', '#000080', '#ff8c00', '#2f4f4f', '#00ff00', '#0000ff',
@@ -771,12 +890,12 @@ def brand_plot(dfs: List[pd.DataFrame],
             brand_dict[brand] = brand_dict[brand].loc[brand_dict[brand].index.repeat(brand_dict[brand]['Quantity'])]
             brand_dict[brand]['Quantity'] = 1
 
-            med_price = brand_dict[brand].groupby(['Sold Date'])['Total Price'].median() * 100
+            med_price = brand_dict[brand].groupby(['Sold Date'])['Total Price'].median() * 100.0
             if roll > 0:
                 med_price = med_price.rolling(roll, min_periods=1).mean()
 
             min_msrp = min(100, min(med_price))
-            max_msrp = min(300, max(med_price))
+            max_msrp = max(300, max(med_price))
             plt.plot(med_price, colors[color], label=e_vars.brand_list[i])
     plt.ylim(bottom=min_msrp, top=max_msrp)
     plt.legend()

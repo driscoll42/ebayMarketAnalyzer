@@ -12,7 +12,7 @@ import pandas as pd
 
 from classes import EbayVariables
 from main_manual_xml import ebay_search
-from plotting import median_plotting, brand_plot, ebay_seller_plot
+from plotting import median_plotting, brand_plot, ebay_seller_plot, mean_plotting
 
 brand_list = ['FOUNDER', 'ASUS', 'MSI', 'EVGA', 'GIGABYTE', 'ZOTAC', 'XFX', 'PNY', 'SAPPHIRE', 'COLORFUL', 'ASROCK',
               'POWERCOLOR', 'INNO3D', 'PALIT', 'VISIONTEK', 'DELL']
@@ -29,7 +29,7 @@ ignore_list = ['BENT PINS', 'BROKEN', 'PARTS ONLY']
 ps5_digi_excludes = query_exclusions.copy()
 
 # Set Class variables
-e_vars = EbayVariables(run_cached=False,
+e_vars = EbayVariables(run_cached=True,
                        sleep_len=8,
                        show_plots=True,
                        main_plot=True,
@@ -103,6 +103,7 @@ median_plotting(zen3_frames, 'Zen 3 Median Pricing', e_vars=cpu_vars, roll=7)
 ebay_seller_plot(zen3_frames, 'Zen 3', e_vars=cpu_vars)
 
 # Big Navi Analysis
+df_6600 = ebay_search('RX 6600', gpu_vars, 379, 379, 2500)
 df_6700 = ebay_search('RX 6700', gpu_vars, 479, 479, 2500)
 df_6800 = ebay_search('RX 6800', gpu_vars, 579, 579, 2500)
 df_6800xt = ebay_search('RX 6800 XT', gpu_vars, 649, 850, 2000)
@@ -113,6 +114,7 @@ df_6900 = ebay_search('RX 6900', gpu_vars, 999, 999, 999999, min_date=datetime(2
 bignavi_frames = [df_6700, df_6800, df_6800xt, df_6900]
 median_plotting(bignavi_frames, 'Big Navi Median Pricing', e_vars=gpu_vars, roll=0)
 median_plotting(bignavi_frames, 'Big Navi Median Pricing', e_vars=gpu_vars, roll=7)
+mean_plotting(bignavi_frames, 'Big Navi Mean Pricing', e_vars=gpu_vars, roll=7, stdev_plot=True)
 
 ebay_seller_plot(bignavi_frames, 'Big Navi', gpu_vars)
 
@@ -138,6 +140,9 @@ ampere_frames = [df_3060, df_3060ti, df_3070, df_3080, df_3090]
 median_plotting(ampere_frames, 'RTX 30 Series Median Pricing', e_vars=gpu_vars, roll=0)
 median_plotting(ampere_frames, 'RTX 30 Series Median Pricing', e_vars=gpu_vars, roll=7)
 
+mean_plotting(ampere_frames, 'RTX 30 Series Average Pricing', e_vars=gpu_vars, roll=0, stdev_plot=True)
+mean_plotting(ampere_frames, 'RTX 30 Series Average Pricing', e_vars=gpu_vars, roll=7, stdev_plot=True)
+
 ebay_seller_plot(ampere_frames, 'RTX 30 Series-Ampere', gpu_vars)
 
 brand_plot(ampere_frames, 'RTX 30 Series-Ampere AIB Comparison', e_vars=gpu_vars, roll=0)
@@ -153,9 +158,10 @@ df_ps5_disc = ebay_search('PS5', console_vars, 499, 450, 11000, min_date=datetim
 # PS5 Plotting
 df_ps5_disc = df_ps5_disc.assign(item='PS5 Disc')
 ps5_frames = [df_ps5_digital, df_ps5_disc]
+ps5_colors = ['darkblue', '#006fcd']
 
-median_plotting(ps5_frames, 'PS5 Median Pricing', e_vars=console_vars, roll=0)
-median_plotting(ps5_frames, 'PS5 Median Pricing', e_vars=console_vars, roll=7)
+median_plotting(ps5_frames, 'PS5 Median Pricing', colors=ps5_colors, e_vars=console_vars, roll=0)
+median_plotting(ps5_frames, 'PS5 Median Pricing', colors=ps5_colors, e_vars=console_vars, roll=7)
 
 # ---------------------------------------------------------------------------------------------
 # Xbox Analysis (All time)
@@ -164,7 +170,14 @@ df_xbox_x = ebay_search('Xbox Series X', console_vars, 499, 350, 11000, min_date
 
 # Xbox Plotting
 xbox_series_frames = [df_xbox_s, df_xbox_x]
+xbox_colors = ['limegreen', '#0e7a0d']
 
 ebay_seller_plot(xbox_series_frames, 'Xbox', console_vars)
-median_plotting(xbox_series_frames, 'Xbox Median Pricing', e_vars=console_vars, roll=0)
-median_plotting(xbox_series_frames, 'Xbox Median Pricing', e_vars=console_vars, roll=7)
+median_plotting(xbox_series_frames, 'Xbox Median Pricing', colors=xbox_colors, e_vars=console_vars, roll=0)
+median_plotting(xbox_series_frames, 'Xbox Median Pricing', colors=xbox_colors, e_vars=console_vars, roll=7)
+
+console_frames = [df_ps5_digital, df_ps5_disc, df_xbox_s, df_xbox_x]
+console_colors = ['darkblue', '#006fcd', 'limegreen', '#0e7a0d']
+
+median_plotting(console_frames, 'PS5 & Xbox Median Pricing', colors=console_colors, e_vars=console_vars, roll=0)
+median_plotting(console_frames, 'PS5 & Xbox Median Pricing', colors=console_colors, e_vars=console_vars, roll=7)
