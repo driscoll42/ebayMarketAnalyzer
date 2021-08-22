@@ -813,7 +813,7 @@ def ebay_seller_plot(dfs: List[pd.DataFrame],
         fifty_plus = df_quant[(df_quant['Quantity'] >= 50)]['Quantity'].sum()
 
         df_fb = pd.DataFrame({
-            'Number of Sales': ['1', '2', '3', '4', '5', '5 - 10', '11 - 20', '21 - 50', '50 +'],
+            'Number of Sales': ['1', '2', '3', '4', '5', '6 - 10', '11 - 20', '21 - 50', '50 +'],
             'Quantity Sold'  : [one_sale, two_sales, three_sales, four_sales, five_sales, five_ten, eleven_twenty,
                                 twen_fifty, fifty_plus]})
         return df_fb

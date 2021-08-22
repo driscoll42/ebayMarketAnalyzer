@@ -64,7 +64,7 @@ def request_link(url, adapter, cache, e_vars, page_type):
 
     # Grab one, use it, remove from list
     while (len(source) < 1 or 'checkCaptcha' in source) and not bad_link:
-        time.sleep(2)
+        time.sleep(1)
         ua = UserAgent()
         random_agent = ua.random
         new_agent = True
@@ -80,6 +80,7 @@ def request_link(url, adapter, cache, e_vars, page_type):
             else:
                 source = adapter.get(url, timeout=time_out_len, headers={'User-Agent': random_agent}).text
         except Exception as e:
+            print(e, url)
             df_bad = {'Agent': random_agent, 'Works': 0, 'Last Used': datetime.now()}
             e_vars.agent_list = e_vars.agent_list.append(df_bad, ignore_index=True)
             e_vars.agent_list.to_excel('agent_list.xlsx', engine='openpyxl')

@@ -1119,5 +1119,9 @@ def ebay_search(query: str,
 
     df = df.assign(item=query_item_name)
     df = df.assign(msrp=msrp)
-    os.remove(f"{cache_name}.sqlite")
+    if not e_vars.run_cached:
+        try:
+            os.remove(f"{cache_name}.sqlite")
+        except Exception as e:
+            print(e)
     return df

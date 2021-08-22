@@ -8,7 +8,7 @@ fb_dict = {}
 
 for f in os.listdir(directory):
     print(f)
-    if str(f).find('~') < 0 and 'xlsx' in str(f):
+    if str(f).find('~') < 0 and 'xlsx' in str(f) and 'agent' not in str(f) and 'Medians' not in str(f):
         df = pd.read_excel('../Spreadsheets/' + f, index_col=0, engine='openpyxl')
         dup_df = df.copy(deep=True)
 
@@ -29,8 +29,7 @@ num_updates = 0
 
 for f in os.listdir(directory):
     print(f)
-    if str(f).find('~') < 0 and 'xlsx' in str(f):
-
+    if str(f).find('~') < 0 and 'xlsx' in str(f) and 'agent' not in str(f) and 'Medians' not in str(f):
         create = False
         df = pd.read_excel('../Spreadsheets/' + f, index_col=0, engine='openpyxl')
         dup_df = df.copy(deep=True)
@@ -56,8 +55,7 @@ print('--------------------------')
 
 for f in os.listdir(directory):
     print(f)
-    if str(f).find('~') < 0 and 'xlsx' in str(f):
-
+    if str(f).find('~') < 0 and 'xlsx' in str(f) and 'agent' not in str(f) and 'Medians' not in str(f):
         create = False
         df = pd.read_excel('../Spreadsheets/' + f, index_col=0, engine='openpyxl')
         dup_df = df.copy(deep=True)

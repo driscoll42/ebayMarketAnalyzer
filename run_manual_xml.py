@@ -34,7 +34,7 @@ e_vars = EbayVariables(run_cached=True,
                        show_plots=True,
                        main_plot=True,
                        profit_plot=True,
-                       trend_type='poly',
+                       trend_type='None',
                        trend_param=[1, 14],  # [Poly_Degree, Days_Out]
                        extra_title_text='',
                        country='USA',
@@ -88,7 +88,7 @@ for x in os.listdir():
 # df_darkhero = ebay_search('ASUS Dark Hero', mobo_vars, 399, 400, 1000)
 
 # Zen 3 Data Scraping & Analysis
-df_5300g = ebay_search('5300G', cpu_vars, 150, 100, 2250)
+'''df_5300g = ebay_search('5300G', cpu_vars, 150, 100, 2250)
 df_5600g = ebay_search('5600G', cpu_vars, 259, 200, 2250)
 df_5700g = ebay_search('5700G', cpu_vars, 359, 300, 2250)
 df_5950x = ebay_search('5950X', cpu_vars, 799, 700, 2250)
@@ -101,6 +101,7 @@ zen3_frames = [df_5300g, df_5600g, df_5700g, df_5600x, df_5800x, df_5900x, df_59
 median_plotting(zen3_frames, 'Zen 3 Median Pricing', e_vars=cpu_vars, roll=0)
 median_plotting(zen3_frames, 'Zen 3 Median Pricing', e_vars=cpu_vars, roll=7)
 ebay_seller_plot(zen3_frames, 'Zen 3', e_vars=cpu_vars)
+'''
 
 # Big Navi Analysis
 df_6600 = ebay_search('RX 6600', gpu_vars, 379, 379, 2500)
@@ -110,10 +111,13 @@ df_6800xt = ebay_search('RX 6800 XT', gpu_vars, 649, 850, 2000)
 df_6900 = ebay_search('RX 6900', gpu_vars, 999, 999, 999999, min_date=datetime(2020, 12, 8))
 
 # Big Navi Plotting
+bignavi_frames = [df_6600, df_6700, df_6800, df_6800xt, df_6900]
+bignavi_colors = ['red', 'purple', 'green', 'cyan', 'lime', 'black', 'white']
 
-bignavi_frames = [df_6700, df_6800, df_6800xt, df_6900]
-median_plotting(bignavi_frames, 'Big Navi Median Pricing', e_vars=gpu_vars, roll=0)
-median_plotting(bignavi_frames, 'Big Navi Median Pricing', e_vars=gpu_vars, roll=7)
+median_plotting(bignavi_frames, 'Big Navi Median Pricing', colors=bignavi_colors, e_vars=gpu_vars, roll=0)
+median_plotting(bignavi_frames, 'Big Navi Median Pricing', colors=bignavi_colors, e_vars=gpu_vars, roll=7)
+
+mean_plotting(bignavi_frames, 'Big Navi Mean Pricing', e_vars=gpu_vars, roll=0, stdev_plot=True)
 mean_plotting(bignavi_frames, 'Big Navi Mean Pricing', e_vars=gpu_vars, roll=7, stdev_plot=True)
 
 ebay_seller_plot(bignavi_frames, 'Big Navi', gpu_vars)
@@ -122,23 +126,25 @@ brand_plot(bignavi_frames, 'Big Navi AIB Comparison', e_vars=gpu_vars, roll=0)
 brand_plot(bignavi_frames, 'Big Navi AIB Comparison', e_vars=gpu_vars, roll=7)
 
 # ---------------------------------------------------------------------------------------------
-
 # RTX 30 Series Analysis
 df_3060 = ebay_search('RTX 3060', gpu_vars, 329, 329, 2000, min_date=datetime(2021, 2, 25))
-df_3060ti = ebay_search('RTX 3060 Ti', gpu_vars, 399, 399, 5000, min_date=datetime(2020, 12, 1))
 # Remember to search ebay with -Ti
-
+df_3060ti = ebay_search('RTX 3060 Ti', gpu_vars, 399, 399, 5000, min_date=datetime(2020, 12, 1))
 df_3070 = ebay_search('RTX 3070', gpu_vars, 499, 499, 10000, min_date=datetime(2020, 10, 29))
+# Remember to search ebay with -Ti
+df_3070ti = ebay_search('RTX 3070 Ti', gpu_vars, 599, 599, 10000, min_date=datetime(2020, 6, 10))
 df_3080 = ebay_search('RTX 3080', gpu_vars, 699, 699, 10000, min_date=datetime(2020, 9, 17))
-df_3080ti = ebay_search('RTX 3080 Ti', gpu_vars, 699, 699, 10000, min_date=datetime(2021, 6, 3))
+df_3080ti = ebay_search('RTX 3080 Ti', gpu_vars, 1199, 1199, 10000, min_date=datetime(2021, 6, 3))
 df_3090 = ebay_search('RTX 3090', gpu_vars, 1499, 1499, 10000, min_date=datetime(2020, 9, 17))
 
 # RTX 30 Series/Ampere Plotting
 df_3060ti = df_3060ti.assign(item='RTX 3060 Ti')
-ampere_frames = [df_3060, df_3060ti, df_3070, df_3080, df_3090]
+ampere_frames = [df_3060, df_3060ti, df_3070, df_3070ti, df_3080, df_3090]
+ampere_colors = ['#0B6623', '#708238', '#39FF14', '#00A86B', '#043927', '#01796F', '#4F7942']
+ampere_colors = ['red', 'purple', 'green', 'cyan', 'lime', 'black', 'white']
 
-median_plotting(ampere_frames, 'RTX 30 Series Median Pricing', e_vars=gpu_vars, roll=0)
-median_plotting(ampere_frames, 'RTX 30 Series Median Pricing', e_vars=gpu_vars, roll=7)
+median_plotting(ampere_frames, 'RTX 30 Series Median Pricing', colors=ampere_colors, e_vars=gpu_vars, roll=0)
+median_plotting(ampere_frames, 'RTX 30 Series Median Pricing', colors=ampere_colors, e_vars=gpu_vars, roll=7)
 
 mean_plotting(ampere_frames, 'RTX 30 Series Average Pricing', e_vars=gpu_vars, roll=0, stdev_plot=True)
 mean_plotting(ampere_frames, 'RTX 30 Series Average Pricing', e_vars=gpu_vars, roll=7, stdev_plot=True)
@@ -149,7 +155,7 @@ brand_plot(ampere_frames, 'RTX 30 Series-Ampere AIB Comparison', e_vars=gpu_vars
 brand_plot(ampere_frames, 'RTX 30 Series-Ampere AIB Comparison', e_vars=gpu_vars, roll=7)
 
 # ---------------------------------------------------------------------------------------------
-
+'''
 # PS5 Analysis (All time)
 df_ps5_digital = ebay_search('PS5 Digital', console_vars, 399, 300, 11000, min_date=datetime(2020, 9, 16))
 df_ps5_disc = ebay_search('PS5', console_vars, 499, 450, 11000, min_date=datetime(2020, 9, 16))
@@ -159,6 +165,7 @@ df_ps5_disc = ebay_search('PS5', console_vars, 499, 450, 11000, min_date=datetim
 df_ps5_disc = df_ps5_disc.assign(item='PS5 Disc')
 ps5_frames = [df_ps5_digital, df_ps5_disc]
 ps5_colors = ['darkblue', '#006fcd']
+ebay_seller_plot(ps5_frames, 'PS5', console_vars)
 
 median_plotting(ps5_frames, 'PS5 Median Pricing', colors=ps5_colors, e_vars=console_vars, roll=0)
 median_plotting(ps5_frames, 'PS5 Median Pricing', colors=ps5_colors, e_vars=console_vars, roll=7)
@@ -181,3 +188,6 @@ console_colors = ['darkblue', '#006fcd', 'limegreen', '#0e7a0d']
 
 median_plotting(console_frames, 'PS5 & Xbox Median Pricing', colors=console_colors, e_vars=console_vars, roll=0)
 median_plotting(console_frames, 'PS5 & Xbox Median Pricing', colors=console_colors, e_vars=console_vars, roll=7)
+
+ebay_seller_plot(console_frames, 'PS5 & Xbox', console_vars)
+'''

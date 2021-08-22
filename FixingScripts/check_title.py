@@ -13,7 +13,8 @@ psf_dig_qe = ['image', 'jpeg', 'img', 'picture', ' pic ', 'jpg', 'charity', 'pho
 
 for f in os.listdir(directory):
     print(f)
-    if str(f).find('~') < 0 and 'xlsx' in str(f) and 'agent_list' not in str(f):
+    if str(f).find('~') < 0 and 'xlsx' in str(f) and 'agent_list' not in str(f) and 'Median' not in str(
+            f) and 'RX' in str(f):
         df = pd.read_excel('../Spreadsheets/' + f, index_col=0, engine='openpyxl')
         dup_df = df.copy(deep=True)
 
