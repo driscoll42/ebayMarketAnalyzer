@@ -13,7 +13,7 @@ black==20.8b1
 brotlipy==0.7.0
 bs4==0.0.1
 ccxt==1.42.78
-certifi==2020.12.5
+certifi==2022.12.7
 cffi @ file:///C:/ci/cffi_1613247279197/work
 cfgv==3.2.0
 chardet @ file:///C:/ci/chardet_1607690654534/work
